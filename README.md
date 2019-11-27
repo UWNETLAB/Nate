@@ -4,7 +4,7 @@ Python package for network analysis with / of unstructured text data
 
 ## Team 
 
-* John McLevey <john.mclevey@uwaterloo.ca>     
+* Dr. John McLevey (PI) <john.mclevey@uwaterloo.ca>     
 * Pierson Browne <pbrowne@uwaterloo.ca>       
 * Tyler Crick <tcrick@uwaterloo.ca>    
 * Sasha Graham <a24graha@uwaterloo.ca>    
