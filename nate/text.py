@@ -1,8 +1,4 @@
 from nate.helpers import window_text, search_entities
-from itertools import chain, combinations
-from collections import Counter
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 import spacy
 nlp = spacy.load('en')
 import re
