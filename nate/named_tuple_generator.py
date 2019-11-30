@@ -13,14 +13,12 @@ def define_named_tuple(observation_name, attribute_names:List[str]) -> NamedTupl
 
 def create_observation_list(observation_name:str, **kwargs) -> List[NamedTuple]:
 
-    custom_named_tuple = define_named_tuple(observation_name, list(kwargs.keys()))
+    custom_named_tuple = define_named_tuple(observation_name,  list(kwargs.keys()))
     
     #Length check: all of the lists fed in MUST be of the same length
     
     arg_lengths = [len(arg) for arg in kwargs.values()]
     arg_length = set(arg_lengths)
-    
-    print(arg_length)
     
     if len(arg_length) != 1:
         raise Exception("Not all of the input data is the same length.")
