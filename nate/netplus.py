@@ -48,7 +48,7 @@ class Netplus():
 
     def degree_distribution(self):
         degree_sequence = sorted([d for n, d in self.network.degree()], reverse=True)
-        degreeCount = collections.Counter(degree_sequence)
+        degreeCount = Counter(degree_sequence)
         deg, count = zip(*degreeCount.items())
         df = pd.DataFrame([deg, count])
         return df
