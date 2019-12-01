@@ -46,3 +46,25 @@ def search_entities(raw_text_string, search):
         if entity.lower() in raw_text_string.lower():
             ents.append(entity.lower())
     return ents
+
+
+def adjmat_to_wel(adjmat, remove_self_loops=True):
+    """
+    Accepts an adjacency matrix and outputs a weighted edgelist.
+    """
+    adjmat = pd.read_csv('~/Desktop/testing/ajm.csv', index_col = 0)
+    adjmat.fillna(0, inplace=True)
+
+    if remove_self_loops is True:
+        # zero out the diagonal
+        for i in adjmat.index:
+            adjmat.loc[i,i] = 0
+    else:
+        pass
+
+    wel=[('i','j','Weight')]
+    for source in adjmat.index.values:
+        for target in adjmat.index.values:
+            if adjmat[source][target] > 0:
+                wel.append((target,source,adjmat[source][target]))
+    return wel

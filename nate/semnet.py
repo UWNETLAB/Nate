@@ -63,30 +63,6 @@ class Text():
             nouns_in_docs = [tok.lemma_ for tok in doc if tok.pos_ == 'ADJ']
             self.adjectives.append(nouns_in_docs)
 
-        # if type(window) is int:
-        #     # prepare text for windowing
-        #     if towin is 'sentences':
-        #         ttw = self.sentences
-        #     elif towin is 'nouns':
-        #         text_to_window = self.nouns
-        #         ttw = [i for sublist in text_to_window for i in sublist]
-        #     elif towin is 'verbs':
-        #         text_to_window = self.verbs
-        #         ttw = [i for sublist in text_to_window for i in sublist]
-        #     elif towin is'adjectives':
-        #         text_to_window = self.adjectives
-        #         ttw = [i for sublist in text_to_window for i in sublist]
-        #     else:
-        #         ValueError("Expected sentences, nouns, verbs, or adjectives.")
-        #
-        #     self.concatenated = [" ".join(ttw)]
-        #
-        #     # window text
-        #     self.windows = window_text(self.concatenated[0].lower(), window_lr=window)
-        #
-        # else:
-        #     pass
-
 
     def window_corpus(self, window=4, towin='sentences'):
         """
@@ -195,6 +171,19 @@ class Text():
         adj_mat = mt * m
         # drop anything below the threshold
         adj_mat[adj_mat < threshold] = 0 # this is faster than the list comprehension approach I took at first
+
+        """
+        I have a function called `adjmat_to_wel()` in helpers.py that
+        returns a wel from an adjacency matrix. It might be a better idea
+        to invoke that here rather than construct the nx object. In keeping
+        with the idea of leaving as much nx to the end as possible.
+
+        However, currently edge alpha values and the modularity score require
+        networkx objects. Perhaps they could just be computed further down the
+        pipeline. This would only really matter if, for example, you wanted to
+        do something with the backbone edges before returning the wel. But
+        currently we don't do anything like that, so maybe it's fine.
+        """
 
         adj_df = pd.DataFrame(adj_mat)
         words = vectorizer.get_feature_names()
