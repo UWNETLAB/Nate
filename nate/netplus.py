@@ -21,7 +21,7 @@ import pandas as pd
 import numpy as np
 from community import best_partition, modularity
 from collections import Counter
-
+import matplotlib.pyplot as plt
 
 class Netplus():
     def __init__(self, WEL, NAF=None):
@@ -49,6 +49,15 @@ class Netplus():
     def degree_distribution(self):
         degree_sequence = sorted([d for n, d in self.network.degree()], reverse=True)
         degreeCount = Counter(degree_sequence)
-        deg, count = zip(*degreeCount.items())
-        df = pd.DataFrame([deg, count])
+        self.deg, self.count = zip(*degreeCount.items())
+        df = pd.DataFrame([self.deg, self.count]).T
+        df.columns = ['Degree', 'Count']
         return df
+
+    def plot_degree_histogram(self):
+        plt.bar(self.deg, self.count, width=0.80, color='black')
+        plt.xticks(np.arange(0, 18, step=2))
+        plt.title("Degree Histogram")
+        plt.ylabel("Count")
+        plt.xlabel("Degree")
+        plt.show()
