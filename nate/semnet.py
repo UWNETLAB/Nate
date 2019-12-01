@@ -9,7 +9,7 @@ TODO:
     * add other network constructors (not MVP)
 """
 
-# from nate.helpers import window_text, search_entities
+from nate.helpers import window_text, search_entities
 from helpers import window_text, search_entities
 from itertools import chain, combinations
 from collections import Counter
@@ -193,17 +193,21 @@ class Text():
         m = matrix.todense()
         mt = m.transpose()
         adj_mat = mt * m
+        # drop anything below the threshold
+        adj_mat[adj_mat < threshold] = 0 # this is faster than the list comprehension approach I took at first
+
         adj_df = pd.DataFrame(adj_mat)
         words = vectorizer.get_feature_names()
         G = nx.from_pandas_adjacency(adj_df)
         d = dict(enumerate(words))
         nx.set_node_attributes(G, values=d, name='Text')
 
-        if threshold > 1:
-            remove = [(u,v) for u,v,d in G.edges(data=True) if d['weight'] < threshold]
-            G.remove_edges_from(remove)
-        else:
-            pass
+        # this is slower than adj_mat[adj_mat < threshold] = 0. Just need to test to make sure results are identical.
+        # if threshold > 1:
+        #     remove = [(u,v) for u,v,d in G.edges(data=True) if d['weight'] < threshold]
+        #     G.remove_edges_from(remove)
+        # else:
+        #     pass
 
         if drop_isolates is True:
             G.remove_nodes_from(list(nx.isolates(G)))
