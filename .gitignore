@@ -134,3 +134,7 @@ dmypy.json
 
 #
 hand/
+
+#
+.vscode/
+.vscode
