@@ -38,9 +38,9 @@ class import_dataframe(base_importer):
 
     def __init__(self, input_dataframe,  text:str, unique_id:str = None,  timestamp:str = None, columns_to_keep:List = []):
 
-        self.import_dataframe(input_dataframe, text, unique_id,  timestamp, columns_to_keep)
+        self.process_dataframe(input_dataframe, text, unique_id,  timestamp, columns_to_keep)
 
-    def import_dataframe(self, temp_data, text:str, unique_id:str = None,  timestamp:str = None, columns_to_keep:List = []):
+    def process_dataframe(self, temp_data, text:str, unique_id:str = None,  timestamp:str = None, columns_to_keep:List = []):
         """
         This is a docstring
         """
@@ -86,7 +86,7 @@ class import_csv(import_dataframe, base_importer):
     def __init__(self, file_path:str, text:str, unique_id:str = None,  timestamp:str = None, columns_to_keep:List = []):
         temp_data:pandas.DataFrame = pandas.read_csv(file_path)
 
-        self.import_dataframe(temp_data, text, unique_id,  timestamp, columns_to_keep)
+        self.process_dataframe(temp_data, text, unique_id,  timestamp, columns_to_keep)
 
 
 class import_excel(import_dataframe, base_importer):
@@ -114,6 +114,6 @@ class import_excel(import_dataframe, base_importer):
 
         temp_data:pandas.DataFrame = pandas.read_excel(file_path)
 
-        self.import_dataframe(temp_data,  text, unique_id,  timestamp, columns_to_keep)
+        self.process_dataframe(temp_data,  text, unique_id,  timestamp, columns_to_keep)
 
         
