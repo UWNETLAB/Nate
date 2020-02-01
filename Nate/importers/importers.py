@@ -2,7 +2,7 @@ import pandas
 from typing import List, Union
 from .named_tuple_generator import tupleize
 from abc import ABC, abstractmethod
-from dummynate.nate_importers.timestamp_process import convert_times
+from .timestamp_process import convert_times
 from .nate_class import nate
  
  
