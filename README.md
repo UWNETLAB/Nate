@@ -1,10 +1,10 @@
 <a href="https://uwaterloo.ca/networks-lab/"><img src="http://www.johnmclevey.com/assets/img/logo.png" width="125"  align="right" /></a>
 
-# ssnipy: **S**ocio-**S**emantic **N**etworks in **Py**thon  
+# `nlpnet`: research at the intersection of natural language processing and network science
 
-`ssnipy` (formerly known as `nate`) is a Python package for analyzing soci-semantic networks in Python, designed and developed by [NETLAB](https://uwaterloo.ca/networks-lab/) at the [University of Waterloo](https://uwaterloo.ca/). We designed it to facilitate research at the intersection of network science and applied natural language processing, and to scale efficiently for large and complex datasets. 
+`nlpnet` (formerly known as `nate`) is a Python package designed and developed by [NETLAB](https://uwaterloo.ca/networks-lab/) at the [University of Waterloo](https://uwaterloo.ca/). It is designed to facilitate research at the intersection of network science and applied natural language processing, and to scale efficiently for large and complex datasets. 
 
-`ssnipy` offers functionality for seamlessly connecting natural language processing workflows using [`spacy`](https://github.com/explosion/spaCy) with network analysis workflows using packages such as [`networkx`](https://networkx.github.io/), [`igraph`](https://igraph.org/python/) for Python, and [`graph-tool`](https://graph-tool.skewed.de/). `ssnipy` has carefully designed data structures to connect these two types of research workflows, and offers a set of tools for quickly producing descriptive reports and visualizations. 
+`nlpnet` offers functionality for seamlessly connecting state-of-the-art machine learning models used in natural language processing workflows using [`spacy`](https://github.com/explosion/spaCy) with network analysis workflows using packages such as [`networkx`](https://networkx.github.io/), [`igraph`](https://igraph.org/python/) for Python, and [`graph-tool`](https://graph-tool.skewed.de/). `nlpnet` has carefully-designed data structures that connect these two types of research workflows, and offers a set of tools for quickly producing descriptive reports and visualizations. 
 
 # Installation 
 
@@ -12,13 +12,13 @@
 
 In the very near future, you will be able to install the most recent stable version of `ssnipy` with pip. 
 
-`pip install ssnipy`
+`pip install nlpnet`
 
 ## Github 
 
 If you want access to the most recent development version of `ssnipy`, you can install it from the source code in this repository. 
 
-`git clone https://github.com/UWNETLAB/ssnipy.git && cd ssnipy && pip install .`
+`git clone https://github.com/UWNETLAB/nlpnet.git && cd nlpnet && pip install .`
 
 # Documentation 
 
