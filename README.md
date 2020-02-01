@@ -10,7 +10,7 @@
 
 ## pip 
 
-You can install the most recent stable version of `ssnipy` with pip. 
+In the very near future, you will be able to install the most recent stable version of `ssnipy` with pip. 
 
 `pip install ssnipy`
 
