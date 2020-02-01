@@ -2,7 +2,7 @@
 
 # ssnipy: **S**ocio-**S**emantic **N**etworks in **Py**thon  
 
-`ssnipy` (formerly known as `nate`) is a library for analyzing soci-semantic networks in Python, designed and developed by [NETLAB](https://uwaterloo.ca/networks-lab/) at the [University of Waterloo](https://uwaterloo.ca/). We designed it to facilitate research at the intersection of network science and applied natural language processing, and to scale efficiently for large and complex datasets. 
+`ssnipy` (formerly known as `nate`) is a Python package for analyzing soci-semantic networks in Python, designed and developed by [NETLAB](https://uwaterloo.ca/networks-lab/) at the [University of Waterloo](https://uwaterloo.ca/). We designed it to facilitate research at the intersection of network science and applied natural language processing, and to scale efficiently for large and complex datasets. 
 
 `ssnipy` offers functionality for seamlessly connecting natural language processing workflows using [`spacy`](https://github.com/explosion/spaCy) with network analysis workflows using packages such as [`networkx`](https://networkx.github.io/), [`igraph`](https://igraph.org/python/) for Python, and [`graph-tool`](https://graph-tool.skewed.de/). `ssnipy` has carefully designed data structures to connect these two types of research workflows, and offers a set of tools for quickly producing descriptive reports and visualizations. 
 
