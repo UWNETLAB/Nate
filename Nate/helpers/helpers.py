@@ -6,6 +6,8 @@ I have been writing. Perhaps network-related helpers should be in a different fi
 - JM 
 """
 
+import pandas as pd
+
 def window_text(string_of_text, window_lr=3):
     """
     This function splits a string into tokens on each space. Then it iterates

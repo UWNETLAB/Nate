@@ -6,15 +6,6 @@ assigns the alpha scores as edge attributes.
 It also includes a series of methods for easily grabbing useful descriptives
 and simple reports for the network.
 """
-
-from nate.backbone import compute_disparity_filter
-# ^ this is Malcolm's. He refactored another module I shared with him
-# implementing Seranno et al.
-
-# I need to ask him about whether or not he is OK with including this in Nate.
-# perhaps the original author as well, although we forked a fork
-# the original has no license.
-
 import numpy as np
 import networkx as nx
 import pandas as pd
@@ -22,6 +13,14 @@ import numpy as np
 from community import best_partition, modularity
 from collections import Counter
 import matplotlib.pyplot as plt
+from ..helpers.backbone import compute_disparity_filter
+
+# ^ this is Malcolm's. He refactored another module I shared with him
+# implementing Seranno et al.
+
+# I need to ask him about whether or not he is OK with including this in Nate.
+# perhaps the original author as well, although we forked a fork
+# the original has no license.
 
 class Netplus():
     def __init__(self, WEL, NAF=None):

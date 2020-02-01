@@ -11,7 +11,7 @@ With the following changes:
  - copy all the original edge attributes so that they are not removed
  - bug fix: changed G.in_degree(G.successors(u)[0]) to G.in_degree(list(G.successors(u))[0])
 '''
-
+ 
 import networkx as nx
 import numpy as np
 from scipy import integrate
