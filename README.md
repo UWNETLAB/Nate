@@ -1,6 +1,6 @@
 <a href="https://uwaterloo.ca/networks-lab/"><img src="http://www.johnmclevey.com/assets/img/logo.png" width="125"  align="right" /></a>
 
-# `nlpnet`
+# nlpnet
 
 **Research at the intersection of natural language processing and social network analysis.**
 
