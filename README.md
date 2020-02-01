@@ -1,6 +1,8 @@
 <a href="https://uwaterloo.ca/networks-lab/"><img src="http://www.johnmclevey.com/assets/img/logo.png" width="125"  align="right" /></a>
 
-# `nlpnet`: research at the intersection of natural language processing and network science
+# `nlpnet`
+
+## Research at the intersection of natural language processing and network science
 
 `nlpnet` (formerly known as `nate`) is a Python package designed and developed by [NETLAB](https://uwaterloo.ca/networks-lab/) at the [University of Waterloo](https://uwaterloo.ca/). It is designed to facilitate research at the intersection of network science and applied natural language processing, and to scale efficiently for large and complex datasets. 
 
