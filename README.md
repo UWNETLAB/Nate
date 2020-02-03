@@ -1,10 +1,10 @@
 <a href="https://uwaterloo.ca/networks-lab/"><img src="http://www.johnmclevey.com/assets/img/logo.png" width="125"  align="right" /></a>
 
-# nelanna (NAtural LANguage and Network Analysis)
+# nalanna
 
 **Research at the intersection of natural language processing and social network analysis.**
 
-`nelanna` (formerly known as `nate`) is a Python package designed and developed by [NETLAB](https://uwaterloo.ca/networks-lab/) at the [University of Waterloo](https://uwaterloo.ca/). It is designed to facilitate research at the intersection of social network analysis / network science and applied natural language processing. It scales efficiently for large and complex datasets. 
+`nalanna` (formerly known as `Nate`) is a Python package designed and developed by [NETLAB](https://uwaterloo.ca/networks-lab/) at the [University of Waterloo](https://uwaterloo.ca/). It is designed to facilitate research at the intersection of social network analysis / network science and applied natural language processing. It scales efficiently for large and complex datasets. 
 
 `nelanna` offers functionality for seamlessly connecting state-of-the-art machine learning models used in natural language processing workflows using [`spacy`](https://github.com/explosion/spaCy) with network analysis workflows using packages such as [`networkx`](https://networkx.github.io/), [`igraph`](https://igraph.org/python/) for Python, and [`graph-tool`](https://graph-tool.skewed.de/). `nlpnet` has carefully-designed data structures that connect these two types of research workflows, and offers a set of tools for quickly producing descriptive reports and visualizations. 
 
@@ -12,15 +12,15 @@
 
 ## pip 
 
-In the very near future, you will be able to install the most recent stable version of `nelanna` with pip. 
+In the very near future, you will be able to install the most recent stable version of `nalanna` with pip. 
 
-`pip install nelanna`
+`pip install nalanna`
 
 ## Github 
 
-If you want access to the most recent development version of `nelanna`, you can install it from the source code in this repository. 
+If you want access to the most recent development version of `nalanna`, you can install it from the source code in this repository. 
 
-`git clone https://github.com/UWNETLAB/nelanna.git && cd nelanna && pip install .`
+`git clone https://github.com/UWNETLAB/nalanna.git && cd nalanna && pip install .`
 
 # Documentation 
 
