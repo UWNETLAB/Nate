@@ -1,26 +1,26 @@
 <a href="https://uwaterloo.ca/networks-lab/"><img src="http://www.johnmclevey.com/assets/img/logo.png" width="125"  align="right" /></a>
 
-# nalanna
+# Nate (Network Analysis + Text)
 
-**Research at the intersection of natural language processing and social network analysis.**
+**Research at the intersection of social network analysis and applied natural language processing.**
 
-`nalanna` (formerly known as `Nate`) is a Python package designed and developed by [NETLAB](https://uwaterloo.ca/networks-lab/) at the [University of Waterloo](https://uwaterloo.ca/). It is designed to facilitate research at the intersection of social network analysis / network science and applied natural language processing. It scales efficiently for large and complex datasets. 
+`Nate` is a Python package designed and developed by [NETLAB](https://uwaterloo.ca/networks-lab/) at the [University of Waterloo](https://uwaterloo.ca/). It is designed to facilitate research at the intersection of social network analysis / network science and applied natural language processing. It scales efficiently for large and complex datasets. 
 
-`nelanna` offers functionality for seamlessly connecting state-of-the-art machine learning models used in natural language processing workflows using [`spacy`](https://github.com/explosion/spaCy) with network analysis workflows using packages such as [`networkx`](https://networkx.github.io/), [`igraph`](https://igraph.org/python/) for Python, and [`graph-tool`](https://graph-tool.skewed.de/). `nlpnet` has carefully-designed data structures that connect these two types of research workflows, and offers a set of tools for quickly producing descriptive reports and visualizations. 
+`Nate` offers functionality for seamlessly connecting state-of-the-art machine learning models used in natural language processing workflows using [`spacy`](https://github.com/explosion/spaCy) with network analysis workflows using packages such as [`networkx`](https://networkx.github.io/), [`igraph`](https://igraph.org/python/) for Python, and [`graph-tool`](https://graph-tool.skewed.de/). `Nate` has carefully-designed data structures that connect these two types of research workflows, and offers a set of tools for quickly producing descriptive reports and visualizations. 
 
 # Installation 
 
 ## pip 
 
-In the very near future, you will be able to install the most recent stable version of `nalanna` with pip. 
+In the very near future, you will be able to install the most recent stable version of `Nate` with pip. 
 
-`pip install nalanna`
+`pip install Nate`
 
 ## Github 
 
 If you want access to the most recent development version of `nalanna`, you can install it from the source code in this repository. 
 
-`git clone https://github.com/UWNETLAB/nalanna.git && cd nalanna && pip install .`
+`git clone https://github.com/UWNETLAB/Nate.git && cd Nate && pip install .`
 
 # Documentation 
 
