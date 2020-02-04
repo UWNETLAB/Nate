@@ -2,7 +2,7 @@
 
 # Nate (Network Analysis + Text)
 
-**Research at the intersection of social network analysis and applied natural language processing.**
+*Research at the intersection of **social network analysis** and applied **natural language processing**.*
 
 `Nate` is a Python package designed and developed by [NETLAB](https://uwaterloo.ca/networks-lab/) at the [University of Waterloo](https://uwaterloo.ca/). It is designed to facilitate research at the intersection of social network analysis / network science and applied natural language processing. It scales efficiently for large and complex datasets. 
 
