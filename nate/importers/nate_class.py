@@ -29,7 +29,7 @@ class nate():
 
     def list_texts(self, start:int = None, end:int = None):
         """
-        Returns a list of 
+        Returns a list of texts
         """ 
         return [str(i.text) for i in self.data[start:end]]
 
@@ -58,4 +58,18 @@ class nate():
         return edge_burst(self)
 
     def svo(self):
-        pass
+        """
+        This is a docstring
+        """ 
+        import spacy
+        from spacy.pipeline import merge_entities
+        nlp = spacy.load("en_core_web_lg")
+        nlp.add_pipe(merge_entities)
+        svo_list = []
+        text_list = self.list_texts()
+
+        for text in text_list:
+            post_nlp = nlp(text)
+            svo_list.append(findSVOs(post_nlp))
+
+        return svo_list
