@@ -1,5 +1,6 @@
 from pprint import pprint
 from ..edgeburst.edge_burst_class import edge_burst
+from ..svo.svo import findSVOs
  
 
 class nate():
@@ -55,3 +56,6 @@ class nate():
         Returns an instance of the 'edge_burst' class, initialized with the relevant data contained 
         """ 
         return edge_burst(self)
+
+    def svo(self):
+        pass
