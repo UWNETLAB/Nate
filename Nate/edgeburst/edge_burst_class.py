@@ -69,7 +69,7 @@ class edge_burst():
 
         for i in range(0,len(s)):
             run_name = "{}_{}".format(str(s[i]), str(gamma[i]))
-            run_result = bursts(offset_subset_dict, s[i], gamma[i])
+            run_result = bursts(self.offset_dict,self.lookup, s[i], gamma[i])
             run_dict[run_name] = run_result
 
         return run_dict
