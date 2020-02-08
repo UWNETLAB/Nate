@@ -14,11 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import en_core_web_sm
- 
-# use spacy small model
-nlp = en_core_web_sm.load()
-
 # dependency markers for subjects
 SUBJECTS = {"nsubj", "nsubjpass", "csubj", "csubjpass", "agent", "expl"}
 # dependency markers for objects

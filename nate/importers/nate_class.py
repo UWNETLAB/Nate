@@ -7,7 +7,7 @@ class nate():
     """
     This is the `Nate` package's base class. Each of the importer functions the `Nate` package loads into namespace returns a populated instance of the `nate` class.
 
-    Calling this class directly is functionally identical to 
+    Calling this class directly is functionally identical to calling the `head()` method with no arguments - both return the first 5 'rows' of the dataset. 
     """
     def __init__(self, data):
         self.data = data
