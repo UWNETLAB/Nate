@@ -28,7 +28,7 @@ def import_files(files):
     text_only_namedtuple = define_named_tuple('obs', ['text'])
 
     for filepath in files:
-        with open(filepath, 'r') as stream:
+        with open(filepath, 'r', encoding='utf-8') as stream:
             obs_list.append(text_only_namedtuple(stream.read().replace('\n', '')))
 
     return nate(obs_list)

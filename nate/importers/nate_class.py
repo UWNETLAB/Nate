@@ -57,7 +57,7 @@ class nate():
         """ 
         return edge_burst(self)
 
-    def svo(self):
+    def svo(self, NER_tags=False):
         """
         This is a docstring
         """ 
@@ -67,9 +67,7 @@ class nate():
         nlp.add_pipe(merge_entities)
         svo_list = []
         text_list = self.list_texts()
-
-        for text in text_list:
-            post_nlp = nlp(text)
-            svo_list.append(findSVOs(post_nlp))
+        post_nlp = nlp.pipe(text_list)
+        svo_list = [findSVOs(x, NER_tags) for x in post_nlp]
 
         return svo_list
