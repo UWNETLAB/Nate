@@ -1,6 +1,6 @@
 from pprint import pprint
 from ..edgeburst.edge_burst_class import edge_burst
-from ..svo.svo import findSVOs
+from ..svo.process import process_svo, svo_to_df
  
 
 class nate():
@@ -57,19 +57,14 @@ class nate():
         """ 
         return edge_burst(self)
 
-    def svo(self):
+    def svo(self, sub_tags=False, obj_tags=False, to_df = False):
         """
         This is a docstring
         """ 
-        import spacy
-        from spacy.pipeline import merge_entities
-        nlp = spacy.load("en_core_web_lg")
-        nlp.add_pipe(merge_entities)
-        svo_list = []
         text_list = self.list_texts()
-
-        for text in text_list:
-            post_nlp = nlp(text)
-            svo_list.append(findSVOs(post_nlp))
-
-        return svo_list
+        self.sentences, self.svo_list = process_svo(text_list, sub_tags, obj_tags)
+        if to_df:
+            return svo_to_df(self.sentences, self.svo_list)
+        else:
+            return self.svo_list
+        

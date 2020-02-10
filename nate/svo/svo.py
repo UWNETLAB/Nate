@@ -23,6 +23,8 @@ BREAKER_POS = {"CCONJ", "VERB"}
 # words that are negations
 NEGATIONS = {"no", "not", "n't", "never", "none"}
 
+sub_ner_tags = False
+obj_ner_tags = False
 
 # does dependency set contain any coordinating conjunctions?
 def contains_conj(depSet):
@@ -38,7 +40,10 @@ def _get_subs_from_conjunctions(subs):
         rights = list(sub.rights)
         rightDeps = {tok.lower_ for tok in rights}
         if contains_conj(rightDeps):
-            more_subs.extend([tok for tok in rights if tok.dep_ in SUBJECTS or tok.pos_ == "NOUN"])
+            if sub_ner_tags:
+                more_subs.extend([tok for tok in rights if tok.dep_ in SUBJECTS and tok.ent_type_ in sub_ner_tags])
+            else:
+                more_subs.extend([tok for tok in rights if tok.dep_ in SUBJECTS or tok.pos_ == "NOUN"])
             if len(more_subs) > 0:
                 more_subs.extend(_get_subs_from_conjunctions(more_subs))
     return more_subs
@@ -52,7 +57,10 @@ def _get_objs_from_conjunctions(objs):
         rights = list(obj.rights)
         rightDeps = {tok.lower_ for tok in rights}
         if contains_conj(rightDeps):
-            more_objs.extend([tok for tok in rights if tok.dep_ in OBJECTS or tok.pos_ == "NOUN"])
+            if obj_ner_tags:
+                more_objs.extend([tok for tok in rights if (tok.dep_ in OBJECTS and tok.ent_type_ in obj_ner_tags) or (tok.pos_ == "NOUN" and tok.ent_type_ in obj_ner_tags)])
+            else:            
+                more_objs.extend([tok for tok in rights if tok.dep_ in OBJECTS or tok.pos_ == "NOUN"])
             if len(more_objs) > 0:
                 more_objs.extend(_get_objs_from_conjunctions(more_objs))
     return more_objs
@@ -64,14 +72,19 @@ def _find_subs(tok):
     while head.pos_ != "VERB" and head.pos_ != "NOUN" and head.head != head:
         head = head.head
     if head.pos_ == "VERB":
-        subs = [tok for tok in head.lefts if tok.dep_ == "SUB"]
+        if sub_ner_tags:
+            subs = [tok for tok in head.lefts if tok.dep_ == "SUB" and tok.ent_type_ in sub_ner_tags]
+        else:
+            subs = [tok for tok in head.lefts if tok.dep_ == "SUB"]
         if len(subs) > 0:
             verb_negated = _is_negated(head)
             subs.extend(_get_subs_from_conjunctions(subs))
             return subs, verb_negated
         elif head.head != head:
             return _find_subs(head)
-    elif head.pos_ == "NOUN":
+    elif sub_ner_tags and head.ent_type_ in sub_ner_tags:
+        return [head], _is_negated(tok)
+    elif not sub_ner_tags and head.pos_ == "NOUN":
         return [head], _is_negated(tok)
     return [], False
 
@@ -101,14 +114,20 @@ def _find_svs(tokens):
 def _get_objs_from_prepositions(deps, is_pas):
     objs = []
     for dep in deps:
-        if dep.pos_ == "ADP" and (dep.dep_ == "prep" or (is_pas and dep.dep_ == "agent")):
-            objs.extend([tok for tok in dep.rights if tok.dep_  in OBJECTS or
-                         (tok.pos_ == "PRON" and tok.lower_ == "me") or
-                         (is_pas and tok.dep_ == 'pobj')])
+        if obj_ner_tags:
+            if dep.pos_ == "ADP" and (dep.dep_ == "prep" or (is_pas and dep.dep_ == "agent")):
+                objs.extend([tok for tok in dep.rights if (tok.dep_  in OBJECTS and tok.ent_type_ in obj_ner_tags)])
+                             #(is_pas and tok.ent_type_ in obj_ner_tags and tok.dep_ == 'pobj')]) #temporarily disabled
+        else:
+            if dep.pos_ == "ADP" and (dep.dep_ == "prep" or (is_pas and dep.dep_ == "agent")):
+                objs.extend([tok for tok in dep.rights if tok.dep_ in OBJECTS or
+                             (tok.pos_ == "PRON" and tok.lower_ == "me") or
+                             (is_pas and tok.dep_ == 'pobj')])
     return objs
 
 
 # get objects from the dependencies using the attribute dependency
+# *NOTE* disabled for unknown reason in _get_all_objs, this needs NER option if it should be enabled
 def _get_objs_from_attrs(deps, is_pas):
     for dep in deps:
         if dep.pos_ == "NOUN" and dep.dep_ == "attr":
@@ -129,7 +148,10 @@ def _get_obj_from_xcomp(deps, is_pas):
         if dep.pos_ == "VERB" and dep.dep_ == "xcomp":
             v = dep
             rights = list(v.rights)
-            objs = [tok for tok in rights if tok.dep_ in OBJECTS]
+            if obj_ner_tags:
+                objs = [tok for tok in rights if tok.dep_ in OBJECTS and tok.ent_type_ in obj_ner_tags]
+            else:
+                objs = [tok for tok in rights if tok.dep_ in OBJECTS]
             objs.extend(_get_objs_from_prepositions(rights, is_pas))
             if len(objs) > 0:
                 return v, objs
@@ -139,12 +161,16 @@ def _get_obj_from_xcomp(deps, is_pas):
 # get all functional subjects adjacent to the verb passed in
 def _get_all_subs(v):
     verb_negated = _is_negated(v)
-    subs = [tok for tok in v.lefts if tok.dep_ in SUBJECTS and tok.pos_ != "DET"]
+    if sub_ner_tags:
+        subs = [tok for tok in v.lefts if tok.dep_ in SUBJECTS and tok.ent_type_ in sub_ner_tags and tok.pos_ != "DET"]
+    else:
+        subs = [tok for tok in v.lefts if tok.dep_ in SUBJECTS and tok.pos_ != "DET"]
     if len(subs) > 0:
         subs.extend(_get_subs_from_conjunctions(subs))
     else:
         foundSubs, verb_negated = _find_subs(v)
         subs.extend(foundSubs)
+        
     return subs, verb_negated
 
 
@@ -172,8 +198,10 @@ def _right_of_verb_is_conj_verb(v):
 def _get_all_objs(v, is_pas):
     # rights is a generator
     rights = list(v.rights)
-
-    objs = [tok for tok in rights if tok.dep_ in OBJECTS or (is_pas and tok.dep_ == 'pobj')]
+    if obj_ner_tags:
+        objs = [tok for tok in rights if (tok.dep_ in OBJECTS and tok.ent_type_ in obj_ner_tags) or (is_pas and tok.dep_ == 'pobj' and tok.ent_type_ in obj_ner_tags)]
+    else:
+        objs = [tok for tok in rights if tok.dep_ in OBJECTS or (is_pas and tok.dep_ == 'pobj')]
     objs.extend(_get_objs_from_prepositions(rights, is_pas))
 
     #potentialNewVerb, potentialNewObjs = _get_objs_from_attrs(rights)
@@ -187,6 +215,9 @@ def _get_all_objs(v, is_pas):
         v = potential_new_verb
     if len(objs) > 0:
         objs.extend(_get_objs_from_conjunctions(objs))
+        
+    for obj in objs:
+        print(obj.lemma_ + ' *** ' + obj.ent_type_)
     return v, objs
 
 
@@ -260,7 +291,11 @@ def to_str(tokens):
 
 
 # find verbs and their subjects / objects to create SVOs, detect passive/active sentences
-def findSVOs(tokens):
+def findSVOs(tokens, sub_tags=False, obj_tags=False):
+    global sub_ner_tags
+    sub_ner_tags = sub_tags
+    global obj_ner_tags
+    obj_ner_tags = obj_tags
     svos = []
     is_pas = _is_passive(tokens)
     verbs = [tok for tok in tokens if _is_non_aux_verb(tok)]
