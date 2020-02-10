@@ -13,7 +13,7 @@ class edge_burst():
         self.texts = data.list_texts()
         self.timestamps = data.list_timestamps()
 
-    def generate_offsets(self, minimum_offsets = 10, subset_data:int = 0, pickle_path = False, save_spacy = None):
+    def generate_offset(self, minimum_offsets = 10, subset_data:int = 0, pickle_path = False, save_spacy = None):
         """
         This is a docstring
         """

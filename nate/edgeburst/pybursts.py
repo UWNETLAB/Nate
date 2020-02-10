@@ -124,7 +124,7 @@ def f(alpha, x):
 def min_cost(cost):
 	return np.argmin(cost)
 		
-@njit(cache=True)
+@njit(cache=False)
 def tau(i, j, gamma_log_n):			
 	return np.where(i >= j, 0, ((j - i) * gamma_log_n))
 
