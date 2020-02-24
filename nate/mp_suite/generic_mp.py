@@ -1,12 +1,16 @@
-from joblib import Parallel, delayed
-# from toolz import partition_all
+from joblib import Parallel, delayed, cpu_count
+
 from itertools import chain
 from spacy.util import minibatch
 from functools import partial
-# from spacy.pipeline import merge_entities
 
 
-def mp(items, function, cpu, *args):
+
+def mp(items, function, *args):
+    if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
+        cpu = 11
+    else:
+        cpu = cpu_count()
     batch_size = round(len(items)/cpu)
     partitions = minibatch(items, size=batch_size)
     executor = Parallel(n_jobs=cpu, backend="multiprocessing", prefer="processes")
