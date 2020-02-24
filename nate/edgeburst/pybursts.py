@@ -118,17 +118,29 @@ def single(offsets, s=2, gamma=1):
 	
 @njit
 def f(alpha, x):
+	"""
+	This is a docstring.
+	"""
 	return alpha * math.exp(-alpha * x)
 
 @njit
 def min_cost(cost):
+	"""
+	This is a docstring.
+	"""
 	return np.argmin(cost)
 		
 @njit(cache=False)
 def tau(i, j, gamma_log_n):			
+	"""
+	This is a docstring.
+	"""
 	return np.where(i >= j, 0, ((j - i) * gamma_log_n))
 
 @jit(forceobj=True)	
 def process(offset_list, s, gamma):
+	"""
+	This is a docstring.
+	"""
 	bursts = [single(x, s, gamma) for x in offset_list]
 	return bursts

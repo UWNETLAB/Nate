@@ -5,7 +5,9 @@ from .visualize_bursts import plot_bursts
 from .export import df_export, max_bursts_export, all_bursts_export, offsets_export
 
 def get_bursts(offset_list, s, gamma):
-        
+    """
+	This is a docstring.
+	"""    
     burst_list = pybursts.process(offset_list, s, gamma)   
 
     return burst_list
