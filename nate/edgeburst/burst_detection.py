@@ -18,10 +18,6 @@ def detect_bursts(offsets, s = 2, gamma = 1):
     This is a docstring
     """
 
-    if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
-        cpu = 10
-    else:
-        cpu = cpu_count()
 
     key_list = list(offsets.keys())
     offset_list = list(offsets.values())
@@ -29,7 +25,7 @@ def detect_bursts(offsets, s = 2, gamma = 1):
     if len(offsets) <= cpu:
         burst_list = pybursts.process(offset_list, s, gamma)
     else:
-        burst_list = mp(offset_list, get_bursts, cpu, s, gamma) #bursts(key_list, offset_list)
+        burst_list = mp(offset_list, get_bursts, s, gamma) #bursts(key_list, offset_list)
 
     edge_bursts = dict(zip(key_list, burst_list))
 
