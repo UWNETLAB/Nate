@@ -1,6 +1,5 @@
 import spacy
 import pandas as pd
-from os import cpu_count
 from spacy.pipeline import merge_entities
 from time import time as marktime
 from typing import List
@@ -18,10 +17,6 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
     print("commencing preliminary preparation...")
 
     start = marktime()
-    if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
-        cpu = 10
-    else:
-        cpu = cpu_count()
 
     nlp = spacy.load('en', disable=['parser'])
     nlp.add_pipe(merge_entities)  #merges named entities into single tokens
@@ -32,7 +27,7 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
     # Spacy Pipeline
     print("commencing spacy pipeline...")
 
-    processed_list = mp(texts, spacy_process, cpu, nlp)
+    processed_list = mp(texts, spacy_process, nlp)
 
     if save_spacy_path != None:
         with open(save_spacy_path, "wb") as stream:
@@ -47,7 +42,7 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
     # Offset Generation
     print("commencing offset generation...")
     
-    offsets = mp(word_ints, cooc, cpu, timestamps, minimum_offsets)
+    offsets = mp(word_ints, cooc, timestamps, minimum_offsets)
     
     print("finished offset generation in {} seconds".format(round(marktime() - start)))
     print("commencing timestamp deduplication...")
@@ -69,7 +64,7 @@ def spacy_component(doc):  # to do: make this user-configurable
     doc = [token.lemma_.lower() for token in doc if token.is_stop == False and len(token) > 2 and token.is_alpha and token.is_ascii]
     return doc
          
-def spacy_process(texts, nlp):
+def spacy_process(nlp, texts):
     """
     This is a docstring.
     """
