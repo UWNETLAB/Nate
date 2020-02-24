@@ -5,6 +5,7 @@ from spacy.pipeline import merge_entities
 from time import time as marktime
 from typing import List
 from ..mp_suite.generic_mp import mp
+from ..helpers.helpers import spacy_process
 from itertools import groupby, chain, combinations
 import pickle
 from collections import defaultdict
@@ -68,13 +69,6 @@ def spacy_component(doc):  # to do: make this user-configurable
     """
     doc = [token.lemma_.lower() for token in doc if token.is_stop == False and len(token) > 2 and token.is_alpha and token.is_ascii]
     return doc
-         
-def spacy_process(texts, nlp):
-    """
-    This is a docstring.
-    """
-    processed_list = [doc for doc in nlp.pipe(texts)]
-    return processed_list
 
 def text_to_int(processed_list):
     """
