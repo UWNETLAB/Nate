@@ -1,6 +1,6 @@
 import spacy
 from spacy.pipeline import merge_entities
-from svo import findSVOs
+from .svo import findSVOs
 import pandas as pd
 
 def process_svo(text_list, sub_tags = False, obj_tags = False):
