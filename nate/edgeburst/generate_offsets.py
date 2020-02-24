@@ -19,10 +19,6 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
     print("commencing preliminary preparation...")
 
     start = marktime()
-    if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
-        cpu = 10
-    else:
-        cpu = cpu_count()
 
     nlp = spacy.load('en', disable=['parser'])
     nlp.add_pipe(merge_entities)  #merges named entities into single tokens
@@ -33,7 +29,7 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
     # Spacy Pipeline
     print("commencing spacy pipeline...")
 
-    processed_list = mp(texts, spacy_process, cpu, nlp)
+    processed_list = mp(texts, spacy_process, nlp)
 
     if save_spacy_path != None:
         with open(save_spacy_path, "wb") as stream:
