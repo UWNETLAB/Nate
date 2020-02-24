@@ -2,20 +2,19 @@ import spacy
 from spacy.pipeline import merge_entities
 from .svo import findSVOs
 import pandas as pd
+from ..mp_helpers import mp
+from ..helpers import spacy_process
 
 def process_svo(text_list, sub_tags = False, obj_tags = False):
     """
     This is a docstring.
     """
-    nlp = spacy.load("en_core_web_lg")
+    nlp = spacy.load("en_core_web_sm")
     nlp.add_pipe(merge_entities)
-    svo_list = []
-    
-    post_nlp = [doc for doc in nlp.pipe(text_list)]
+    post_nlp = mp(text_list, spacy_process, nlp)
     sentences = [[x.string.strip() for x in y.sents] for y in post_nlp]
     svo_items = [[findSVOs(x, sub_tags, obj_tags) for x in y.sents] for y in post_nlp]
-    #print(svo_items)
-    #svo_list, sub_ent_types, obj_ent_types = zip(*svo_items)
+
     
     return sentences, svo_items
     
@@ -50,7 +49,7 @@ def svo_to_df(sentences, svo_items):
             
     df['doc_id'], df['sent_id'], df ['sentence'], df['svo'] = doc_id, sent_id, sent_list_flat, svo_list_flat
     df['subject'], df['sub_type'], df['verb'], df['object'], df['obj_type'] = sub_list_flat, sub_ent_types, verb_list_flat, obj_list_flat, obj_ent_types
-    #df[['subject', 'verb', 'object']] = pd.DataFrame(df['svo'].tolist(), index=df.index)
+
     
     return df
 
