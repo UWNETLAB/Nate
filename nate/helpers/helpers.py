@@ -120,9 +120,9 @@ def preprocess_text_with_bigrams(text_with_bigrams_los):
         return inspect
 
 def write_topics(model, feature_names, no_top_words, filename='topics.txt'):
-	"""
-	This is a docstring.
-	"""
+    """
+    This is a docstring.
+    """
     with open(filename, 'w') as f:
         for topic_idx, topic in enumerate(model.components_):
             f.write("Topic {}: ".format(topic_idx))

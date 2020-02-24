@@ -5,7 +5,6 @@ from spacy.pipeline import merge_entities
 from time import time as marktime
 from typing import List
 from ..mp_suite.generic_mp import mp
-
 from itertools import groupby, chain, combinations
 import pickle
 from collections import defaultdict
