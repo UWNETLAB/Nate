@@ -1,5 +1,5 @@
 from . import pybursts
-from ..mp_helpers.mp_helpers import mp
+from ..mp_suite.generic_mp import mp
 from os import cpu_count
 from .visualize_bursts import plot_bursts
 from .export import df_export, max_bursts_export, all_bursts_export, offsets_export
