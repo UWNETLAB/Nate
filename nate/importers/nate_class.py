@@ -2,7 +2,7 @@ from pprint import pprint
 from ..edgeburst.edge_burst_class import edge_burst
 from ..svo.process import process_svo, svo_to_df
  
-
+ 
 class nate():
     """
     This is the `nate` package's base class. Each of the importer functions the `nate` package loads into namespace returns a populated instance of the `nate` class.

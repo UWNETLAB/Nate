@@ -4,9 +4,9 @@ from .svo import findSVOs
 import pandas as pd
 
 def process_svo(text_list, sub_tags = False, obj_tags = False):
-	"""
-	This is a docstring.
-	"""
+    """
+    This is a docstring.
+    """
     nlp = spacy.load("en_core_web_lg")
     nlp.add_pipe(merge_entities)
     svo_list = []
@@ -19,11 +19,11 @@ def process_svo(text_list, sub_tags = False, obj_tags = False):
     
     return sentences, svo_items
     
-    
+   
 def svo_to_df(sentences, svo_items):
-	"""
-	This is a docstring.
-	"""
+    """ 
+    This is a docstring.
+    """
     df = pd.DataFrame()
     doc_id = []
     sent_id = []

@@ -14,7 +14,7 @@ def import_text(strings):
     text_only_namedtuple = define_named_tuple('obs', ['text'])
 
     return nate([text_only_namedtuple(string) for string in strings])
-
+ 
 
 def import_files(files):
     """
