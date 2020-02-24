@@ -62,9 +62,9 @@ class nate():
         This is a docstring
         """ 
         text_list = self.list_texts()
-        self.sentences, self.svo_list = process_svo(text_list, sub_tags, obj_tags)
+        self.sentences, self.svo_items = process_svo(text_list, sub_tags, obj_tags)
         if to_df:
-            return svo_to_df(self.sentences, self.svo_list)
+            return svo_to_df(self.sentences, self.svo_items)
         else:
             return self.svo_list
         

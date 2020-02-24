@@ -25,6 +25,9 @@ NEGATIONS = {"no", "not", "n't", "never", "none"}
 
 sub_ner_tags = False
 obj_ner_tags = False
+sub_ent_types = []
+obj_ent_types = []
+
 
 # does dependency set contain any coordinating conjunctions?
 def contains_conj(depSet):
@@ -170,6 +173,9 @@ def _get_all_subs(v):
     else:
         foundSubs, verb_negated = _find_subs(v)
         subs.extend(foundSubs)
+
+    global sub_ent_types
+    sub_ent_types = [sub.ent_type_ for sub in subs]
         
     return subs, verb_negated
 
@@ -215,9 +221,10 @@ def _get_all_objs(v, is_pas):
         v = potential_new_verb
     if len(objs) > 0:
         objs.extend(_get_objs_from_conjunctions(objs))
-        
-    for obj in objs:
-        print(obj.lemma_ + ' *** ' + obj.ent_type_)
+    
+    global obj_ent_types
+    obj_ent_types = [obj.ent_type_ for obj in objs]
+
     return v, objs
 
 
@@ -300,6 +307,8 @@ def findSVOs(tokens, sub_tags=False, obj_tags=False):
     is_pas = _is_passive(tokens)
     verbs = [tok for tok in tokens if _is_non_aux_verb(tok)]
     visited = set()  # recursion detection
+    sub_ent_types = []
+    obj_ent_types = []
     for v in verbs:
         subs, verbNegated = _get_all_subs(v)
         # hopefully there are subs, if not, don't examine this verb any longer
@@ -313,13 +322,21 @@ def findSVOs(tokens, sub_tags=False, obj_tags=False):
                         if is_pas:  # reverse object / subject for passive
                             svos.append((to_str(expand(obj, tokens, visited)),
                                          "!" + v.lemma_ if verbNegated or objNegated else v.lemma_, to_str(expand(sub, tokens, visited))))
+                            sub_ent_types.append(sub.ent_type_)
+                            obj_ent_types.append(obj.ent_type_)
                             svos.append((to_str(expand(obj, tokens, visited)),
                                          "!" + v2.lemma_ if verbNegated or objNegated else v2.lemma_, to_str(expand(sub, tokens, visited))))
+                            sub_ent_types.append(sub.ent_type_)
+                            obj_ent_types.append(obj.ent_type_)
                         else:
                             svos.append((to_str(expand(sub, tokens, visited)),
                                          "!" + v.lower_ if verbNegated or objNegated else v.lower_, to_str(expand(obj, tokens, visited))))
+                            sub_ent_types.append(sub.ent_type_)
+                            obj_ent_types.append(obj.ent_type_)                            
                             svos.append((to_str(expand(sub, tokens, visited)),
                                          "!" + v2.lower_ if verbNegated or objNegated else v2.lower_, to_str(expand(obj, tokens, visited))))
+                            sub_ent_types.append(sub.ent_type_)
+                            obj_ent_types.append(obj.ent_type_)         
             else:
                 v, objs = _get_all_objs(v, is_pas)
                 for sub in subs:
@@ -328,8 +345,13 @@ def findSVOs(tokens, sub_tags=False, obj_tags=False):
                         if is_pas:  # reverse object / subject for passive
                             svos.append((to_str(expand(obj, tokens, visited)),
                                          "!" + v.lemma_ if verbNegated or objNegated else v.lemma_, to_str(expand(sub, tokens, visited))))
+                            sub_ent_types.append(sub.ent_type_)
+                            obj_ent_types.append(obj.ent_type_)                        
                         else:
                             svos.append((to_str(expand(sub, tokens, visited)),
                                          "!" + v.lower_ if verbNegated or objNegated else v.lower_, to_str(expand(obj, tokens, visited))))
-    return svos
+                            sub_ent_types.append(sub.ent_type_)
+                            obj_ent_types.append(obj.ent_type_)
+                            
+    return (svos, sub_ent_types, obj_ent_types)
 
