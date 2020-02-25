@@ -5,7 +5,7 @@ from spacy.util import minibatch
 from functools import partial
 
 
-
+# note: functions must now accept `*args` first and batched `items` come last
 def mp(items, function, *args):
     if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
         cpu = 11
