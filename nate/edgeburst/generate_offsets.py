@@ -3,8 +3,8 @@ import pandas as pd
 from spacy.pipeline import merge_entities
 from time import time as marktime
 from typing import List
-from ..mp_suite.generic_mp import mp
-from ..helpers.helpers import spacy_process
+from ..utils.mp_helpers import mp
+from ..utils.text_helpers import spacy_process
 from itertools import groupby, chain, combinations
 import pickle
 from collections import defaultdict

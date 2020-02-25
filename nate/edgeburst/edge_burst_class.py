@@ -2,7 +2,7 @@ from .generate_offsets import generate_offsets
 from .burst_detection import bursts
 from typing import List, Dict
 import pickle
-from ..mp_suite.generic_mp import mp
+from ..utils.mp_helpers import mp
 
 
 class edge_burst():

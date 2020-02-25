@@ -12,6 +12,7 @@ def mp(items, function, *args):
         cpu = 11
     else:
         cpu = cpu_count()
+        
     batch_size = round(len(items)/cpu)
     partitions = minibatch(items, size=batch_size)
     executor = Parallel(n_jobs=cpu, backend="multiprocessing", prefer="processes")

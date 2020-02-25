@@ -81,44 +81,44 @@ def adjmat_to_wel(adjmat, remove_self_loops=True):
     return wel
 
 
-def detect_bigrams(text_los, bigram_threshold=10, bigram_min_count=3,custom_cuts=[]):
-    """
-    Accepts text in the form of a list of strings.
-    Does some super simple tokenization and case changes.
-    Computes bigrams then returns new list of strings with the bigrams in place
-    of the original pairs, words joined by _.
-    """
-    text = [t.translate(str.maketrans('', '', string.punctuation)).lower().split() for t in text_los]
-    # bigram_threshold is 10 by default. The higher the number, the few bigrams returned.
-    bigram = Phrases(text, min_count=bigram_min_count, threshold=bigram_threshold)
-    parsed = [bigram[line] for line in text]
-    for_spacy = [" ".join(sent) for sent in parsed]
-    return for_spacy
+# def detect_bigrams(text_los, bigram_threshold=10, bigram_min_count=3,custom_cuts=[]):
+#     """
+#     Accepts text in the form of a list of strings.
+#     Does some super simple tokenization and case changes.
+#     Computes bigrams then returns new list of strings with the bigrams in place
+#     of the original pairs, words joined by _.
+#     """
+#     text = [t.translate(str.maketrans('', '', string.punctuation)).lower().split() for t in text_los]
+#     # bigram_threshold is 10 by default. The higher the number, the few bigrams returned.
+#     bigram = Phrases(text, min_count=bigram_min_count, threshold=bigram_threshold)
+#     parsed = [bigram[line] for line in text]
+#     for_spacy = [" ".join(sent) for sent in parsed]
+#     return for_spacy
 
-def preprocess_text_with_bigrams(text_with_bigrams_los):
-    """
-    Accepts the output of the `detect_bigrams()` function.
-    Uses spacy to check tokens for
-        * stopword status
-        * alpha status
-        * longer than 1 character
-        * is not in a list of custom stopwords
-    and then appends the bigrams and anything that meets the criteria ^
-    to a list. Returns the data as a list of list of strings or a list of strings.
-    Inner list in the former represents a document.
-    """
-    cleaned = [nlp(t) for t in text_with_bigrams_los]
-    inspect = []
-    for doc in cleaned:
-        processed = []
-        for token in doc:
-            if '_' in token.text:
-                processed.append(token.text)
-            if token.is_stop == False and token.is_alpha == True and len(token) > 1:
-                if token.text not in custom_cuts:
-                    processed.append(token.lemma_)
-        inspect.append(processed)
-        return inspect
+# def preprocess_text_with_bigrams(text_with_bigrams_los):
+#     """
+#     Accepts the output of the `detect_bigrams()` function.
+#     Uses spacy to check tokens for
+#         * stopword status
+#         * alpha status
+#         * longer than 1 character
+#         * is not in a list of custom stopwords
+#     and then appends the bigrams and anything that meets the criteria ^
+#     to a list. Returns the data as a list of list of strings or a list of strings.
+#     Inner list in the former represents a document.
+#     """
+#     cleaned = [nlp(t) for t in text_with_bigrams_los]
+#     inspect = []
+#     for doc in cleaned:
+#         processed = []
+#         for token in doc:
+#             if '_' in token.text:
+#                 processed.append(token.text)
+#             if token.is_stop == False and token.is_alpha == True and len(token) > 1:
+#                 if token.text not in custom_cuts:
+#                     processed.append(token.lemma_)
+#         inspect.append(processed)
+#         return inspect
 
 def write_topics(model, feature_names, no_top_words, filename='topics.txt'):
     """

@@ -1,8 +1,8 @@
 from . import pybursts
-from ..mp_suite.generic_mp import mp
+from ..utils.mp_helpers import mp
 from .visualize_bursts import plot_bursts
 from .export import df_export, max_bursts_export, all_bursts_export, offsets_export
-
+ 
 def get_bursts(s, gamma, offset_list):
     """
 	This is a docstring.
