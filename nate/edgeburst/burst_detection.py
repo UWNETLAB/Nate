@@ -1,10 +1,9 @@
 from . import pybursts
-from .mp_helpers import mp
-from os import cpu_count
+from ..utils.mp_helpers import mp
 from .visualize_bursts import plot_bursts
 from .export import df_export, max_bursts_export, all_bursts_export, offsets_export
-
-def get_bursts(offset_list, s, gamma):
+ 
+def get_bursts(s, gamma, offset_list):
     """
 	This is a docstring.
 	"""    
@@ -18,18 +17,11 @@ def detect_bursts(offsets, s = 2, gamma = 1):
     This is a docstring
     """
 
-    if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
-        cpu = 10
-    else:
-        cpu = cpu_count()
-
     key_list = list(offsets.keys())
     offset_list = list(offsets.values())
 
-    if len(offsets) <= cpu:
-        burst_list = pybursts.process(offset_list, s, gamma)
-    else:
-        burst_list = mp(offset_list, get_bursts, cpu, s, gamma) #bursts(key_list, offset_list)
+
+    burst_list = mp(offset_list, get_bursts, s, gamma) #bursts(key_list, offset_list)
 
     edge_bursts = dict(zip(key_list, burst_list))
 

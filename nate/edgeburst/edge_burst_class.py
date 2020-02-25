@@ -1,7 +1,8 @@
-from .generate_offsets import mp, generate_offsets
+from .generate_offsets import generate_offsets
 from .burst_detection import bursts
 from typing import List, Dict
 import pickle
+from ..utils.mp_helpers import mp
 
 
 class edge_burst():
@@ -13,13 +14,12 @@ class edge_burst():
         self.texts = data.list_texts()
         self.timestamps = data.list_timestamps()
 
-    def generate_offset(self, minimum_offsets = 10, subset_data:int = 0, pickle_path = False, save_spacy = None):
+    def generate_offset(self, minimum_offsets = 10, subset_data:int = 0, save_spacy = None):
         """
         This is a docstring
         """
         self.minimum_offsets = minimum_offsets
         self.subset_data = subset_data
-        self.pickle_path = pickle_path
         self.save_spacy = save_spacy
         
         if self.subset_data > 0: # This can be used to limit the number of cases for testing purposes
@@ -28,10 +28,6 @@ class edge_burst():
 
         self.offset_dict, self.lookup = generate_offsets(self.texts, self.timestamps, self.minimum_offsets, self.save_spacy)
 
-        if self.pickle_path != False:
-
-            with open('../output/test_offsets.pkl', "wb") as stream:
-                pickle.dump(self.offset_dict, stream) # We need to save the offset dictionary so we can use it to populate our visualizations later
 
     def burst_detection(self, s:float = 2, gamma:float = 1):
         """
@@ -47,8 +43,7 @@ class edge_burst():
         self.s = s
         self.gamma = gamma
         bursts_instance = bursts(self.offset_dict,self.lookup,s,gamma)
-        with open("../output/edge_bursts.pkl", "wb") as textf:
-            pickle.dump(bursts_instance.edge_burst_dict, textf)
+
         return bursts_instance
 
 

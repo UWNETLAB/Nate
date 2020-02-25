@@ -1,10 +1,10 @@
 import spacy
 import pandas as pd
-from os import cpu_count
 from spacy.pipeline import merge_entities
 from time import time as marktime
 from typing import List
-from .mp_helpers import mp
+from ..utils.mp_helpers import mp
+from ..utils.text_helpers import spacy_process
 from itertools import groupby, chain, combinations
 import pickle
 from collections import defaultdict
@@ -18,12 +18,8 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
     print("commencing preliminary preparation...")
 
     start = marktime()
-    if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
-        cpu = 10
-    else:
-        cpu = cpu_count()
 
-    nlp = spacy.load('en', disable=['parser'])
+    nlp = spacy.load('en_core_web_sm', disable=['parser'])
     nlp.add_pipe(merge_entities)  #merges named entities into single tokens
     nlp.add_pipe(spacy_component, name="filter_lemmatize", last=True)  #custom component
     
@@ -32,7 +28,7 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
     # Spacy Pipeline
     print("commencing spacy pipeline...")
 
-    processed_list = mp(texts, spacy_process, cpu, nlp)
+    processed_list = mp(texts, spacy_process, nlp)
 
     if save_spacy_path != None:
         with open(save_spacy_path, "wb") as stream:
@@ -47,7 +43,7 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
     # Offset Generation
     print("commencing offset generation...")
     
-    offsets = mp(word_ints, cooc, cpu, timestamps, minimum_offsets)
+    offsets = mp(word_ints, cooc, timestamps, minimum_offsets)
     
     print("finished offset generation in {} seconds".format(round(marktime() - start)))
     print("commencing timestamp deduplication...")
@@ -68,13 +64,6 @@ def spacy_component(doc):  # to do: make this user-configurable
     """
     doc = [token.lemma_.lower() for token in doc if token.is_stop == False and len(token) > 2 and token.is_alpha and token.is_ascii]
     return doc
-         
-def spacy_process(texts, nlp):
-    """
-    This is a docstring.
-    """
-    processed_list = [doc for doc in nlp.pipe(texts)]
-    return processed_list
 
 def text_to_int(processed_list):
     """
@@ -91,9 +80,6 @@ def text_to_int(processed_list):
     
     word_dict = df.reset_index().set_index('word')['index'].to_dict()
     lookup_dict = {v: k for k, v in word_dict.items()}
-    
-    with open('../output/lookup_dict.pkl', "wb") as stream:
-        pickle.dump(lookup_dict, stream)
         
     word_ints = [[word_dict[word] for word in text] for text in sorted_texts]
 
@@ -101,7 +87,7 @@ def text_to_int(processed_list):
     
     return word_ints, lookup_dict    
 
-def cooc(word_ints, timestamps, minimum_offsets):
+def cooc(timestamps, minimum_offsets, word_ints):
     """
     This is a docstring.
     """
