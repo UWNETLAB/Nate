@@ -20,7 +20,7 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
 
     start = marktime()
 
-    nlp = spacy.load('en', disable=['parser'])
+    nlp = spacy.load('en_core_web_sm', disable=['parser'])
     nlp.add_pipe(merge_entities)  #merges named entities into single tokens
     nlp.add_pipe(spacy_component, name="filter_lemmatize", last=True)  #custom component
     
