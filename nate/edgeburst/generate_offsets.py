@@ -64,7 +64,7 @@ def spacy_component(doc):  # to do: make this user-configurable
     doc = [token.lemma_.lower() for token in doc if token.is_stop == False and len(token) > 2 and token.is_alpha and token.is_ascii]
     return doc
          
-def spacy_process(nlp, texts):
+def spacy_process(texts, nlp):
     """
     This is a docstring.
     """
