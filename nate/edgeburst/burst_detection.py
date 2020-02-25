@@ -22,7 +22,7 @@ def detect_bursts(offsets, s = 2, gamma = 1):
     key_list = list(offsets.keys())
     offset_list = list(offsets.values())
 
-    if len(offsets) <= cpu:
+    if len(offsets) <= cpu_count():
         burst_list = pybursts.process(offset_list, s, gamma)
     else:
         burst_list = mp(offset_list, get_bursts, s, gamma) #bursts(key_list, offset_list)
