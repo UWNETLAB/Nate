@@ -87,7 +87,7 @@ def text_to_int(processed_list):
     
     return word_ints, lookup_dict    
 
-def cooc(word_ints, timestamps, minimum_offsets):
+def cooc(timestamps, minimum_offsets, word_ints):
     """
     This is a docstring.
     """
