@@ -81,9 +81,6 @@ def text_to_int(processed_list):
     
     word_dict = df.reset_index().set_index('word')['index'].to_dict()
     lookup_dict = {v: k for k, v in word_dict.items()}
-    
-    with open('../output/lookup_dict.pkl', "wb") as stream:
-        pickle.dump(lookup_dict, stream)
         
     word_ints = [[word_dict[word] for word in text] for text in sorted_texts]
 
