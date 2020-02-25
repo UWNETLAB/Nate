@@ -1,6 +1,5 @@
 import spacy
 import pandas as pd
-from os import cpu_count
 from spacy.pipeline import merge_entities
 from time import time as marktime
 from typing import List
@@ -44,7 +43,7 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
     # Offset Generation
     print("commencing offset generation...")
     
-    offsets = mp(word_ints, cooc, cpu, timestamps, minimum_offsets)
+    offsets = mp(word_ints, cooc, timestamps, minimum_offsets)
     
     print("finished offset generation in {} seconds".format(round(marktime() - start)))
     print("commencing timestamp deduplication...")
