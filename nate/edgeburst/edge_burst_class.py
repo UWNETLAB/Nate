@@ -20,7 +20,6 @@ class edge_burst():
         """
         self.minimum_offsets = minimum_offsets
         self.subset_data = subset_data
-        self.pickle_path = pickle_path
         self.save_spacy = save_spacy
         
         if self.subset_data > 0: # This can be used to limit the number of cases for testing purposes
