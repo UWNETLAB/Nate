@@ -8,6 +8,9 @@ I have been writing. Perhaps network-related helpers should be in a different fi
 
 import pandas as pd
 import spacy #maybe not needed
+from gensim.models.phrases import Phrases, Phraser
+from itertools import chain
+
 
 def window_text(string_of_text, window_lr=3):
     """
@@ -133,3 +136,16 @@ def write_topics(model, feature_names, no_top_words, filename='topics.txt'):
 def spacy_process(nlp, texts):
     processed_list = [doc for doc in nlp.pipe(texts)]
     return processed_list
+
+def bigram_process(processed_list, tokenized=True):
+    sentences = [[[token.text for token in sent] for sent in doc.sents] for doc in processed_list]
+    all_sentences = list(chain(*sentences))
+    model = Phrases(all_sentences, min_count=1, threshold=0.8, scoring='npmi')
+    bigrammer = Phraser(model)
+    bigrammed_list = [[bigrammer[sent] for sent in doc] for doc in sentences]
+    bigrammed_list = [list(chain(*x)) for x in bigrammed_list]
+    
+    if tokenized == False:
+        bigrammed_list = [' '.join(doc) for doc in bigrammed_list]
+    
+    return bigrammed_list
