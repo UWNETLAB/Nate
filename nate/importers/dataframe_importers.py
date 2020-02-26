@@ -2,8 +2,8 @@ import pandas
 from typing import List, Union
 from .named_tuple_generator import tupleize
 from abc import ABC, abstractmethod
-from .timestamp_process import convert_times
 from .nate_class import nate
+from .timestamp_process import convert_times
   
  
 def process_dataframe(temp_data, text:str, unique_id:str = None,  time:str = None, columns_to_keep:List = []):
@@ -14,7 +14,7 @@ def process_dataframe(temp_data, text:str, unique_id:str = None,  time:str = Non
     special_column_list = [
         (text, "text"),
         (unique_id, "unique_id"),
-        (time, "time")
+        (time, "times")
     ]
  
     for special_column, special_column_name in special_column_list:
@@ -29,8 +29,8 @@ def process_dataframe(temp_data, text:str, unique_id:str = None,  time:str = Non
         series_dict[covariate_column] = temp_column.tolist()
 
     if time != None:
-        series_dict['timestamp'] = convert_times(series_dict['time'])
-        del series_dict['time']
+        series_dict['time'] = convert_times(series_dict['times'])
+        del series_dict['times']
 
     return nate(tupleize(series_dict))
 

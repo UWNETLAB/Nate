@@ -50,4 +50,4 @@ def tupleize(series_dict, tuple_name = "obs"):
     for i in range(0,len(keys)):
         kwarg_dict[keys[i]] = list(series_dict[keys[i]])
 
-    return create_observation_list("obs", **kwarg_dict)
+    return create_observation_list(tuple_name, **kwarg_dict)

@@ -10,7 +10,7 @@ import pickle
 from collections import defaultdict
 
 
-def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spacy_path = None):
+def generate_offsets(texts:List, time:List, minimum_offsets = 10, save_spacy_path = None):
     """
     This is a docstring.
     """
@@ -43,7 +43,7 @@ def generate_offsets(texts:List, timestamps:List, minimum_offsets = 10, save_spa
     # Offset Generation
     print("commencing offset generation...")
     
-    offsets = mp(word_ints, cooc, timestamps, minimum_offsets)
+    offsets = mp(word_ints, cooc, time, minimum_offsets)
     
     print("finished offset generation in {} seconds".format(round(marktime() - start)))
     print("commencing timestamp deduplication...")
@@ -87,13 +87,13 @@ def text_to_int(processed_list):
     
     return word_ints, lookup_dict    
 
-def cooc(timestamps, minimum_offsets, word_ints):
+def cooc(time, minimum_offsets, word_ints):
     """
     This is a docstring.
     """
     offset_dict = defaultdict(list)
     
-    for text, timestamp in zip(word_ints, timestamps):
+    for text, timestamp in zip(word_ints, time):
         keys = list(combinations(text,2))
         for key in keys:
             offset_dict[key].append(timestamp)

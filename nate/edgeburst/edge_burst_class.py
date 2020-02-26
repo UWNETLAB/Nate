@@ -12,7 +12,7 @@ class edge_burst():
     def __init__(self, data):
 
         self.texts = data.list_texts()
-        self.timestamps = data.list_timestamps()
+        self.time = data.list_time()
 
     def generate_offset(self, minimum_offsets = 10, subset_data:int = 0, save_spacy = None):
         """
@@ -24,9 +24,9 @@ class edge_burst():
         
         if self.subset_data > 0: # This can be used to limit the number of cases for testing purposes
             self.texts = self.texts[0:self.subset_data] 
-            self.timestamps = self.timestamps[0:self.subset_data] 
+            self.time = self.time[0:self.subset_data] 
 
-        self.offset_dict, self.lookup = generate_offsets(self.texts, self.timestamps, self.minimum_offsets, self.save_spacy)
+        self.offset_dict, self.lookup = generate_offsets(self.texts, self.time, self.minimum_offsets, self.save_spacy)
 
 
     def burst_detection(self, s:float = 2, gamma:float = 1):

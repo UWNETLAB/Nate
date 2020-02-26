@@ -1,9 +1,10 @@
 from pprint import pprint
 from ..edgeburst.edge_burst_class import edge_burst
 from ..svo.process import process_svo, svo_to_df
- 
- 
-class nate():
+from .edgelist_importers import edgelist_mixin
+
+
+class nate(edgelist_mixin):
     """
     This is the `nate` package's base class. Each of the importer functions the `nate` package loads into namespace returns a populated instance of the `nate` class.
 
@@ -11,6 +12,7 @@ class nate():
     """
     def __init__(self, data):
         self.data = data
+        self.fields = data[0]._fields
 
     def __call__(self, start:int = 0, end:int = 5):
         """
@@ -33,11 +35,11 @@ class nate():
         """ 
         return [str(i.text) for i in self.data[start:end]]
 
-    def list_timestamps(self, start:int = None, end:int = None):
+    def list_time(self, start:int = None, end:int = None):
         """
         This is a docstring
         """
-        return [i.timestamp for i in self.data[start:end]]
+        return [i.time for i in self.data[start:end]]
 
     def list_ids(self, start:int = None, end:int = None): 
         """
@@ -66,5 +68,5 @@ class nate():
         if to_df:
             return svo_to_df(self.sentences, self.svo_items)
         else:
-            return self.svo_list
+            return self.svo_items
         

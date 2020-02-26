@@ -1,8 +1,9 @@
 from typing import List, Union
 from .named_tuple_generator import define_named_tuple
-from .timestamp_process import convert_times
 from .nate_class import nate
+from .timestamp_process import convert_time
 
+text_only_namedtuple = define_named_tuple('obs', ['text'])
 
 def import_text(strings):
     """
@@ -11,8 +12,6 @@ def import_text(strings):
     if isinstance(strings, str):
         strings = [strings]
     
-    text_only_namedtuple = define_named_tuple('obs', ['text'])
-
     return nate([text_only_namedtuple(string) for string in strings])
  
 
@@ -25,7 +24,6 @@ def import_files(files):
         files = [files]
     
     obs_list = []
-    text_only_namedtuple = define_named_tuple('obs', ['text'])
 
     for filepath in files:
         with open(filepath, 'r', encoding='utf-8') as stream:
@@ -34,11 +32,42 @@ def import_files(files):
     return nate(obs_list)
 
 
-def import_dict(dictionary):
+def import_dict_of_dicts(dictionary, text, time = None, values_to_keep = []):
     """
-    IMPLEMENT
+    Used for importing data contained in a dictionary of dictionaries, where the keys of the outer dict correspond with unique_ids. 
+    
+    The `values_to_keep` argument accepts a list of keys which appear in all of the dictionaries nested in the outer dictionary; the 
+    values therein will be passed into the resulting `nate` object.
     """
-    pass
+
+    lookup_list = [text]
+    named_list = ['unique_id', 'text']
+
+    if time != None:
+        lookup_list.append(time)
+        named_list.append('time')
+
+    lookup_list.extend(values_to_keep)
+    named_list.extend(values_to_keep)
+
+    dict_namedtuple = define_named_tuple('obs', named_list)
+
+    obs_list = []
+
+    for key, subdict in dictionary.items():
+        filtered_values = []
+        for value in lookup_list:
+
+            value_to_append = subdict[value]
+
+            if value == 'time':
+                value_to_append = convert_time(value_to_append)
+
+            filtered_values.append(value_to_append)
+
+        obs_list.append(dict_namedtuple(key, *filtered_values))
+
+    return nate(obs_list)
 
 
 def import_lists(text:List,  time:List = None, unique_id:List = None):
