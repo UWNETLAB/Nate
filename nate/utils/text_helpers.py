@@ -144,6 +144,9 @@ def spacy_component(doc):  # to do: make this user-configurable
     """
     doc = [token.lemma_.lower() for token in doc if token.is_stop == False and len(token) > 2 and token.is_alpha and token.is_ascii]
     return doc
+    
+def custom_spacy_component(doc):
+    return [token.lemma_.lower() for token in doc if token.is_stop == False and token.is_ascii]
 
 def bigram_process(texts, tokenized=True):
     sentences = [sent_tokenize(text) for text in texts]
