@@ -4,13 +4,13 @@ from spacy.pipeline import merge_entities
 from time import time as marktime
 from typing import List
 from ..utils.mp_helpers import mp
-from ..utils.text_helpers import spacy_process
+from ..utils.text_helpers import spacy_process, spacy_component, bigram_process
 from itertools import groupby, chain, combinations
 import pickle
 from collections import defaultdict
 
 
-def generate_offsets(texts:List, time:List, minimum_offsets = 10, save_spacy_path = None):
+def generate_offsets(texts:List, time:List, minimum_offsets = 10, save_spacy_path = None, bigrams = False, custom_spacy_component = False):
     """
     This is a docstring.
     """
@@ -21,9 +21,18 @@ def generate_offsets(texts:List, time:List, minimum_offsets = 10, save_spacy_pat
 
     nlp = spacy.load('en_core_web_sm', disable=['parser'])
     nlp.add_pipe(merge_entities)  #merges named entities into single tokens
-    nlp.add_pipe(spacy_component, name="filter_lemmatize", last=True)  #custom component
+    if custom_spacy_component != False:
+        nlp.add_pipe(custom_spacy_component, name="custom_component", last=True)  #custom component
+    else:
+        nlp.add_pipe(spacy_component, name="filter_lemmatize", last=True)  #standard component
     
     print("finished preliminary preparation in {} seconds".format(round(marktime() - start)))
+    
+    if bigrams == True:
+        print("Detecting bigrams...")
+        texts = bigram_process(texts, tokenized = False)
+        print("Finished bigram detection.")
+    
     
     # Spacy Pipeline
     print("commencing spacy pipeline...")
@@ -58,12 +67,6 @@ def generate_offsets(texts:List, time:List, minimum_offsets = 10, save_spacy_pat
 
     return offsets, lookup 
 
-def spacy_component(doc):  # to do: make this user-configurable
-    """
-    This is a docstring.
-    """
-    doc = [token.lemma_.lower() for token in doc if token.is_stop == False and len(token) > 2 and token.is_alpha and token.is_ascii]
-    return doc
 
 def text_to_int(processed_list):
     """
