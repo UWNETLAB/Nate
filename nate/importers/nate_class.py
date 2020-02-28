@@ -2,6 +2,7 @@ from pprint import pprint
 from ..edgeburst.edge_burst_class import edge_burst
 from ..svo.process import process_svo, svo_to_df
 from .edgelist_importers import edgelist_mixin
+from ..socnet.socnet import socnet_pipe
 
 
 class nate(edgelist_mixin):
@@ -58,6 +59,14 @@ class nate(edgelist_mixin):
         Returns an instance of the 'edge_burst' class, initialized with the relevant data contained 
         """ 
         return edge_burst(self)
+
+    def socnet_pipeline(self, subset:int = None):
+        """
+        Returns an instance of the 'socnet_pipe' class, initialized with the relevant data contained.
+
+        The 'Subset' parameter allows users to specify the maximum number of edges to calculate.
+        """ 
+        return socnet_pipe(self.data, self.edgelist[slice(subset)])
 
     def svo(self, sub_tags=False, obj_tags=False, to_df = False):
         """

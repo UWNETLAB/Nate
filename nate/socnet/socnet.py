@@ -2,8 +2,10 @@
 This module accepts a social network that has text attributes for nodes and outputs
 the same social network with similarity values between i,j as an edge attribute
 """
+from .centralities import compute_centralities
+
+class socnet_pipe():
+    def __init__(self, data, edgelist):
+        self.centrality = compute_centralities(edgelist)
 
 
-class socnet():
-    def __init__(self):
-        pass
