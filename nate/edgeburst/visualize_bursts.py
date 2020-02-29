@@ -29,8 +29,8 @@ def generate_ticks(offsets, number_of_ticks = 10) -> Tuple[List[int], List[str]]
     return tick_positions, tick_labels
 
 
-def plot_bursts(offsets, bursts, plot_title, output_path = False,
-                plot_size_x = 20, plot_size_y = 10, plot_vertically = False, num_ticks = 10):
+def plot_bursts(offsets, bursts, plot_title, output_path = False, 
+                plot_size_x = 20, plot_size_y = 10, plot_vertically = False, num_ticks = 10, rug_alpha = 0.45, dark = True):
     """
     This is a docstring
     """ 
@@ -50,17 +50,30 @@ def plot_bursts(offsets, bursts, plot_title, output_path = False,
         burst_lines = plt.hlines
         burst_ticks = plt.xticks
         time_ticks = plt.yticks
-        time_label = plt.ylabel
+        time_label = plt.ylabel  
 
-    sns.set_style("darkgrid")
-    seaborn_plot = sns.rugplot(offsets, axis = burst_axis, height = 0.02).set_title(plot_title, fontsize = 20)
+
+    if dark:
+        sns.set_style("ticks")
+        plt.style.use("dark_background")
+        rug_colour = "turquoise"
+        line_colour = '#caa0ff'
+    else:
+        sns.set_style("dark")
+        rug_colour = "#107ab0"
+        line_colour = 'k'
+
+        
+
+    seaborn_plot = sns.rugplot(offsets, axis = burst_axis, height = 0.1, linewidths = 200, alpha = rug_alpha, colors = rug_colour).set_title(plot_title, fontsize = 20)
 
     burst_ticks(tick_positions, tick_labels, rotation=35, fontsize = 15)
     time_ticks(fontsize = 15)
     time_label("Burst Intensity (0 = Lowest)", fontsize = 20)
 
     for entry in bursts:
-        burst_lines(entry[0], entry[1], entry[2], label=str(entry[0]))
+        burst_lines(entry[0], entry[1], entry[2], label=str(entry[0]), colors = line_colour, linewidths = 7.5)
 
     if output_path != False:
-        seaborn_plot.get_figure().savefig(output_path, dpi=400)
+        final_path = output_path + "_" + plot_title.replace(" + ", "_").replace(" ", "_") + ".png"
+        seaborn_plot.get_figure().savefig(final_path, dpi=100)

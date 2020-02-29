@@ -64,7 +64,7 @@ class bursts():
         """
         return offsets_export(self.offset_dict_int, self.lookup)
 
-    def create_burst_plot(self, token_pairs, zoom_level = 0, output_path = False, plot_size_x = 20, plot_size_y = 10, plot_vertically = False, num_ticks = 10):
+    def create_burst_plot(self, token_pairs, zoom_level = 0, output_path = False, plot_size_x = 20, plot_size_y = 10, plot_vertically = False, num_ticks = 10, rug_alpha = 0.35, dark = True):
         """
         `token_pair` accepts either a string or a list of strings corresponding to one of the token-token pairs in the edge_burst_dict dictionary. 
         If a list of valid token pairs is provided, one separate plot for each of the token pairs is produced. 
@@ -75,13 +75,14 @@ class bursts():
         if isinstance(token_pairs, str):
             token_pairs = [token_pairs]
 
-        if zoom_level == 0: # When the zoom level is 0, we can just pass everything directly into the plotting function.
-            for entry in token_pairs:
-                plot_bursts(self.offset_dict[entry], self.edge_burst_dict[entry], entry, output_path, plot_size_x, plot_size_y, plot_vertically, num_ticks)
 
-        else: # When the zoom level is above 0, we have to slice everything manually and pass the slices along to the plotting function:
-            for entry in token_pairs:
+        for entry in token_pairs:
 
+            plot_title = "'{}' + '{}'  -  Full Plot".format(entry[0], entry[1])
+
+            plot_bursts(self.offset_dict[entry], self.edge_burst_dict[entry], plot_title, output_path, plot_size_x, plot_size_y, plot_vertically, num_ticks, rug_alpha, dark)
+
+            if zoom_level > 0: # When the zoom level is 0, we can just pass everything directly into the plotting function.
                 offsets = self.offset_dict[entry]
                 bursts = self.edge_burst_dict[entry]
 
@@ -116,8 +117,8 @@ class bursts():
                 assert len(burst_stack) == len(offset_stack)
 
                 for i in range(0, len(burst_stack)):
-                    plot_title = ("{}, slice {} of {}".format(entry, i+1, len(burst_stack)))
+                    plot_title = ("'{}' + '{}'  -  Zoom Level {}, Slice {} of {}".format(entry[0], entry[1], zoom_level, i+1, len(burst_stack)))
 
-                    plot_bursts(offset_stack[i], burst_stack[i], plot_title, output_path, plot_size_x, plot_size_y, plot_vertically, num_ticks)
+                    plot_bursts(offset_stack[i], burst_stack[i], plot_title, output_path, plot_size_x, plot_size_y, plot_vertically, num_ticks, rug_alpha, dark)
 
 
