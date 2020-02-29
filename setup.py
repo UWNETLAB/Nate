@@ -6,7 +6,7 @@ setup(
     install_requires=["pandas>=0.25.0", "spacy>=2.0.0"], # A bunch of things will need to go here; we'll have to do an audit of every package we use
     packages = find_packages(),
     include_package_data=True,
-    author = "John McLevey, Tyler Crick, Pierson Browne, Sasha Graham, Alexis Hill, Alex de Wit",
+    author = "John McLevey, Tyler Crick, Pierson Browne", # likely more later
     description = "nate (Network Analysis with TExt).",
     url="http://networkslab.org",
 	classifiers=(
