@@ -1,6 +1,15 @@
 import pandas as pd
 import networkx as nx
 
+
+def find_alters(tuples):
+    network = nx.Graph() 
+
+    pass
+
+
+
+
 edgelist = pd.read_csv("../input/coauthorship_edgeList.csv")
 network = nx.from_pandas_edgelist(edgelist, source='From', target='To')
 
