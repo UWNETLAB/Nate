@@ -1,38 +1,21 @@
-from .generate_offsets import generate_offsets
-from .burst_detection import bursts
+from ..edgeburst.burst_detection import bursts, detect_bursts
+from ..edgeburst.export import df_export, max_bursts_export, all_bursts_export, offsets_export
 from typing import List, Dict
 import pickle
 from ..utils.mp_helpers import mp
 
-
-class edge_burst():
+class cooc():
     """
-    If subset_data is set to 0 (which it is, by default), `edge_burst` will include all observations. 
+    This is a docstring
     """
-    def __init__(self, data):
-
-        self.texts = data.list_texts()
-        self.time = data.list_time()
-
-    def generate_offset(self, minimum_offsets = 10, subset_data:int = 0, save_spacy = None, bigrams = False):
-        """
-        This is a docstring
-        """
+    def __init__(self, offset_dict, lookup, minimum_offsets = 20):
+        self.offset_dict = offset_dict
+        self.lookup = lookup
         self.minimum_offsets = minimum_offsets
-        self.subset_data = subset_data
-        self.save_spacy = save_spacy
-        self.bigrams = bigrams
-        
-        if self.subset_data > 0: # This can be used to limit the number of cases for testing purposes
-            self.texts = self.texts[0:self.subset_data] 
-            self.time = self.time[0:self.subset_data] 
-
-        self.offset_dict, self.lookup = generate_offsets(self.texts, self.time, self.minimum_offsets, self.save_spacy, self.bigrams)
-
 
     def burst_detection(self, s:float = 2, gamma:float = 1):
         """
-        Returns an object of the class `bursts_for_parameters`
+        Returns an object of the class `bursts`
 
         This method is used to detect bursts for _all_ of the term-term pairs in the offset dictionary generated when this class (`edge_burst`) was instantiated.
         This method is best employed as an exploratory tool for identifying unusually bursty term pairs, or groups of term pairs with correlated burst patterns.  
@@ -41,11 +24,11 @@ class edge_burst():
 
         If you wish to detect bursts using a variety of different values for the s and gamma parameters, instead utilize the `multi_bursts` method contained in this class. 
         """
-        self.s = s
-        self.gamma = gamma
-        bursts_instance = bursts(self.offset_dict,self.lookup,s,gamma)
+        offset_dict_strings = offsets_export(self.offset_dict, self.lookup)
+        edge_burst_dict_int = detect_bursts(self.offset_dict, s, gamma)
+        edge_burst_dict_strings = all_bursts_export(edge_burst_dict_int, self.offset_dict, self.lookup)
 
-        return bursts_instance
+        return bursts(offset_dict_strings, edge_burst_dict_strings, s, gamma)
 
 
     def multi_burst(self, token_pairs:List, s:List, gamma:List) -> Dict:

@@ -294,7 +294,7 @@ def _get_lemma(word: str):
     """ 
     This is a docstring.
     """
-    tokens = nlp(word)
+    tokens = word #nlp(word)
     if len(tokens) == 1:
         return tokens[0].lemma_
     return word
