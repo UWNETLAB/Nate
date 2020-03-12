@@ -11,6 +11,11 @@ def get_spacy_text(text, model="en_core_web_sm"):
     nlp.add_pipe(spacy_component, name="filter_lemmatize", last=True) 
     return mp(text, spacy_process, nlp)
 
+def get_spacy_sentences(text, model="en_core_web_sm"):
+    nlp = spacy.load(model)
+    nlp.add_pipe(merge_entities)
+    return mp(text, spacy_process, nlp)
+
 
 # Everything from this point down was moved from the `text_helpers` module
 

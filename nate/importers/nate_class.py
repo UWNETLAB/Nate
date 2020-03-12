@@ -1,6 +1,6 @@
 from pprint import pprint
 from ..cooc.cooc_class import cooc
-from ..svo.process import process_svo, svo_to_df
+from ..svonet.process import svonet, process_svo
 from .edgelist_importers import edgelist_mixin
 from ..socnet.socnet import socnet_pipe
 from ..utils import nlp_helpers
@@ -17,8 +17,8 @@ class nate(edgelist_mixin):
     """
     def __init__(self, data):
         self.data = data
-        #self.fields = data[0]._fields
         self.post_nlp = nlp_helpers.get_spacy_text(self.list_texts())
+        self.nlp_sentences = nlp_helpers.get_spacy_sentences(self.list_texts())
 
     def __call__(self, start:int = 0, end:int = 5):
         """
@@ -89,16 +89,22 @@ class nate(edgelist_mixin):
         """ 
         return socnet_pipe(self.data, self.edgelist[slice(subset)])
 
-    def svo(self, sub_tags=False, obj_tags=False, to_df = False, bigrams = False):
+    def svo_pipeline(self, sub_tags=False, obj_tags=False, bigrams = False):
         """
         This is a docstring
         """ 
-        text_list = self.list_nlp_text()
-        if bigrams == True:
-            text_list = nlp_helpers.bigram_process(text_list, tokenized=False)
-        self.sentences, self.svo_items = process_svo(text_list, sub_tags, obj_tags)
-        if to_df:
-            return svo_to_df(self.sentences, self.svo_items)
-        else:
-            return self.svo_items
+        ###
+        # The following commented functionality will need to be re-implemented...
+        # I probably broke it... Sorry!
+        ###
+        
+        # if bigrams == True:
+        #     text_list = nlp_helpers.bigram_process(text_list, tokenized=False)
+        # else:
+        #     text_list = self.list_nlp_text()
+
+    
+        sentences, svo_items = process_svo(self.nlp_sentences, sub_tags, obj_tags)
+
+        return svonet(sentences, svo_items)
         
