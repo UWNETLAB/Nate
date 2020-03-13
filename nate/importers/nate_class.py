@@ -1,6 +1,6 @@
 from pprint import pprint
 from ..cooc.cooc_class import cooc
-from ..svonet.process import svonet, process_svo
+from ..svonet.svonet_class import svonet, process_svo
 from .edgelist_importers import edgelist_mixin
 from ..socnet.socnet import socnet_pipe
 from ..utils import nlp_helpers
@@ -103,7 +103,7 @@ class nate(edgelist_mixin):
         """ 
         return [getattr(i, column_name) for i in self.data[start:end]]
 
-    def cooc_pipeline(self, minimum_offsets = 20): 
+    def cooc_pipeline(self, minimum_offsets = 20, custom_filter = False): 
         """
         Returns an instance of the 'cooc' class, initialized with the relevant data contained 
         """
