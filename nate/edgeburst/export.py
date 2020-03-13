@@ -136,7 +136,7 @@ def offsets_export(offsets, lookup, from_svo = False):
     key_list = []
     offset_list = []
     
-    for k, v in offsets.items():
+    for k, _ in offsets.items():
         key_list.append(k)
         offset_list.append(offsets[k])
     

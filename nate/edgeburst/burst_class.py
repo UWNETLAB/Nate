@@ -50,7 +50,7 @@ class bursts():
         
     def create_burst_plot(self, token_pairs, zoom_level = 0, output_path = False, plot_size_x = 20, plot_size_y = 10, plot_vertically = False, num_ticks = 10, rug_alpha = 0.35, dark = True):
         """
-        `token_pair` accepts either a string or a list of strings corresponding to one of the token-token pairs in the edge_burst_dict dictionary. 
+        `token_pair` accepts either a tuple or a list of tuples corresponding to one of the token-token pairs in the edge_burst_dict dictionary. 
         If a list of valid token pairs is provided, one separate plot for each of the token pairs is produced. 
 
         `zoom_level` (default = 0) splits the burst structure for each provided token-token pair into a series of separate bursts hierarchies, omitting any levels

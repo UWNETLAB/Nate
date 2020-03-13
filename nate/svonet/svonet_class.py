@@ -4,8 +4,6 @@ from ..utils.mp_helpers import mp
 from typing import List, Dict
 from .svo_offsets import generate_svo_offsets
 from ..edgeburst.burst_mixin import burst_mixin
-# from ..edgeburst.export import df_export, max_bursts_export, all_bursts_export, offsets_export
-# from ..edgeburst.burst_detection import bursts, detect_bursts
 
 def process_svo(sub_tags, obj_tags, post_nlp):
     """
@@ -18,11 +16,15 @@ def process_svo(sub_tags, obj_tags, post_nlp):
 
 
 class svonet(burst_mixin):
+    """
+    This is a docstring.
+    """
     def __init__(self, sentences, svo_items, timestamps):
         self.sentences = sentences
         self.svo_items = svo_items
         self.times = timestamps
         self.from_svo = True
+
 
     def svo_to_df(self):
         """ 
@@ -51,14 +53,15 @@ class svonet(burst_mixin):
                     sub_ent_types.append(self.svo_items[i][j][1][k])
                     obj_ent_types.append(self.svo_items[i][j][2][k])
 
-                
         df['doc_id'], df['sent_id'], df ['sentence'], df['svo'] = doc_id, sent_id, sent_list_flat, svo_list_flat
         df['subject'], df['sub_type'], df['verb'], df['object'], df['obj_type'] = sub_list_flat, sub_ent_types, verb_list_flat, obj_list_flat, obj_ent_types
 
-        
         return df
         
-    def svo_to_burst(self, minimum_offsets = 20): 
+
+    def svo_to_burst(self, minimum_offsets = 20, s = 2, gamma = 1): 
             
         self.offset_dict, self.lookup = generate_svo_offsets(self.svo_items, self.times, minimum_offsets)
+
+        return self.burst_detection(s, gamma)
         

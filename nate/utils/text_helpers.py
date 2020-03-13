@@ -33,7 +33,7 @@ def window_text(string_of_text, window_lr=3):
     co-occurrence network.
     """
     tokens = string_of_text.split()
-    for each in tokens:
+    for _ in tokens:
         context = []
         for index in range(len(tokens)):
             start = max(0, index-window_lr)

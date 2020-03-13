@@ -1,7 +1,7 @@
 
 from .export import df_export, max_bursts_export, all_bursts_export, offsets_export
-from .burst_detection import bursts, detect_bursts
-
+from .burst_class import bursts, detect_bursts
+ 
 
 class burst_mixin():
     

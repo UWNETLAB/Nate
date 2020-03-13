@@ -5,18 +5,6 @@ from tok import sent_tokenize
 from gensim.models.phrases import Phrases, Phraser
 from itertools import chain
 
-def get_spacy_text(text, nlp):
-    nlp = spacy.load(model)
-    nlp.add_pipe(merge_entities)
-    nlp.add_pipe(filter_lemma_component, name="filter_lemmatize", last=True) 
-    return mp(text, spacy_process, nlp)
-
-def get_spacy_sentences(text, nlp):
-    nlp = spacy.load(model)
-    nlp.add_pipe(merge_entities)
-    return mp(text, spacy_process, nlp)
-
-
 # Everything from this point down was moved from the `text_helpers` module
 
 def spacy_process(nlp, texts):
