@@ -84,7 +84,7 @@ def max_bursts_export(bursts, lookup):
     
     return max_bursts
     
-def all_bursts_export(bursts, offsets, lookup):
+def all_bursts_export(bursts, offsets, lookup, from_svo = False):
     """
     This is a docstring.
     """        
@@ -95,15 +95,22 @@ def all_bursts_export(bursts, offsets, lookup):
         key_list.append(k)
         burst_list.append(v)
         
-    df = pd.DataFrame.from_records(key_list, columns =['word1_#', 'word2_#'])
-    df['word1'] = df['word1_#'].map(lookup)
-    df['word2'] = df['word2_#'].map(lookup)
+    if from_svo:
+        df = pd.DataFrame()
+        df['svo_#'] = key_list
+        df['svo'] = df['svo_#'].map(lookup)
+        
+        all_bursts = {df['svo'][x]: burst_list[x] for x in df.index}        
+    else:    
+        df = pd.DataFrame.from_records(key_list, columns =['word1_#', 'word2_#'])
+        df['word1'] = df['word1_#'].map(lookup)
+        df['word2'] = df['word2_#'].map(lookup)
 
-    all_bursts = {(df['word1'][x],df['word2'][x]): burst_list[x] for x in df.index}
+        all_bursts = {(df['word1'][x],df['word2'][x]): burst_list[x] for x in df.index}
     
     return all_bursts
 
-def offsets_export(offsets, lookup):
+def offsets_export(offsets, lookup, from_svo = False):
     """
     This is a docstring.
     """
@@ -113,11 +120,18 @@ def offsets_export(offsets, lookup):
     for k, v in offsets.items():
         key_list.append(k)
         offset_list.append(offsets[k])
-        
-    df = pd.DataFrame.from_records(key_list, columns =['word1_#', 'word2_#'])
-    df['word1'] = df['word1_#'].map(lookup)
-    df['word2'] = df['word2_#'].map(lookup)
     
-    offsets = {(df['word1'][x],df['word2'][x]): offset_list[x] for x in df.index}
+    if from_svo:
+        df = pd.DataFrame()
+        df['svo_#'] = key_list
+        df['svo'] = df['svo_#'].map(lookup)
+        
+        offsets = {df['svo'][x]: offset_list[x] for x in df.index}
+    else:    
+        df = pd.DataFrame.from_records(key_list, columns =['word1_#', 'word2_#'])
+        df['word1'] = df['word1_#'].map(lookup)
+        df['word2'] = df['word2_#'].map(lookup)
+        
+        offsets = {(df['word1'][x],df['word2'][x]): offset_list[x] for x in df.index}
     
     return offsets

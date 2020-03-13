@@ -29,3 +29,24 @@ def mp(items, function, *args):
 
     return results
 
+# for fuctions that return two lists (does not work for dictionaries yet)    
+def mp2(items, function, *args):
+    """
+    This is a docstring.
+    """
+    if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
+        cpu = 11
+    else:
+        cpu = cpu_count()
+        
+    batch_size = round(len(items)/cpu)
+    partitions = minibatch(items, size=batch_size)
+    executor = Parallel(n_jobs=cpu, backend="multiprocessing", prefer="processes")
+    do = delayed(partial(function, *args))
+    tasks = (do(batch) for batch in partitions)
+    temp = executor(tasks)
+    results1, results2 = zip(*temp)
+    results1 = list(chain(*results1))
+    results2 = list(chain(*results2))
+    return results1, results2
+

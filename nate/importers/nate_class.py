@@ -4,7 +4,7 @@ from ..svonet.process import svonet, process_svo
 from .edgelist_importers import edgelist_mixin
 from ..socnet.socnet import socnet_pipe
 from ..utils import nlp_helpers
-from ..utils.mp_helpers import mp
+from ..utils.mp_helpers import mp, mp2
 import spacy
 from spacy.pipeline import merge_entities
 from ..cooc.generate_offsets import generate_offsets
@@ -17,8 +17,10 @@ class nate(edgelist_mixin):
     """
     def __init__(self, data):
         self.data = data
-        self.post_nlp = nlp_helpers.get_spacy_text(self.list_texts())
-        self.nlp_sentences = nlp_helpers.get_spacy_sentences(self.list_texts())
+        self.texts = self.list_texts()
+        self.time = self.list_time()
+        del self.data
+        
 
     def __call__(self, start:int = 0, end:int = 5):
         """
@@ -28,6 +30,35 @@ class nate(edgelist_mixin):
 
     def __getitem__(self, index):
         return self.data[index]
+        
+    def preprocess(self, for_svo = False, bigrams = False, custom_filter = False, model="en_core_web_sm"):
+        self.for_svo = for_svo
+        self.bigrams = bigrams
+        self.model = model
+        self.custom_filter = custom_filter
+
+        if for_svo:
+            # add error check for custom_filter, which cannot be applied in this step for svo
+            self.nlp = spacy.load(self.model)
+            self.nlp.add_pipe(merge_entities)
+            if bigrams == True:
+                self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
+            self.post_nlp = mp(self.texts, nlp_helpers.spacy_process, self.nlp)
+        elif custom_filter:
+            # note that for mp on Windows, custom_filter must be defined in a python file and imported
+            self.nlp = spacy.load(self.model, disable=['parser'])
+            self.nlp.add_pipe(merge_entities)
+            self.nlp.add_pipe(custom_filter, name="custom_filter", last=True)
+            if bigrams == True:
+                self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
+            self.post_nlp = mp(texts, custom_filter, nlp_helpers.spacy_process, self.nlp)
+        else:
+            self.nlp = spacy.load(self.model, disable=['parser'])
+            self.nlp.add_pipe(merge_entities)
+            self.nlp.add_pipe(nlp_helpers.default_filter_lemma, name="filter_lemmatize", last=True)
+            if bigrams == True:
+                self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
+            self.post_nlp = mp(self.texts, nlp_helpers.spacy_process, self.nlp)
 
     def head(self, start:int = 0, end:int = 5):
         """
@@ -38,23 +69,23 @@ class nate(edgelist_mixin):
     def list_texts(self, start:int = None, end:int = None):
         return [i.text for i in self.data[start:end]]
 
-    def list_nlp_text(self, start:int = None, end:int = None, bigrams = False, tokenized = False, nlp = False, custom_component = False, standard_component = False, merge_ents = False):
+
+    def list_nlp_text(self, start:int = None, end:int = None, bigrams = False, tokenized = False, nlp = False, custom_filter = False, default_filter = False, merge_ents = False):
         """
         Returns a list of texts
         """ 
-        texts = [str(i.text) for i in self.data[start:end]]
         if bigrams == True:
-            texts = nlp_helpers.bigram_process(texts, tokenized=tokenized)        
+            self.texts = nlp_helpers.bigram_process(self.texts, tokenized=tokenized)        
         if nlp == True:
             nlp = spacy.load('en_core_web_sm')
             if merge_ents == True:
                 nlp.add_pipe(merge_entities)
-            if standard_component == True:
-                nlp.add_pipe(nlp_helpers.spacy_component, name="standard_component", last=True)
-            if custom_component:
-                nlp.add_pipe(custom_component, name="custom_component", last=True)
-            texts = mp(texts, nlp_helpers.spacy_process, nlp)
-        return texts
+            if default_filter == True:
+                nlp.add_pipe(nlp_helpers.default_filter_lemma, name="filter_lemmatize", last=True)
+            elif custom_filter:
+                nlp.add_pipe(custom_filter, name="custom_filter", last=True)
+            self.texts = mp(self.texts, nlp_helpers.spacy_process, nlp)
+        return self.texts
 
     def list_time(self, start:int = None, end:int = None):
         """
@@ -77,8 +108,13 @@ class nate(edgelist_mixin):
     def cooc_pipeline(self, minimum_offsets = 20): 
         """
         Returns an instance of the 'cooc' class, initialized with the relevant data contained 
-        """ 
-        offset_dict, lookup = generate_offsets(self.post_nlp, self.list_time(), minimum_offsets)
+        """
+        if self.for_svo == True and custom_filter == False:
+            self.post_nlp = [nlp_helpers.default_filter_lemma(doc) for doc in self.post_nlp]
+        elif self.for_svo == True:
+            self.post_nlp = [custom_filter(doc) for doc in self.post_nlp]
+            
+        offset_dict, lookup = generate_offsets(self.post_nlp, self.time, minimum_offsets)
         
         return cooc(offset_dict, lookup, minimum_offsets)
 
@@ -89,22 +125,12 @@ class nate(edgelist_mixin):
         """ 
         return socnet_pipe(self.data, self.edgelist[slice(subset)])
 
-    def svo_pipeline(self, sub_tags=False, obj_tags=False, bigrams = False):
+    def svo_pipeline(self, sub_tags=False, obj_tags=False):
         """
         This is a docstring
         """ 
-        ###
-        # The following commented functionality will need to be re-implemented...
-        # I probably broke it... Sorry!
-        ###
-        
-        # if bigrams == True:
-        #     text_list = nlp_helpers.bigram_process(text_list, tokenized=False)
-        # else:
-        #     text_list = self.list_nlp_text()
 
-    
-        sentences, svo_items = process_svo(self.nlp_sentences, sub_tags, obj_tags)
+        sentences, svo_items = mp2(self.post_nlp, process_svo, sub_tags, obj_tags)
 
-        return svonet(sentences, svo_items)
+        return svonet(sentences, svo_items, self.time)
         
