@@ -19,8 +19,6 @@ class nate(edgelist_mixin):
         self.data = data
         self.texts = self.list_texts()
         self.time = self.list_time()
-        del self.data
-        
 
     def __call__(self, start:int = 0, end:int = 5):
         """
@@ -51,7 +49,7 @@ class nate(edgelist_mixin):
             self.nlp.add_pipe(custom_filter, name="custom_filter", last=True)
             if bigrams == True:
                 self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
-            self.post_nlp = mp(texts, custom_filter, nlp_helpers.spacy_process, self.nlp)
+            self.post_nlp = mp(self.texts, custom_filter, nlp_helpers.spacy_process, self.nlp)
         else:
             self.nlp = spacy.load(self.model, disable=['parser'])
             self.nlp.add_pipe(merge_entities)
