@@ -7,7 +7,7 @@ from ..utils import nlp_helpers
 from ..utils.mp_helpers import mp, mp2
 import spacy
 from spacy.pipeline import merge_entities
-from ..cooc.generate_offsets import generate_offsets
+from ..cooc.cooc_offsets import cooc_offsets
 
 class nate(edgelist_mixin):
     """
@@ -112,7 +112,7 @@ class nate(edgelist_mixin):
         elif self.for_svo == True:
             self.post_nlp = [custom_filter(doc) for doc in self.post_nlp]
             
-        offset_dict, lookup = generate_offsets(self.post_nlp, self.time, minimum_offsets)
+        offset_dict, lookup = cooc_offsets(self.post_nlp, self.time, minimum_offsets)
         
         return cooc(offset_dict, lookup, minimum_offsets)
 

@@ -12,4 +12,5 @@ class cooc(burst_mixin):
         self.offset_dict = offset_dict
         self.lookup = lookup
         self.minimum_offsets = minimum_offsets
+        self.from_svo = False
 
