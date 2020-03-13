@@ -146,6 +146,7 @@ def offsets_export(offsets, lookup, from_svo = False):
         df['svo'] = df['svo_#'].map(lookup)
         
         offsets = {df['svo'][x]: offset_list[x] for x in df.index}
+
     else:    
         df = pd.DataFrame.from_records(key_list, columns =['word1_#', 'word2_#'])
         df['word1'] = df['word1_#'].map(lookup)
