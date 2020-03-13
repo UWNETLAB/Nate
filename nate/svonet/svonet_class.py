@@ -22,6 +22,7 @@ class svonet(burst_mixin):
         self.sentences = sentences
         self.svo_items = svo_items
         self.times = timestamps
+        self.from_svo = True
 
     def svo_to_df(self):
         """ 

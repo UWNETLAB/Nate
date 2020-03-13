@@ -6,7 +6,7 @@ import pickle
 from itertools import groupby
 
 
-def df_export(bursts, offsets, lookup):
+def df_export(bursts, offsets, lookup, from_svo = False):
     """
     This is a docstring.
     """        
@@ -17,12 +17,21 @@ def df_export(bursts, offsets, lookup):
         key_list.append(k)
         burst_list.append(v)
         offset_list.append(offsets[k])
-        
-    df = pd.DataFrame.from_records(key_list, columns =['word1_#', 'word2_#'])
-    df['word1'] = df['word1_#'].map(lookup)
-    df['word2'] = df['word2_#'].map(lookup)
     
-    intensities = max_intensities(burst_list)
+    if from_svo:
+        df = pd.DataFrame()
+        df['svo_#'] = key_list
+        df['svo'] = df['svo_#'].map(lookup)
+        
+        intensities = max_intensities(burst_list)
+               
+    else:    
+    
+        df = pd.DataFrame.from_records(key_list, columns =['word1_#', 'word2_#'])
+        df['word1'] = df['word1_#'].map(lookup)
+        df['word2'] = df['word2_#'].map(lookup)
+        
+        intensities = max_intensities(burst_list)
     
     df['bursts'] = intensities
     
@@ -63,7 +72,7 @@ def flatten(df, intensities):
     
     return return_df
     
-def max_bursts_export(bursts, lookup):
+def max_bursts_export(bursts, lookup, from_svo = False):
     """
     This is a docstring.
     """
@@ -73,14 +82,24 @@ def max_bursts_export(bursts, lookup):
     for k, v in bursts.items():
         key_list.append(k)
         burst_list.append(v)
+
+    if from_svo:
+        df = pd.DataFrame()
+        df['svo_#'] = key_list
+        df['svo'] = df['svo_#'].map(lookup)
         
-    df = pd.DataFrame.from_records(key_list, columns =['word1_#', 'word2_#'])
-    df['word1'] = df['word1_#'].map(lookup)
-    df['word2'] = df['word2_#'].map(lookup)
+        intensities = max_intensities(burst_list)
+        
+        max_bursts = {df['svo'][x]: intensities[x] for x in df.index}        
+    else:
+        
+        df = pd.DataFrame.from_records(key_list, columns =['word1_#', 'word2_#'])
+        df['word1'] = df['word1_#'].map(lookup)
+        df['word2'] = df['word2_#'].map(lookup)
 
-    intensities = max_intensities(burst_list)
+        intensities = max_intensities(burst_list)
 
-    max_bursts = {(df['word1'][x],df['word2'][x]): intensities[x] for x in df.index}
+        max_bursts = {(df['word1'][x],df['word2'][x]): intensities[x] for x in df.index}
     
     return max_bursts
     

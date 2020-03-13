@@ -8,6 +8,7 @@ class burst_mixin():
     def __init__(self):
         self.offset_dict: dict
         self.lookup: dict
+        self.from_svo = False
 
 
     def burst_detection(self, s:float = 2, gamma:float = 1):
@@ -25,7 +26,7 @@ class burst_mixin():
         edge_burst_dict_int = detect_bursts(self.offset_dict, s, gamma)
         edge_burst_dict_strings = all_bursts_export(edge_burst_dict_int, self.offset_dict, self.lookup)
 
-        return bursts(offset_dict_strings, edge_burst_dict_strings, s, gamma)
+        return bursts(offset_dict_strings, edge_burst_dict_strings, s, gamma, self.from_svo)
 
 
     def multi_burst(self, token_pairs, s, gamma):

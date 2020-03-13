@@ -29,27 +29,24 @@ class bursts():
     """
     This is a docstring.
     """
-    def __init__(self, offset_dict, edge_burst_dict, s, gamma):
+    def __init__(self, offset_dict, edge_burst_dict, s, gamma, from_svo):
         self.offset_dict:dict = offset_dict
         self.edge_burst_dict:dict = edge_burst_dict
         self.s = s
         self.gamma = gamma
+        self.from_svo = from_svo
 
-    # in order to get the class to play nice with the other steps in the pipeline,
-    # I had to move the processing over to the pre-init side, which breaks the
-    # export methods listed below. We'll need to re-implement them eventually.
-
-    # def export_df(self):
-    #     """
-    #     This is a docstring.
-    #     """
-    #     return df_export(self.edge_burst_dict_int, self.offset_dict_int, self.lookup)
+    def export_df(self):
+        """
+        This is a docstring.
+        """
+        return df_export(self.edge_burst_dict, self.offset_dict, self.from_svo)
         
-    # def export_max_bursts(self):
-    #     """
-    #     This is a docstring.
-    #     """
-    #     return max_bursts_export(self.edge_burst_dict_int, self.lookup)
+    def export_max_bursts(self):
+        """
+        This is a docstring.
+        """
+        return max_bursts_export(self.edge_burst_dict, self.from_svo)
         
     def create_burst_plot(self, token_pairs, zoom_level = 0, output_path = False, plot_size_x = 20, plot_size_y = 10, plot_vertically = False, num_ticks = 10, rug_alpha = 0.35, dark = True):
         """
