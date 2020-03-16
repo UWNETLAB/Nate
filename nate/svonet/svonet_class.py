@@ -5,7 +5,7 @@ from typing import List, Dict
 from .svo_offsets import generate_svo_offsets
 from ..edgeburst.burst_mixin import burst_mixin
 from ..edgeburst.burst_class import bursts
-import networkx as nx
+from .graph_svo import save_svo_graph, create_svo_animation
 from types import MethodType
 
 def process_svo(sub_tags, obj_tags, post_nlp):
@@ -16,40 +16,6 @@ def process_svo(sub_tags, obj_tags, post_nlp):
     svo_items = [[findSVOs(x, sub_tags, obj_tags) for x in y.sents] for y in post_nlp]
 
     return (sentences, svo_items)
-
-
-def save_svo_graph(self, term_list, file_name = "test"):
-
-    G = nx.DiGraph()
-
-    if isinstance(term_list, str):
-        term_list = [term_list]
-    
-    svo_list = self.edge_burst_dict
-
-    for entry in svo_list:
-        include = False
-        for entry_part in entry:
-            if entry_part in term_list:
-                include = True
-
-            for term in term_list:
-                if term in entry_part or entry_part in term:
-                    include = True
-
-        
-        if include:
-            G.add_edge(entry[0], entry[2], label = " "+ entry[1])
-
-    for entry in G:
-        G.nodes[entry]['style'] = 'filled'
-        G.nodes[entry]['fillcolor'] = 'cadetblue2'
-
-
-    toPdot = nx.drawing.nx_pydot.to_pydot
-    N = toPdot(G)
-
-    N.write(file_name + ".png", prog='dot', format='png')
 
 
 class svonet(burst_mixin):
@@ -103,5 +69,6 @@ class svonet(burst_mixin):
         burst_instance = self.burst_detection(s, gamma)
 
         burst_instance.save_svo_graph = MethodType(save_svo_graph, burst_instance)
+        burst_instance.create_svo_animation = MethodType(create_svo_animation, burst_instance)
 
         return burst_instance
