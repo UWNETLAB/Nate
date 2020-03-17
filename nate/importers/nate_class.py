@@ -122,13 +122,17 @@ class nate(edgelist_mixin):
         """ 
 
             # add error check for custom_filter, which cannot be applied in this step for svo
-        self.nlp = spacy.load(self.model)
-        self.nlp.add_pipe(merge_entities)
+
         if bigrams == True:
             self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
-        self.post_nlp = mp(self.texts, nlp_helpers.spacy_process, self.nlp)
+            
+        self.nlp = spacy.load(self.model)
+        self.nlp.add_pipe(merge_entities)
+        self.nlp.add_pipe(nlp_helpers.svo_component, name="svo_component", last=True)
+        
+        self.post_svo = mp(self.texts, nlp_helpers.spacy_process, self.nlp, sub_tags, obj_tags)
 
-        sentences, svo_items = mp2(self.post_nlp, process_svo, sub_tags, obj_tags)
+        #sentences, svo_items = mp2(self.post_nlp, process_svo, sub_tags, obj_tags)
 
-        return svonet(sentences, svo_items, self.time)
+        #return svonet(sentences, svo_items, self.time)
         
