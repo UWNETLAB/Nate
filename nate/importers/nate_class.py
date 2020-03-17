@@ -133,9 +133,11 @@ class nate(edgelist_mixin):
         
         self.post_svo = mp(self.texts, nlp_helpers.spacy_process, self.nlp, sub_tags, obj_tags)
         
-        return self.post_svo
+        sentences = [x[0] for x in post_svo]
+        svo_items = [x[1] for x in post_svo]
+        
 
-        #sentences, svo_items = mp2(self.post_nlp, process_svo, sub_tags, obj_tags)
+        sentences, svo_items = mp2(self.post_nlp, process_svo, sub_tags, obj_tags)
 
-        #return svonet(sentences, svo_items, self.time)
+        return svonet(sentences, svo_items, self.time)
         
