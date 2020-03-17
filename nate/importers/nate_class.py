@@ -59,24 +59,7 @@ class nate(edgelist_mixin):
     def list_texts(self, start:int = None, end:int = None):
         return [str(i.text) for i in self.data[start:end]]
 
-    # The following isn't currently in use:
 
-    # def list_nlp_text(self, start:int = None, end:int = None, bigrams = False, tokenized = False, nlp = False, custom_filter = False, default_filter = False, merge_ents = False):
-    #     """
-    #     Returns a list of texts
-    #     """ 
-    #     if bigrams == True:
-    #         self.texts = nlp_helpers.bigram_process(self.texts, tokenized=tokenized)        
-    #     if nlp == True:
-    #         nlp = spacy.load('en_core_web_sm')
-    #         if merge_ents == True:
-    #             nlp.add_pipe(merge_entities)
-    #         if default_filter == True:
-    #             nlp.add_pipe(nlp_helpers.default_filter_lemma, name="filter_lemmatize", last=True)
-    #         elif custom_filter:
-    #             nlp.add_pipe(custom_filter, name="custom_filter", last=True)
-    #         self.texts = mp(self.texts, nlp_helpers.spacy_process, nlp)
-    #     return self.texts
 
     def list_time(self, start:int = None, end:int = None):
         """
@@ -133,11 +116,7 @@ class nate(edgelist_mixin):
         
         self.post_svo = mp(self.texts, nlp_helpers.spacy_process, self.nlp, sub_tags, obj_tags)
         
-        sentences = [x[0] for x in post_svo]
-        svo_items = [x[1] for x in post_svo]
+        sentences = [x[0] for x in self.post_svo]
+        svo_items = [x[1] for x in self.post_svo]
         
-
-        sentences, svo_items = mp2(self.post_nlp, process_svo, sub_tags, obj_tags)
-
         return svonet(sentences, svo_items, self.time)
-        
