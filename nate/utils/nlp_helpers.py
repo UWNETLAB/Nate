@@ -10,7 +10,7 @@ from ..svonet.svonet_class import process_svo
 
 def spacy_process(nlp, texts, sub_tags = False, obj_tags = False):
     if 'svo_component' in nlp.pipe_names:
-        processed_list = [doc for doc in nlp.pipe(texts, {'svo_component': [sub_tags, obj_tags]})
+        processed_list = [doc for doc in nlp.pipe(texts, {'svo_component': [sub_tags, obj_tags]})]
     else:
         processed_list = [doc for doc in nlp.pipe(texts)]
     return processed_list
