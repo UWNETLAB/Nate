@@ -8,12 +8,12 @@ def mp(items, function, *args):
     """
     This is a docstring.
     """
-    if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
-        cpu = 11
+    if cpu_count() >= 10:   #to avoid overtaxing Brad, save some cores
+        cpu = 10
     else:
         cpu = cpu_count()
         
-    batch_size = round(len(items)/cpu)
+    batch_size = 100#round(len(items)/cpu)
     partitions = minibatch(items, size=batch_size)
     executor = Parallel(n_jobs=cpu, backend="multiprocessing", prefer="processes")
     do = delayed(partial(function, *args))
@@ -34,12 +34,12 @@ def mp2(items, function, *args):
     """
     This is a docstring.
     """
-    if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
-        cpu = 11
+    if cpu_count() >= 10:   #to avoid overtaxing Brad, save some cores
+        cpu = 10
     else:
         cpu = cpu_count()
         
-    batch_size = round(len(items)/cpu)
+    batch_size = 100#round(len(items)/cpu)
     partitions = minibatch(items, size=batch_size)
     executor = Parallel(n_jobs=cpu, backend="multiprocessing", prefer="processes")
     do = delayed(partial(function, *args))

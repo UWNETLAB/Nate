@@ -65,25 +65,26 @@ class nate(edgelist_mixin):
         pprint(self.data[start:end])
 
     def list_texts(self, start:int = None, end:int = None):
-        return [i.text for i in self.data[start:end]]
+        return [str(i.text) for i in self.data[start:end]]
 
-
-    def list_nlp_text(self, start:int = None, end:int = None, bigrams = False, tokenized = False, nlp = False, custom_filter = False, default_filter = False, merge_ents = False):
-        """
-        Returns a list of texts
-        """ 
-        if bigrams == True:
-            self.texts = nlp_helpers.bigram_process(self.texts, tokenized=tokenized)        
-        if nlp == True:
-            nlp = spacy.load('en_core_web_sm')
-            if merge_ents == True:
-                nlp.add_pipe(merge_entities)
-            if default_filter == True:
-                nlp.add_pipe(nlp_helpers.default_filter_lemma, name="filter_lemmatize", last=True)
-            elif custom_filter:
-                nlp.add_pipe(custom_filter, name="custom_filter", last=True)
-            self.texts = mp(self.texts, nlp_helpers.spacy_process, nlp)
-        return self.texts
+    # The following isn't currently in use:
+    
+    # def list_nlp_text(self, start:int = None, end:int = None, bigrams = False, tokenized = False, nlp = False, custom_filter = False, default_filter = False, merge_ents = False):
+    #     """
+    #     Returns a list of texts
+    #     """ 
+    #     if bigrams == True:
+    #         self.texts = nlp_helpers.bigram_process(self.texts, tokenized=tokenized)        
+    #     if nlp == True:
+    #         nlp = spacy.load('en_core_web_sm')
+    #         if merge_ents == True:
+    #             nlp.add_pipe(merge_entities)
+    #         if default_filter == True:
+    #             nlp.add_pipe(nlp_helpers.default_filter_lemma, name="filter_lemmatize", last=True)
+    #         elif custom_filter:
+    #             nlp.add_pipe(custom_filter, name="custom_filter", last=True)
+    #         self.texts = mp(self.texts, nlp_helpers.spacy_process, nlp)
+    #     return self.texts
 
     def list_time(self, start:int = None, end:int = None):
         """

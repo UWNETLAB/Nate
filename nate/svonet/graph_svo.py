@@ -73,7 +73,7 @@ def find_max_burst(burst_list:list, offset_start, offset_end):
     return max(burst_levels)
 
 
-def create_svo_animation(self, term_list, num_ticks = 20, file_name = "test", remove_images = True):
+def create_svo_animation(self, term_list, num_ticks = 20, delay_per_tick = 3, file_name = "test", remove_images = True):
     """
     This is a docstring.
     """
@@ -151,7 +151,7 @@ def create_svo_animation(self, term_list, num_ticks = 20, file_name = "test", re
         save_all=True,
         append_images=images[1:], 
         optimize=False, 
-        duration=len(images * 3), 
+        duration=len(images * delay_per_tick), 
         loop=0)
 
     if remove_images:
