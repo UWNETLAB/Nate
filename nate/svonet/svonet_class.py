@@ -8,12 +8,12 @@ from ..edgeburst.burst_class import bursts
 from .graph_svo import save_svo_graph, create_svo_animation
 from types import MethodType
 
-def process_svo(sub_tags, obj_tags, post_nlp):
+def process_svo(sub_tags, obj_tags, doc):
     """
     This is a docstring.
     """
-    sentences = [[x.string.strip() for x in y.sents] for y in post_nlp]
-    svo_items = [[findSVOs(x, sub_tags, obj_tags) for x in y.sents] for y in post_nlp]
+    sentences = [x.string.strip() for x in doc.sents]
+    svo_items = [findSVOs(x, sub_tags, obj_tags) for x in doc.sents]
 
     return (sentences, svo_items)
 

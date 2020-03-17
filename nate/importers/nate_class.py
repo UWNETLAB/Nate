@@ -116,13 +116,14 @@ class nate(edgelist_mixin):
         """ 
         return socnet_pipe(self.data, self.edgelist[slice(subset)])
 
-    def svo_pipeline(self, sub_tags=False, obj_tags=False, bigrams = False):
+    def svo_pipeline(self, sub_tags=False, obj_tags=False, bigrams = False, model="en_core_web_sm"):
         """
         This is a docstring
         """ 
 
             # add error check for custom_filter, which cannot be applied in this step for svo
-
+        self.model = model
+        
         if bigrams == True:
             self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
             
@@ -131,6 +132,8 @@ class nate(edgelist_mixin):
         self.nlp.add_pipe(nlp_helpers.svo_component, name="svo_component", last=True)
         
         self.post_svo = mp(self.texts, nlp_helpers.spacy_process, self.nlp, sub_tags, obj_tags)
+        
+        return self.post_svo
 
         #sentences, svo_items = mp2(self.post_nlp, process_svo, sub_tags, obj_tags)
 

@@ -8,9 +8,9 @@ from ..svonet.svonet_class import process_svo
 
 # Everything from this point down was moved from the `text_helpers` module
 
-def spacy_process(nlp, texts, sub_tags = False, obj_tags = False):
+def spacy_process(nlp, sub_tags, obj_tags, texts):
     if 'svo_component' in nlp.pipe_names:
-        processed_list = [doc for doc in nlp.pipe(texts, {'svo_component': [sub_tags, obj_tags]})]
+        processed_list = [doc for doc in nlp.pipe(texts, component_cfg = {'svo_component': {'sub_tags':sub_tags, 'obj_tags': obj_tags}})]
     else:
         processed_list = [doc for doc in nlp.pipe(texts)]
     return processed_list
