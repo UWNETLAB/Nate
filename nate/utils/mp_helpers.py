@@ -13,7 +13,7 @@ def mp(items, function, *args):
     else:
         cpu = cpu_count()
         
-    batch_size = 100#round(len(items)/cpu)
+    batch_size = round(len(items)/cpu)
     partitions = minibatch(items, size=batch_size)
     executor = Parallel(n_jobs=cpu, backend="multiprocessing", prefer="processes")
     do = delayed(partial(function, *args))
@@ -39,7 +39,7 @@ def mp2(items, function, *args):
     else:
         cpu = cpu_count()
         
-    batch_size = 100#round(len(items)/cpu)
+    batch_size = round(len(items)/cpu)
     partitions = minibatch(items, size=batch_size)
     executor = Parallel(n_jobs=cpu, backend="multiprocessing", prefer="processes")
     do = delayed(partial(function, *args))
