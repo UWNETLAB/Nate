@@ -29,7 +29,7 @@ class svonet(burst_mixin):
         self.from_svo = True
 
 
-    def svo_to_df(self):
+    def svo_to_df(self, tidy=True):
         """ 
         This is a docstring.
         """
@@ -38,6 +38,7 @@ class svonet(burst_mixin):
         sent_id = []
         sent_list_flat = []
         svo_list_flat = []
+        time_list_flat = []
         sub_list_flat = []
         verb_list_flat = []
         obj_list_flat = []
@@ -49,6 +50,7 @@ class svonet(burst_mixin):
                     doc_id.append(i)
                     sent_id.append(j)
                     sent_list_flat.append(sent)
+                    time_list_flat.append(self.times[i])
                     svo_list_flat.append(svo_item)
                     sub_list_flat.append(svo_item[0])
                     verb_list_flat.append(svo_item[1])
@@ -56,8 +58,14 @@ class svonet(burst_mixin):
                     sub_ent_types.append(self.svo_items[i][j][1][k])
                     obj_ent_types.append(self.svo_items[i][j][2][k])
 
-        df['doc_id'], df['sent_id'], df ['sentence'], df['svo'] = doc_id, sent_id, sent_list_flat, svo_list_flat
+        df['doc_id'], df['sent_id'], df ['sentence'], df['svo'], df['timestamp'] = doc_id, sent_id, sent_list_flat, svo_list_flat, time_list_flat
         df['subject'], df['sub_type'], df['verb'], df['object'], df['obj_type'] = sub_list_flat, sub_ent_types, verb_list_flat, obj_list_flat, obj_ent_types
+        
+        df['datetime'] = pd.to_datetime(df['timestamp'], unit='s')
+        
+        if tidy == False:
+            #df = df.groupby('svo').agg(lambda x: list(x))
+            df = df.groupby('svo')['doc_id', 'timestamp', 'datetime'].agg(list)
 
         return df
         
