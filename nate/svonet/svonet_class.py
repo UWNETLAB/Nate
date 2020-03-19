@@ -51,16 +51,18 @@ class SVOnet(BurstMixin):
         for i, doc in enumerate(self.sentences):
             for j, sent in enumerate(doc):
                 for k, svo_item in enumerate(self.svo_items[i][j][0]):
-                    doc_id.append(i)
-                    sent_id.append(j)
-                    sent_list_flat.append(sent)
-                    time_list_flat.append(self.times[i])
-                    svo_list_flat.append(svo_item)
-                    sub_list_flat.append(svo_item[0])
-                    verb_list_flat.append(svo_item[1])
-                    obj_list_flat.append(svo_item[2])
-                    sub_ent_types.append(self.svo_items[i][j][1][k])
-                    obj_ent_types.append(self.svo_items[i][j][2][k])
+                    if svo_item[0].isascii and svo_item[1].isascii and svo_item[2].isascii:
+                        svo_item = (svo_item[0].lower(), svo_item[1].lower(), svo_item[2].lower())                
+                        doc_id.append(i)
+                        sent_id.append(j)
+                        sent_list_flat.append(sent)
+                        time_list_flat.append(self.times[i])
+                        svo_list_flat.append(svo_item)
+                        sub_list_flat.append(svo_item[0])
+                        verb_list_flat.append(svo_item[1])
+                        obj_list_flat.append(svo_item[2])
+                        sub_ent_types.append(self.svo_items[i][j][1][k])
+                        obj_ent_types.append(self.svo_items[i][j][2][k])
 
         df['doc_id'], df['sent_id'], df ['sentence'], df['svo'], df['timestamp'] = doc_id, sent_id, sent_list_flat, svo_list_flat, time_list_flat
         df['subject'], df['sub_type'], df['verb'], df['object'], df['obj_type'] = sub_list_flat, sub_ent_types, verb_list_flat, obj_list_flat, obj_ent_types
