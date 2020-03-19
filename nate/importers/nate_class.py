@@ -1,13 +1,20 @@
+"""
+This is a MODULE docstring
+"""
+
 from pprint import pprint
-from ..cooc.cooc_class import cooc
-from ..svonet.svonet_class import svonet, process_svo
-from .edgelist_importers import edgelist_mixin
-from ..socnet.socnet import socnet_pipe
-from ..utils import nlp_helpers
-from ..utils.mp_helpers import mp, mp2
+
 import spacy
 from spacy.pipeline import merge_entities
+
+from ..cooc.cooc_class import cooc
 from ..cooc.cooc_offsets import cooc_offsets
+from ..socnet.socnet import socnet_pipe
+from ..svonet.svonet_class import process_svo, svonet
+from ..utils import nlp_helpers
+from ..utils.mp_helpers import mp, mp2
+from .edgelist_importers import edgelist_mixin
+
 
 class nate(edgelist_mixin):
     """
@@ -27,9 +34,15 @@ class nate(edgelist_mixin):
         pprint(self.data[start:end])
 
     def __getitem__(self, index):
+        """
+        This is a docstring
+        """
         return self.data[index]
         
     def preprocess(self, bigrams = False, custom_filter = False, model="en_core_web_sm"):
+        """
+        This is a docstring
+        """
         self.bigrams = bigrams
         self.model = model
         self.custom_filter = custom_filter
@@ -57,9 +70,10 @@ class nate(edgelist_mixin):
         pprint(self.data[start:end])
 
     def list_texts(self, start:int = None, end:int = None):
+        """
+        This is a docstring
+        """
         return [str(i.text) for i in self.data[start:end]]
-
-
 
     def list_time(self, start:int = None, end:int = None):
         """
@@ -83,10 +97,6 @@ class nate(edgelist_mixin):
         """
         Returns an instance of the 'cooc' class, initialized with the relevant data contained 
         """
-        # if self.for_svo == True and custom_filter == False:
-        #     self.post_nlp = [nlp_helpers.default_filter_lemma(doc) for doc in self.post_nlp]
-        # elif self.for_svo == True:
-        #     self.post_nlp = [custom_filter(doc) for doc in self.post_nlp]
             
         offset_dict, lookup = cooc_offsets(self.post_nlp, self.time, minimum_offsets)
         
@@ -104,7 +114,7 @@ class nate(edgelist_mixin):
         This is a docstring
         """ 
 
-            # add error check for custom_filter, which cannot be applied in this step for svo
+        # add error check for custom_filter, which cannot be applied in this step for svo
         self.model = model
         
         if bigrams == True:

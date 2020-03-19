@@ -1,3 +1,6 @@
+"""
+This is a MODULE docstring
+"""
 import spacy
 from spacy.pipeline import merge_entities
 from .mp_helpers import mp

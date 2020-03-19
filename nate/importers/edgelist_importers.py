@@ -1,8 +1,15 @@
+"""
+This is a MODULE docstring
+"""
+
 import pandas
 from .named_tuple_generator import tupleize
 
 
 def process_edgelist(temp_data, From, To, Weight = None):
+    """
+    This is a docstring
+    """
 
     series_dict = {}
     
@@ -22,6 +29,9 @@ def process_edgelist(temp_data, From, To, Weight = None):
 
 
 class edgelist_mixin():
+    """
+    This is a docstring
+    """
 
     def add_edges_from_csv(self, file_path, From, To, Weight = None):
         """

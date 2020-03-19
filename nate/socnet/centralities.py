@@ -1,3 +1,6 @@
+"""
+This is a MODULE docstring
+"""
 from importlib.util import find_spec
 from collections import namedtuple
 import igraph as ig

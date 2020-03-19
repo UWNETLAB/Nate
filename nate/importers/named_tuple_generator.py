@@ -1,3 +1,7 @@
+"""
+This is a MODULE docstring
+"""
+
 from collections import namedtuple
 from typing import List, Tuple, NamedTuple
 

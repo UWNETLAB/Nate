@@ -1,9 +1,5 @@
 """
-As this collection of helper functions grows, we may want to organize it
-into different files. Right now, I am just putting all kinds of helpers
-here. So far, everthing is text related because those are the modules
-I have been writing. Perhaps network-related helpers should be in a different file?
-- JM 
+This is a MODULE docstring
 """
 
 import pandas as pd

@@ -1,3 +1,7 @@
+"""
+This is a MODULE docstring
+"""
+
 import seaborn as sns
 import matplotlib
 import matplotlib.pyplot as plt

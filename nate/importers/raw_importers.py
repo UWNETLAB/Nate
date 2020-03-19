@@ -1,3 +1,6 @@
+"""
+This is a MODULE docstring
+"""
 from typing import List, Union
 from .named_tuple_generator import define_named_tuple
 from .nate_class import nate
@@ -72,7 +75,7 @@ def import_dict_of_dicts(dictionary, text, time = None, values_to_keep = []):
 
 def import_lists(text:List,  time:List = None, unique_id:List = None):
     """
-    IMPLEMENT
+    Not yet implemented
     """
     pass
 

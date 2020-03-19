@@ -1,3 +1,7 @@
+"""
+This is a MODULE docstring
+"""
+
 import networkx as nx
 from ..edgeburst.visualize_bursts import generate_ticks
 from PIL import Image, ImageDraw

@@ -1,3 +1,7 @@
+"""
+This is a MODULE docstring
+"""
+
 import pandas
 from typing import List, Union
 from .named_tuple_generator import tupleize

@@ -1,3 +1,6 @@
+"""
+This is a MODULE docstring
+"""
 from . import pybursts
 from ..utils.mp_helpers import mp
 from .visualize_bursts import plot_bursts

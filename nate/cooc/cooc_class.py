@@ -1,4 +1,6 @@
-
+"""
+This is a MODULE docstring
+"""
 from typing import List, Dict
 import pickle
 from ..utils.mp_helpers import mp

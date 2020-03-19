@@ -1,3 +1,7 @@
+"""
+This is a MODULE docstring
+"""
+
 # modification of the `enhanced-subject-verb-object-extraction` package by Rock de Vocht: https://github.com/peter3125/enhanced-subject-verb-object-extraction
 #
 # Copyright 2017 Peter de Vocht

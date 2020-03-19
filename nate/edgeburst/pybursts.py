@@ -1,3 +1,6 @@
+"""
+This is a MODULE docstring
+"""
 # modification of pybursts package by Renzo Poddighe: https://pypi.org/project/pybursts/
 import numpy as np
 import math

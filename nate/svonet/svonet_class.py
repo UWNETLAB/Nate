@@ -1,3 +1,7 @@
+"""
+This is a MODULE docstring
+"""
+
 from .svo import findSVOs
 import pandas as pd
 from ..utils.mp_helpers import mp

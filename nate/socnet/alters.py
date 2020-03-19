@@ -1,3 +1,7 @@
+"""
+This is a MODULE docstring
+"""
+
 import pandas as pd
 import networkx as nx
 

@@ -1,3 +1,6 @@
+"""
+This is a MODULE docstring
+"""
 import pandas as pd
 from time import time as marktime
 from typing import List

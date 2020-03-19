@@ -1,3 +1,6 @@
+"""
+This is a MODULE docstring
+"""
 from joblib import Parallel, delayed, cpu_count
 from itertools import chain
 from spacy.util import minibatch

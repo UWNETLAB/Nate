@@ -1,3 +1,6 @@
+"""
+This is a MODULE docstring
+"""
 import pickle
 from datetime import datetime, timezone
   
