@@ -2,82 +2,69 @@
 This is a MODULE docstring
 """
 
-import seaborn as sns
-import matplotlib
+import nate
+import pandas as pd
+import matplotlib as mpl
 import matplotlib.pyplot as plt
-import matplotlib.axes
-import datetime
-from typing import Tuple, List
-from datetime import datetime, timezone
- 
+import matplotlib.dates as mdates
 
-def generate_ticks(offsets, number_of_ticks = 10) -> Tuple[List[int], List[str]]:
+
+def to_pandas(ebursts, offsets, unit='s'):
     """
-    This is a docstring
-    """ 
-    chunk_size = round((max(offsets) - min(offsets))/number_of_ticks)
-    
-    tick_positions:List[int] = []
-    
-    for i in range(0, number_of_ticks + 1):
-        tick_positions.append(int(min(offsets) + (i * chunk_size)))
-        
-    tick_labels:List[str] = []
-        
-    for tick in tick_positions:
-        
-        time_label = datetime.utcfromtimestamp(tick).strftime("%b %d, %Y")
-        
-        tick_labels.append(time_label)
-    
-    return tick_positions, tick_labels
+    TODO: write docstring
 
-
-def plot_bursts(offsets, bursts, plot_title, output_path = False, 
-                plot_size_x = 20, plot_size_y = 10, plot_vertically = False, num_ticks = 10, rug_alpha = 0.45, dark = True):
+    ebursts is an edgebust dict from the SVO object
+    offsets is an offsets dict from the SVO object
     """
-    This is a docstring
-    """ 
-    tick_positions, tick_labels = generate_ticks(offsets, number_of_ticks=num_ticks)
+    bdf = pd.DataFrame(ebursts)
+    bdf[1] = pd.to_datetime(bdf[1], unit=unit)
+    bdf[2] = pd.to_datetime(bdf[2], unit=unit)
+    bdf.columns = ['level', 'start', 'end']
 
-    plt.figure(figsize=(plot_size_x, plot_size_y))
-    
-    if plot_vertically == True:
-        burst_axis = "y"
-        burst_lines = plt.vlines
-        burst_ticks = plt.yticks
-        time_ticks = plt.xticks
-        time_label = plt.xlabel
-        
-    else:
-        burst_axis = "x"
-        burst_lines = plt.hlines
-        burst_ticks = plt.xticks
-        time_ticks = plt.yticks
-        time_label = plt.ylabel  
+    odf = pd.DataFrame()
+    i = pd.to_datetime(offsets, unit='s')
+    odf['Date'], odf['Year'], odf['Month'], odf['Day'] = i.date, i.year, i.month, i.day
+    odf = odf.set_index(i)
+
+    return bdf, odf
 
 
-    if dark:
-        sns.set_style("ticks")
-        plt.style.use("dark_background")
-        rug_colour = "turquoise"
-        line_colour = '#caa0ff'
-    else:
-        sns.set_style("dark")
-        rug_colour = "#107ab0"
-        line_colour = 'k'
+def plot_bursts(odf, bdf, lowest_level=0, daterange=None, xrangeoffsets=3):
+    """
+    TODO: write docstring
 
-        
+    odf = an offsets dataframe 
+    bdf = an edgeburst dataframe
+    lowest_level = subset the burst dataframe with bursts greater than or equal to the specified level
+    daterange = a tuple with two elements: a start date and end date as *strings*. format is 'year-month-day'
+    xrangeoffsets = the number of days to add before and after the min and max x dates
+    """
+    if lowest_level > 0:
+        bdf = bdf[bdf['level'] >= lowest_level]
+        xmin = (min(bdf['start']) + pd.DateOffset(days=2)).date()
+        xmax = (max(bdf['start']) + pd.DateOffset(days=2)).date()
+        daterange = (xmin, xmax)
 
-    seaborn_plot = sns.rugplot(offsets, axis = burst_axis, height = 0.1, linewidths = 200, alpha = rug_alpha, colors = rug_colour).set_title(plot_title, fontsize = 20)
+    fig, (axa, axb) = plt.subplots(2, sharey=False, sharex=True)
+    fig.set_figwidth(10)
+    fig.set_figheight(6)
 
-    burst_ticks(tick_positions, tick_labels, rotation=35, fontsize = 15)
-    time_ticks(fontsize = 15)
-    time_label("Burst Intensity (0 = Lowest)", fontsize = 20)
+    formatter = mdates.DateFormatter("%b %d\n%Y")
+    axb.xaxis.set_major_formatter(formatter)
 
-    for entry in bursts:
-        burst_lines(entry[0], entry[1], entry[2], label=str(entry[0]), colors = line_colour, linewidths = 7.5)
+    # offsets plot
+    day_freq = odf.resample('D').size()
+    axa.plot(day_freq, color='#32363A')
+    axa.xaxis.set_major_formatter(formatter)
+    axa.xaxis_date()
+    axa.tick_params(axis='both', which='both', length=0)
+    axa.set_ylabel('Daily offsets')
+    if daterange:
+        axa.set_xlim(pd.Timestamp(daterange[0]), pd.Timestamp(daterange[1]))
 
-    if output_path != False:
-        final_path = output_path + "_" + plot_title.replace(" + ", "_").replace(" ", "_") + ".png"
-        seaborn_plot.get_figure().savefig(final_path, dpi=100)
+    # bursts plot
+    axb.bar(bdf['start'], bdf['level'], color='#32363A')
+    axb.set_ylabel('Burst level')
+    axb.tick_params(axis='both', which='both', length=0)
+    if daterange:
+        axb.set_xlim(pd.Timestamp(daterange[0]), pd.Timestamp(daterange[1]))
