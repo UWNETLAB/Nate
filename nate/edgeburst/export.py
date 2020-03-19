@@ -21,7 +21,7 @@ def df_export(bursts, offsets, lookup, from_svo = False):
         burst_list.append(v)
         offset_list.append(offsets[k])
     
-    if from_svo:
+    if from_svo == True:
         df = pd.DataFrame()
         df['svo_#'] = key_list
         df['svo'] = df['svo_#'].map(lookup)
