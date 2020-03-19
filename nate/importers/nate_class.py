@@ -23,7 +23,7 @@ from .edgelist_importers import EdgelistMixin
 from collections import namedtuple
 from typing import List, NamedTuple, Union
 
-NateData = NamedTuple('obs', ['text', 'time', 'unique_id'])
+#NamedTuple = NamedTuple('obs', ['text', 'time', 'unique_id'])
 
 
 class Nate(EdgelistMixin):
@@ -44,10 +44,10 @@ class Nate(EdgelistMixin):
 
     """
     
-    def __init__(self, data: List[NateData]):
+    def __init__(self, data: List[NamedTuple]):
         """Inits `nate`. See `nate` class docstring.
         """ 
-        self.data: List[NateData] = data
+        self.data: List[NamedTuple] = data
         self.texts = self.list_texts()
         self.time = self.list_time()
 
@@ -60,7 +60,7 @@ class Nate(EdgelistMixin):
         """
         pprint(self.data[start:end])
 
-    def __getitem__(self, index) -> NateData:
+    def __getitem__(self, index) -> NamedTuple:
         """[summary]
         
         Args:

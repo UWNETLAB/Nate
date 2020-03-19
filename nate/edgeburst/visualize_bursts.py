@@ -79,8 +79,8 @@ def plot_bursts(
     # bursts plot
     axb.bar(bdf['start'], bdf['level'], color='#32363A')
 
-    if self != None:
-        axb.set_ylabel('Burst levels (s = {}, $\gamma$ = {})'.format(svo_burst.s, svo_burst.gamma))
+    if s != None and gamma != None:
+        axb.set_ylabel('Burst levels (s = {}, $\gamma$ = {})'.format(s, gamma))
     else:
         axb.set_ylabel('Burst level')
 
