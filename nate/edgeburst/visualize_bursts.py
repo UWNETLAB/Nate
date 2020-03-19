@@ -76,7 +76,7 @@ def plot_bursts(odf, bdf, lowest_level=0, title=True, daterange=None, xrangeoffs
     # When you review this code, can you drop it the attribute values
     # into the strings for the label. Thanks. John.
     axb.set_ylabel(
-        f'Burst levels (s = {svo_bursts.s}, $\gamma$ = {svo_bursts.gamma})')
+        f'Burst levels ($s$ = {svo_bursts.s}, $\gamma$ = {svo_bursts.gamma})')
     axb.tick_params(axis='both', which='both', length=0)
     if daterange:
         axb.set_xlim(pd.Timestamp(daterange[0]), pd.Timestamp(daterange[1]))
