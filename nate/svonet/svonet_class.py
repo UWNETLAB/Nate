@@ -83,6 +83,5 @@ class SVOnet(BurstMixin):
         burst_instance.save_svo_graph = MethodType(save_svo_graph, burst_instance)
         burst_instance.create_svo_animation = MethodType(create_svo_animation, burst_instance)
         burst_instance.get_giant_component = MethodType(get_giant_component, burst_instance)
-        print(burst_instance.get_giant_component)
-
+        
         return burst_instance

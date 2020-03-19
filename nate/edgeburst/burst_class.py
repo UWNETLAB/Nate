@@ -5,6 +5,8 @@ from . import pybursts
 from ..utils.mp_helpers import mp
 from .visualize_bursts import plot_bursts
 from .export import df_export, max_bursts_export, all_bursts_export, offsets_export
+from nate.edgeburst import visualize_bursts
+from typing import Tuple, Dict
  
 def get_bursts(s, gamma, offset_list):
     """
@@ -38,6 +40,8 @@ class Bursts():
         self.s = s
         self.gamma = gamma
         self.from_svo = from_svo
+        self.bdf = None
+        self.odf = None
 
     def export_df(self):
         """
@@ -50,62 +54,95 @@ class Bursts():
         This is a docstring.
         """
         return max_bursts_export(self.edge_burst_dict, self.from_svo)
+
+    def to_pandas(self, key: Tuple, unit = 's') -> Tuple[Dict, Dict]:
+        """[summary]
         
-    def create_burst_plot(self, token_pairs, zoom_level = 0, output_path = False, plot_size_x = 20, plot_size_y = 10, plot_vertically = False, num_ticks = 10, rug_alpha = 0.35, dark = True):
+        Args:
+            key (Tuple): [description]
+            unit (str, optional): [description]. Defaults to 's'.
+        
+        Returns:
+            Tuple[Dict, Dict]: [description]
         """
-        `token_pair` accepts either a tuple or a list of tuples corresponding to one of the token-token pairs in the edge_burst_dict dictionary. 
-        If a list of valid token pairs is provided, one separate plot for each of the token pairs is produced. 
 
-        `zoom_level` (default = 0) splits the burst structure for each provided token-token pair into a series of separate bursts hierarchies, omitting any levels
-        below the indicated zoom_level. A zoom level of 0 does not omit any of the bursts (including the baseline burst, which spans the entirety of the supplied data)
-        """ 
-        if isinstance(token_pairs, tuple):
-            token_pairs = [token_pairs]
+        offsets = self.offset_dict[key]
+        bursts = self.edge_burst_dict[key]
+
+        return visualize_bursts.to_pandas(bursts, offsets, unit)
 
 
-        for entry in token_pairs:
+    def plot_bursts(self, key: Tuple, unit = 's', lowest_level = 0, daterange = None, xrangeoffsets = 3):
+        """[summary]
+        
+        Args:
+            key (Tuple): [description]
+            unit (str, optional): [description]. Defaults to 's'.
+            lowest_level (int, optional): [description]. Defaults to 0.
+            daterange ([type], optional): [description]. Defaults to None.
+            xrangeoffsets (int, optional): [description]. Defaults to 3.
+        """
+        odf, bdf = self.to_pandas(key, unit)
+        visualize_bursts.plot_bursts(odf, bdf, lowest_level, daterange, xrangeoffsets)
 
-            plot_title = "'{}' + '{}'  -  Full Plot (s = {}, gamma = {})".format(entry[0], entry[1], self.s, self.gamma)
 
-            plot_bursts(self.offset_dict[entry], self.edge_burst_dict[entry], plot_title, output_path, plot_size_x, plot_size_y, plot_vertically, num_ticks, rug_alpha, dark)
+    
+        
+    # def create_burst_plot(self, token_pairs, zoom_level = 0, output_path = False, plot_size_x = 20, plot_size_y = 10, plot_vertically = False, num_ticks = 10, rug_alpha = 0.35, dark = True):
+    #     """
+    #     `token_pair` accepts either a tuple or a list of tuples corresponding to one of the token-token pairs in the edge_burst_dict dictionary. 
+    #     If a list of valid token pairs is provided, one separate plot for each of the token pairs is produced. 
 
-            if zoom_level > 0: # When the zoom level is 0, we can just pass everything directly into the plotting function.
-                offsets = self.offset_dict[entry]
-                bursts = self.edge_burst_dict[entry]
+    #     `zoom_level` (default = 0) splits the burst structure for each provided token-token pair into a series of separate bursts hierarchies, omitting any levels
+    #     below the indicated zoom_level. A zoom level of 0 does not omit any of the bursts (including the baseline burst, which spans the entirety of the supplied data)
+    #     """ 
+    #     if isinstance(token_pairs, tuple):
+    #         token_pairs = [token_pairs]
 
-                burst_stack = []
-                temp_burst_stack = []
 
-                for burst in bursts:
-                    if burst[0] < zoom_level:
-                        pass
-                    elif burst[0] == zoom_level:
-                        if len(temp_burst_stack) > 0:
-                            burst_stack.append(temp_burst_stack)
-                        temp_burst_stack = []
-                        temp_burst_stack.append(burst)
-                    else:
-                        temp_burst_stack.append(burst)
+    #     for entry in token_pairs:
+
+    #         plot_title = "'{}' + '{}'  -  Full Plot (s = {}, gamma = {})".format(entry[0], entry[1], self.s, self.gamma)
+
+    #         plot_bursts(self.offset_dict[entry], self.edge_burst_dict[entry], plot_title, output_path, plot_size_x, plot_size_y, plot_vertically, num_ticks, rug_alpha, dark)
+
+    #         if zoom_level > 0: # When the zoom level is 0, we can just pass everything directly into the plotting function.
+    #             offsets = self.offset_dict[entry]
+    #             bursts = self.edge_burst_dict[entry]
+
+    #             burst_stack = []
+    #             temp_burst_stack = []
+
+    #             for burst in bursts:
+    #                 if burst[0] < zoom_level:
+    #                     pass
+    #                 elif burst[0] == zoom_level:
+    #                     if len(temp_burst_stack) > 0:
+    #                         burst_stack.append(temp_burst_stack)
+    #                     temp_burst_stack = []
+    #                     temp_burst_stack.append(burst)
+    #                 else:
+    #                     temp_burst_stack.append(burst)
                         
-                if len(temp_burst_stack) > 0:
-                    burst_stack.append(temp_burst_stack)
+    #             if len(temp_burst_stack) > 0:
+    #                 burst_stack.append(temp_burst_stack)
 
-                offset_stack = []
+    #             offset_stack = []
 
-                for burst in burst_stack:
-                    low = burst[0][1]
-                    high = burst[0][2]
-                    temp_offset_stack = []
-                    for offset in offsets:
-                        if low <= offset and offset <= high:
-                            temp_offset_stack.append(offset)
-                    offset_stack.append(temp_offset_stack)
+    #             for burst in burst_stack:
+    #                 low = burst[0][1]
+    #                 high = burst[0][2]
+    #                 temp_offset_stack = []
+    #                 for offset in offsets:
+    #                     if low <= offset and offset <= high:
+    #                         temp_offset_stack.append(offset)
+    #                 offset_stack.append(temp_offset_stack)
 
-                assert len(burst_stack) == len(offset_stack)
+    #             assert len(burst_stack) == len(offset_stack)
 
-                for i in range(0, len(burst_stack)):
-                    plot_title = ("'{}' + '{}'  -  Zoom Level {}, Slice {} of {} (s = {}, gamma = {})".format(entry[0], entry[1], zoom_level, i+1, len(burst_stack), self.s, self.gamma))
+    #             for i in range(0, len(burst_stack)):
+    #                 plot_title = ("'{}' + '{}'  -  Zoom Level {}, Slice {} of {} (s = {}, gamma = {})".format(entry[0], entry[1], zoom_level, i+1, len(burst_stack), self.s, self.gamma))
 
-                    plot_bursts(offset_stack[i], burst_stack[i], plot_title, output_path, plot_size_x, plot_size_y, plot_vertically, num_ticks, rug_alpha, dark)
+    #                 plot_bursts(offset_stack[i], burst_stack[i], plot_title, output_path, plot_size_x, plot_size_y, plot_vertically, num_ticks, rug_alpha, dark)
 
 

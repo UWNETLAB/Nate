@@ -21,7 +21,9 @@ from ..utils import nlp_helpers
 from ..utils.mp_helpers import mp, mp2
 from .edgelist_importers import EdgelistMixin
 from collections import namedtuple
-from typing import List, NamedTuple
+from typing import List, NamedTuple, Union
+
+NateData = NamedTuple('obs', ['text', 'time', 'unique_id'])
 
 
 class Nate(EdgelistMixin):
@@ -42,10 +44,10 @@ class Nate(EdgelistMixin):
 
     """
     
-    def __init__(self, data: List[NamedTuple]):
+    def __init__(self, data: List[NateData]):
         """Inits `nate`. See `nate` class docstring.
         """ 
-        self.data: List[NamedTuple] = data
+        self.data: List[NateData] = data
         self.texts = self.list_texts()
         self.time = self.list_time()
 
@@ -58,7 +60,7 @@ class Nate(EdgelistMixin):
         """
         pprint(self.data[start:end])
 
-    def __getitem__(self, index):
+    def __getitem__(self, index) -> NateData:
         """[summary]
         
         Args:
@@ -69,7 +71,7 @@ class Nate(EdgelistMixin):
         """
         return self.data[index]
         
-    def preprocess(self, bigrams = False, custom_filter = False, model="en_core_web_sm"):
+    def preprocess(self, bigrams: bool = False, custom_filter = False, model="en_core_web_sm"):
         """[summary]
         
         Args:
