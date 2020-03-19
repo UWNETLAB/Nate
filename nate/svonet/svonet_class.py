@@ -5,12 +5,14 @@ This is a MODULE docstring
 from .svo import findSVOs
 import pandas as pd
 from ..utils.mp_helpers import mp
+from ..utils.text_helpers import is_ascii
 from typing import List, Dict
 from .svo_offsets import generate_svo_offsets
 from ..edgeburst.burst_mixin import BurstMixin
 from ..edgeburst.burst_class import Bursts
 from .graph_svo import create_svo_animation, get_giant_component, save_svo_graph
 from types import MethodType
+
 
 def process_svo(sub_tags, obj_tags, doc):
     """
@@ -51,7 +53,7 @@ class SVOnet(BurstMixin):
         for i, doc in enumerate(self.sentences):
             for j, sent in enumerate(doc):
                 for k, svo_item in enumerate(self.svo_items[i][j][0]):
-                    if svo_item[0].isascii and svo_item[1].isascii and svo_item[2].isascii:
+                    if is_ascii(svo_item[0]) and is_ascii(svo_item[1]) and is_ascii(svo_item[2]):
                         svo_item = (svo_item[0].lower(), svo_item[1].lower(), svo_item[2].lower())                
                         doc_id.append(i)
                         sent_id.append(j)
