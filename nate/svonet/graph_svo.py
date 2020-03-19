@@ -13,8 +13,19 @@ color_dict = {
     6: "#000000"
 }
 
+def get_giant_component(self):
 
-def save_svo_graph(self, term_list, file_name = None, return_networkx = False):
+    G = nx.DiGraph()
+
+    svo_list = self.edge_burst_dict
+
+    for entry in svo_list:
+        G.add_edge(entry[0], entry[2], label = " "+ entry[1])
+
+    return G.subgraph(max(nx.connected_components(G), key=len)).copy()
+
+
+def save_svo_graph(self, term_list, use_giant = False, file_name = None, return_networkx = False):
     """
     This is a docstring.
     """
@@ -73,7 +84,7 @@ def find_max_burst(burst_list:list, offset_start, offset_end):
     return max(burst_levels)
 
 
-def create_svo_animation(self, term_list, num_ticks = 20, delay_per_tick = 3, file_name = "test", remove_images = True):
+def create_svo_animation(self, term_list, use_giant = False, num_ticks = 20, delay_per_tick = 3, file_name = "test", remove_images = True):
     """
     This is a docstring.
     """
