@@ -79,17 +79,13 @@ def plot_bursts(
     # bursts plot
     axb.bar(bdf['start'], bdf['level'], color='#32363A')
 
-    # Pierson, these are attributes in the SVO class. It will need to be expressed differently when
-    # hooked back up to the class, taking self...
-    # When you review this code, can you drop it the attribute values
-    # into the strings for the label. Thanks. John.
-
     if self != None:
         axb.set_ylabel('Burst levels (s = {}, $\gamma$ = {})'.format(svo_burst.s, svo_burst.gamma))
     else:
         axb.set_ylabel('Burst level')
 
     axb.tick_params(axis='both', which='both', length=0)
+
     if daterange:
         axb.set_xlim(pd.Timestamp(daterange[0]), pd.Timestamp(daterange[1]))
 
