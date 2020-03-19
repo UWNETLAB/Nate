@@ -29,9 +29,34 @@ class SVOnet(BurstMixin):
     This is a docstring.
     """
     def __init__(self, sentences, svo_items, timestamps):
-        self.sentences = sentences
-        self.svo_items = svo_items
-        self.times = timestamps
+        
+        self.doc_ids = []
+        self.sent_ids = []
+        self.sentences = []
+        self.svo_items = []
+        self.times = []
+        self.subjects = []
+        self.verbs = []
+        self.objects = []
+        self.sub_ent_types = []
+        self.obj_ent_types = []
+        for i, doc in enumerate(sentences):
+            for j, sent in enumerate(doc):
+                if len(svo_items[i][j][0]) > 0:
+                    for k, svo_item in enumerate(svo_items[i][j][0]):
+                        if is_ascii(svo_item[0]) and is_ascii(svo_item[1]) and is_ascii(svo_item[2]):
+                            svo_item = (svo_item[0].lower(), svo_item[1].lower(), svo_item[2].lower())
+                            self.doc_ids.append(i)
+                            self.sent_ids.append(j)
+                            self.sentences.append(sent)
+                            self.times.append(timestamps[i])
+                            self.svo_items.append(svo_item)
+                            self.subjects.append(svo_item[0])
+                            self.verbs.append(svo_item[1])
+                            self.objects.append(svo_item[2])
+                            self.sub_ent_types.append(svo_items[i][j][1][k])
+                            self.obj_ent_types.append(svo_items[i][j][2][k])
+
         self.from_svo = True
 
 
@@ -40,34 +65,9 @@ class SVOnet(BurstMixin):
         This is a docstring.
         """
         df = pd.DataFrame()
-        doc_id = []
-        sent_id = []
-        sent_list_flat = []
-        svo_list_flat = []
-        time_list_flat = []
-        sub_list_flat = []
-        verb_list_flat = []
-        obj_list_flat = []
-        sub_ent_types = []
-        obj_ent_types = []
-        for i, doc in enumerate(self.sentences):
-            for j, sent in enumerate(doc):
-                for k, svo_item in enumerate(self.svo_items[i][j][0]):
-                    if is_ascii(svo_item[0]) and is_ascii(svo_item[1]) and is_ascii(svo_item[2]):
-                        svo_item = (svo_item[0].lower(), svo_item[1].lower(), svo_item[2].lower())                
-                        doc_id.append(i)
-                        sent_id.append(j)
-                        sent_list_flat.append(sent)
-                        time_list_flat.append(self.times[i])
-                        svo_list_flat.append(svo_item)
-                        sub_list_flat.append(svo_item[0])
-                        verb_list_flat.append(svo_item[1])
-                        obj_list_flat.append(svo_item[2])
-                        sub_ent_types.append(self.svo_items[i][j][1][k])
-                        obj_ent_types.append(self.svo_items[i][j][2][k])
 
-        df['doc_id'], df['sent_id'], df ['sentence'], df['svo'], df['timestamp'] = doc_id, sent_id, sent_list_flat, svo_list_flat, time_list_flat
-        df['subject'], df['sub_type'], df['verb'], df['object'], df['obj_type'] = sub_list_flat, sub_ent_types, verb_list_flat, obj_list_flat, obj_ent_types
+        df['doc_id'], df['sent_id'], df ['sentence'], df['svo'], df['timestamp'] = self.doc_ids, self.sent_ids, self.sentences, self.svo_items, self.times
+        df['subject'], df['sub_type'], df['verb'], df['object'], df['obj_type'] = self.subjects, self.sub_ent_types, self.verbs, self.objects, self.obj_ent_types
         
         df['datetime'] = pd.to_datetime(df['timestamp'], unit='s')
         

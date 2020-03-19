@@ -19,13 +19,9 @@ def generate_svo_offsets(svo_list:List, time:List, minimum_offsets):
     start = marktime()
     
     svo_dict = defaultdict(list)
-    
-    for i, doc in enumerate(svo_list):
-        for sent in doc:
-            if len(sent[0]) > 0:
-                svo_dict[sent[0][0]].append(time[i])
+    for i, svo in enumerate(svo_list):
+        svo_dict[svo].append(time[i])
             
-    
     svo_int_dict, lookup = text_to_int(svo_dict)
 
     offsets = {k: v for k, v in svo_int_dict.items() if len(v) >= minimum_offsets}

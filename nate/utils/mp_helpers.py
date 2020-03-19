@@ -22,6 +22,9 @@ def mp(items, function, *args):
     do = delayed(partial(function, *args))
     tasks = (do(batch) for batch in partitions)
     temp = executor(tasks)
+    
+    # todo: add error catch/message for zero results
+    
     if isinstance(temp[0], dict):
         results = {}
         for batch in temp:

@@ -24,6 +24,7 @@ class BurstMixin():
 
         If you wish to detect bursts using a variety of different values for the s and gamma parameters, instead utilize the `multi_bursts` method contained in this class. 
         """
+        self.from_svo = from_svo
         offset_dict_strings = offsets_export(self.offset_dict, self.lookup, self.from_svo)
         edge_burst_dict_int = detect_bursts(self.offset_dict, s, gamma)
         edge_burst_dict_strings = all_bursts_export(edge_burst_dict_int, self.offset_dict, self.lookup, self.from_svo)
