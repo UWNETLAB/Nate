@@ -9,27 +9,31 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 
-def to_pandas(ebursts, offsets, unit='s'):
+def to_pandas(ebursts, offsets, svo, unit='s'):
     """
     TODO: write docstring
 
     ebursts is an edgebust dict from the SVO object
     offsets is an offsets dict from the SVO object
     """
+    svos = " | ".join(svo)
+
     bdf = pd.DataFrame(ebursts)
     bdf[1] = pd.to_datetime(bdf[1], unit=unit)
     bdf[2] = pd.to_datetime(bdf[2], unit=unit)
     bdf.columns = ['level', 'start', 'end']
+    bdf['svo'] = svos
 
     odf = pd.DataFrame()
     i = pd.to_datetime(offsets, unit='s')
     odf['Date'], odf['Year'], odf['Month'], odf['Day'] = i.date, i.year, i.month, i.day
     odf = odf.set_index(i)
+    odf['svo'] = svos
 
     return bdf, odf
 
 
-def plot_bursts(odf, bdf, lowest_level=0, daterange=None, xrangeoffsets=3):
+def plot_bursts(odf, bdf, lowest_level=0, title=True, daterange=None, xrangeoffsets=3):
     """
     TODO: write docstring
 
@@ -39,6 +43,8 @@ def plot_bursts(odf, bdf, lowest_level=0, daterange=None, xrangeoffsets=3):
     daterange = a tuple with two elements: a start date and end date as *strings*. format is 'year-month-day'
     xrangeoffsets = the number of days to add before and after the min and max x dates
     """
+    svo_title = str(set(bdf['svo']).pop())
+
     if lowest_level > 0:
         bdf = bdf[bdf['level'] >= lowest_level]
         xmin = (min(bdf['start']) + pd.DateOffset(days=2)).date()
@@ -68,3 +74,8 @@ def plot_bursts(odf, bdf, lowest_level=0, daterange=None, xrangeoffsets=3):
     axb.tick_params(axis='both', which='both', length=0)
     if daterange:
         axb.set_xlim(pd.Timestamp(daterange[0]), pd.Timestamp(daterange[1]))
+
+    fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+
+    if title is True:
+        fig.suptitle(f'SVO: {svo_title}', fontsize=12, ha='center')
