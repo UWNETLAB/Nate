@@ -6,7 +6,7 @@ import pandas
 from typing import List, Union
 from .named_tuple_generator import tupleize
 from abc import ABC, abstractmethod
-from .nate_class import nate
+from .nate_class import Nate
 from .timestamp_process import convert_times
   
  
@@ -36,7 +36,7 @@ def process_dataframe(temp_data, text:str, unique_id:str = None,  time:str = Non
         series_dict['time'] = convert_times(series_dict['times'])
         del series_dict['times']
 
-    return nate(tupleize(series_dict))
+    return Nate(tupleize(series_dict))
 
 
 def import_dataframe(input_dataframe:pandas.DataFrame, text:str, unique_id:str = None, time:str = None, columns_to_keep:List = []):

@@ -4,9 +4,9 @@ This is a MODULE docstring
 from typing import List, Dict
 import pickle
 from ..utils.mp_helpers import mp
-from ..edgeburst.burst_mixin import burst_mixin
+from ..edgeburst.burst_mixin import BurstMixin
 
-class cooc(burst_mixin):
+class Cooc(BurstMixin):
     """
     This is a docstring
     """

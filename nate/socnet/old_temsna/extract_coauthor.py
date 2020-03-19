@@ -17,11 +17,10 @@ RCY = mk.RecordCollection('../input/', cached = False)
 
 RC = RCY.yearSplit(2008,2019)
 
-nx.
 
 coauth = RC.networkCoAuthor()
 # coauth.remove_nodes_from(list(nx.isolates(coauth)))   #temporarily commented out until we decide whether to NLP entire network or just giant component
-coauth = max(nx.connected_component_subgraphs(coauth), key=len)  #temporarily added - see above
+#coauth = max(nx.connected_component_subgraphs(coauth), key=len)  #temporarily added - see above
 #partition = community.best_partition(coauth)
 mk.writeGraph(coauth, '../output/coauthorship')
 

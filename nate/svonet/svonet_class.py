@@ -7,8 +7,8 @@ import pandas as pd
 from ..utils.mp_helpers import mp
 from typing import List, Dict
 from .svo_offsets import generate_svo_offsets
-from ..edgeburst.burst_mixin import burst_mixin
-from ..edgeburst.burst_class import bursts
+from ..edgeburst.burst_mixin import BurstMixin
+from ..edgeburst.burst_class import Bursts
 from .graph_svo import create_svo_animation, get_giant_component, save_svo_graph
 from types import MethodType
 
@@ -22,7 +22,7 @@ def process_svo(sub_tags, obj_tags, doc):
     return (sentences, svo_items)
 
 
-class svonet(burst_mixin):
+class SVOnet(BurstMixin):
     """
     This is a docstring.
     """

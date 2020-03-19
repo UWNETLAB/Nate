@@ -28,7 +28,7 @@ def process_edgelist(temp_data, From, To, Weight = None):
     return tupleize(series_dict, "edge")
 
 
-class edgelist_mixin():
+class EdgelistMixin():
     """
     This is a docstring
     """

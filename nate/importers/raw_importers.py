@@ -3,7 +3,7 @@ This is a MODULE docstring
 """
 from typing import List, Union
 from .named_tuple_generator import define_named_tuple
-from .nate_class import nate
+from .nate_class import Nate
 from .timestamp_process import convert_time
 
 text_only_namedtuple = define_named_tuple('obs', ['text'])
@@ -15,7 +15,7 @@ def import_text(strings):
     if isinstance(strings, str):
         strings = [strings]
     
-    return nate([text_only_namedtuple(string) for string in strings])
+    return Nate([text_only_namedtuple(string) for string in strings])
  
 
 def import_files(files):
@@ -32,7 +32,7 @@ def import_files(files):
         with open(filepath, 'r', encoding='utf-8') as stream:
             obs_list.append(text_only_namedtuple(stream.read().replace('\n', '')))
 
-    return nate(obs_list)
+    return Nate(obs_list)
 
 
 def import_dict_of_dicts(dictionary, text, time = None, values_to_keep = []):
@@ -70,7 +70,7 @@ def import_dict_of_dicts(dictionary, text, time = None, values_to_keep = []):
 
         obs_list.append(dict_namedtuple(key, *filtered_values))
 
-    return nate(obs_list)
+    return Nate(obs_list)
 
 
 def import_lists(text:List,  time:List = None, unique_id:List = None):

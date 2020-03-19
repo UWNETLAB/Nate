@@ -2,10 +2,10 @@
 This is a MODULE docstring
 """
 from .export import df_export, max_bursts_export, all_bursts_export, offsets_export
-from .burst_class import bursts, detect_bursts
+from .burst_class import Bursts, detect_bursts
  
 
-class burst_mixin():
+class BurstMixin():
     
     def __init__(self):
         self.offset_dict: dict
@@ -28,7 +28,7 @@ class burst_mixin():
         edge_burst_dict_int = detect_bursts(self.offset_dict, s, gamma)
         edge_burst_dict_strings = all_bursts_export(edge_burst_dict_int, self.offset_dict, self.lookup, self.from_svo)
 
-        return bursts(offset_dict_strings, edge_burst_dict_strings, s, gamma, self.from_svo)
+        return Bursts(offset_dict_strings, edge_burst_dict_strings, s, gamma, self.from_svo)
 
 
     def multi_burst(self, token_pairs, s, gamma):
@@ -48,7 +48,7 @@ class burst_mixin():
 
         for i in range(0,len(s)):
             run_name = "{}_{}".format(str(s[i]), str(gamma[i]))
-            run_result = bursts(self.offset_dict,self.lookup, s[i], gamma[i], self.from_svo)
+            run_result = Bursts(self.offset_dict,self.lookup, s[i], gamma[i], self.from_svo)
             run_dict[run_name] = run_result
 
         return run_dict

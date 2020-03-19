@@ -28,7 +28,7 @@ def detect_bursts(offsets, s = 2, gamma = 1):
 
     return edge_bursts
 
-class bursts():
+class Bursts():
     """
     This is a docstring.
     """
