@@ -13,6 +13,23 @@ color_dict = {
     6: "#000000"
 }
 
+
+def find_max_burst(burst_list:list, offset_start, offset_end):
+    """
+    This is a docstring.
+    """
+    
+    burst_levels = set()
+    burst_levels.add(0)
+    
+    for burst in burst_list:
+        if offset_start < burst[1] < offset_end or offset_start < burst[2] < offset_end:
+            burst_levels.add(burst[0])
+
+    return max(burst_levels)
+
+
+
 def get_giant_component(self):
 
     G = nx.DiGraph()
@@ -22,7 +39,7 @@ def get_giant_component(self):
     for entry in svo_list:
         G.add_edge(entry[0], entry[2], label = " "+ entry[1])
 
-    return G.subgraph(max(nx.connected_components(G), key=len)).copy()
+    return G.subgraph(max(nx.weakly_connected_components(G), key=len)).copy()
 
 
 def save_svo_graph(self, term_list, use_giant = False, file_name = None, return_networkx = False):
@@ -69,21 +86,6 @@ def save_svo_graph(self, term_list, use_giant = False, file_name = None, return_
         N.write(file_name + "_svo_visualization.png", prog='dot', format='png')
 
 
-def find_max_burst(burst_list:list, offset_start, offset_end):
-    """
-    This is a docstring.
-    """
-    
-    burst_levels = set()
-    burst_levels.add(0)
-    
-    for burst in burst_list:
-        if offset_start < burst[1] < offset_end or offset_start < burst[2] < offset_end:
-            burst_levels.add(burst[0])
-
-    return max(burst_levels)
-
-
 def create_svo_animation(self, term_list, use_giant = False, num_ticks = 20, delay_per_tick = 3, file_name = "test", remove_images = True):
     """
     This is a docstring.
@@ -91,7 +93,10 @@ def create_svo_animation(self, term_list, use_giant = False, num_ticks = 20, del
 
     file_name = str(file_name)
 
-    G = save_svo_graph(self, term_list, return_networkx=True)
+    if use_giant:
+        G = get_giant_component(self)
+    else:
+        G = save_svo_graph(self, term_list, return_networkx=True)
 
     offset_list = set()
     svo_keys = []

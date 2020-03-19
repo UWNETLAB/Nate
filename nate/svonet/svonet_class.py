@@ -5,7 +5,7 @@ from typing import List, Dict
 from .svo_offsets import generate_svo_offsets
 from ..edgeburst.burst_mixin import burst_mixin
 from ..edgeburst.burst_class import bursts
-from .graph_svo import save_svo_graph, create_svo_animation, get_giant_component
+from .graph_svo import create_svo_animation, get_giant_component, save_svo_graph
 from types import MethodType
 
 def process_svo(sub_tags, obj_tags, doc):
