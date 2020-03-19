@@ -69,7 +69,7 @@ class Bursts():
         offsets = self.offset_dict[key]
         bursts = self.edge_burst_dict[key]
 
-        return visualize_bursts.to_pandas(bursts, offsets, unit)
+        return visualize_bursts.to_pandas(bursts, offsets, key, unit)
 
 
     def plot_bursts(self, 
