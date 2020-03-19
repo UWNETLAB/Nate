@@ -5,9 +5,10 @@ from joblib import Parallel, delayed, cpu_count
 from itertools import chain
 from spacy.util import minibatch
 from functools import partial
+from typing import Union, List, Dict
 
 # note: functions must now accept `*args` first and batched `items` come last
-def mp(items, function, *args):
+def mp(items, function, *args) -> Union[List, Dict]:
     """
     This is a docstring.
     """

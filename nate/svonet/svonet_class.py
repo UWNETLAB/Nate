@@ -2,6 +2,7 @@
 This is a MODULE docstring
 """
 
+from nate.edgeburst.burst_class import Bursts
 from .svo import findSVOs
 import pandas as pd
 from ..utils.mp_helpers import mp
@@ -9,7 +10,6 @@ from ..utils.text_helpers import is_ascii
 from typing import List, Dict
 from .svo_offsets import generate_svo_offsets
 from ..edgeburst.burst_mixin import BurstMixin
-from ..edgeburst.burst_class import Bursts
 from .graph_svo import create_svo_animation, get_giant_component, save_svo_graph
 from types import MethodType
 
@@ -78,7 +78,7 @@ class SVOnet(BurstMixin):
         return df
         
 
-    def svo_to_burst(self, minimum_offsets = 20, s = 2, gamma = 1): 
+    def svo_to_burst(self, minimum_offsets = 20, s = 2, gamma = 1) -> Bursts: 
             
         self.offset_dict, self.lookup = generate_svo_offsets(self.svo_items, self.times, minimum_offsets)
 

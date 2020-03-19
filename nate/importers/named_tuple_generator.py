@@ -3,14 +3,14 @@ This is a MODULE docstring
 """
 
 from collections import namedtuple
-from typing import List, Tuple, NamedTuple
+from typing import List, NamedTuple
 
 
-def define_named_tuple(observation_name, attribute_names:List[str]) -> NamedTuple:
+def define_named_tuple(observation_name, attribute_names:List[str]):
     """
     This is a docstring.
     """
-    output_tuple:NamedTuple = namedtuple(observation_name, attribute_names)
+    output_tuple = namedtuple(observation_name, attribute_names)
 
     return output_tuple
 

@@ -21,16 +21,14 @@ from ..utils import nlp_helpers
 from ..utils.mp_helpers import mp, mp2
 from .edgelist_importers import EdgelistMixin
 from collections import namedtuple
-from typing import List, NamedTuple, Union
-
-#NamedTuple = NamedTuple('obs', ['text', 'time', 'unique_id'])
+from typing import List, NamedTuple, Union, Dict
 
 
 class Nate(EdgelistMixin):
     """The `nate` package's eponymous base class. 
     
     Each of the `nate` package's importer functions returns a populated instance
-    of the `nate` class. This class contains the data and methods necessary to 
+    of the `Nate` class. This class contains the data and methods necessary to 
     initialize any of the subsidary pipelines for network analysis with text.
 
     Calling an instance of this class directly is functionally identical to 
@@ -41,53 +39,168 @@ class Nate(EdgelistMixin):
         data: A list of `NamedTuples` containing the project's formatted dataset.
         texts: A list of text documented, derived from the `data` attribute.
         time: A list of epoch times, derived from the `data` attribute.
+        post_nlp: A collection of `spaCy` doc objects, produced by one of the
+            `Nate`'s pipelines.
 
     """
     
-    def __init__(self, data: List[NamedTuple]):
-        """Inits `nate`.
+    def __init__(self, data: List):
+        """Inits `Nate`.
         
-        See `nate` class docstring.
+        See `Nate` class docstring.
         """ 
-        self.data: List[NamedTuple] = data
+        self.data: List = data
         self.texts = self.list_texts()
         self.time = self.list_time()
+        self.post_nlp: List | Dict
 
 
     def __call__(self, start: int = 0, end: int = 5):
-        """[summary]
+        """Returns complete 'rows' from the contained dataset. 
         
         Args:
-            start (int, optional): [description]. Defaults to 0.
-            end (int, optional): [description]. Defaults to 5.
+            start (int, optional): The index number of the first returned row. Defaults to 0.
+            end (int, optional): The index number of the last returned row. Defaults to 5.
         """
         pprint(self.data[start:end])
 
 
-    def __getitem__(self, index: Union[slice, int]) -> NamedTuple:
-        """[summary]
+    def __getitem__(self, index: slice | int) -> List:
+        """Called when `Nate` is accessed using indexing or slicing.
         
         Args:
-            index (Union[slice, int]): [description]
+            index (slice): A range of integers used to retrieve corresponding entries
+                in the dataset.
         
         Returns:
-            NamedTuple: [description]
+            A list of named tuples, each corresponding to one row in the dataset. 
         """
+
         return self.data[index]
 
 
+    def head(self, start:int = 0, end:int = 5):
+        """Returns complete 'rows' from the contained dataset. 
+        
+        Args:
+            start (int, optional): The index number of the first returned row. 
+                Defaults to 0.
+            end (int, optional): The index number of the last returned row. 
+                Defaults to 5.
+        """
+        pprint(self.data[start:end])
+
+
+    def list_texts(self, start:int = None, end:int = None) -> List:
+        """Returns the 'text' field from data in the range provided.
+
+        Note that if both `start` and `end` are left at their default (None),
+        the text 'column' of the entire dataset will be returned. If an 
+        integer is supplied for `start`, but `end` is None, every row with an 
+        index greater than `start` will be returned. The same applies in reverse:
+        if `start` is None, but `end` is an integer, every row with an index 
+        lesser than `end` will be returned.
+        
+        Args:
+            start (int, optional): The index number of the first returned row. 
+                Defaults to None.
+            end (int, optional): The index number of the last returned row. 
+                Defaults to None.
+        
+        Returns:
+            List: A list of strings.
+        """
+        return [str(i.text) for i in self.data[start:end]]
+
+
+    def list_time(self, start:int = None, end:int = None) -> List:
+        """Returns the 'time' field from data in the range provided.
+
+        Note that if both `start` and `end` are left at their default (None),
+        the text 'column' of the entire dataset will be returned. If an 
+        integer is supplied for `start`, but `end` is None, every row with an 
+        index greater than `start` will be returned. The same applies in reverse:
+        if `start` is None, but `end` is an integer, every row with an index 
+        lesser than `end` will be returned.
+        
+        Args:
+            start (int, optional): The index number of the first returned row. 
+                Defaults to None.
+            end (int, optional): The index number of the last returned row. 
+                Defaults to None.
+        
+        Returns:
+            List: A list of integers, representing time in epoch format (number 
+                of seconds elapsed since midnight UTC on 1 January 1970)
+        """
+        return [i.time for i in self.data[start:end]]
+
+
+    def list_ids(self, start:int = None, end:int = None) -> List: 
+        """Returns the 'unique_id' field from data in the range provided.
+
+        Note that if both `start` and `end` are left at their default (None),
+        the text 'column' of the entire dataset will be returned. If an 
+        integer is supplied for `start`, but `end` is None, every row with an 
+        index greater than `start` will be returned. The same applies in reverse:
+        if `start` is None, but `end` is an integer, every row with an index 
+        lesser than `end` will be returned.
+        
+        Args:
+            start (int, optional): The index number of the first returned row. 
+                Defaults to None.
+            end (int, optional): The index number of the last returned row. 
+                Defaults to None.
+        
+        Returns:
+            List: A list of unique IDs.
+        """
+        return [i.unique_id for i in self.data[start:end]]
+
+
+    def list_column(self, column_name:str, start:int = None, end:int = None) -> List: 
+        """Returns the named field from data in the range provided.
+
+        Note that if both `start` and `end` are left at their default (None),
+        the text 'column' of the entire dataset will be returned. If an 
+        integer is supplied for `start`, but `end` is None, every row with an 
+        index greater than `start` will be returned. The same applies in reverse:
+        if `start` is None, but `end` is an integer, every row with an index 
+        lesser than `end` will be returned.
+        
+        Args:
+            column_name (str): The name of the field (or 'column') to be 
+                returned.
+            start (int, optional): The index number of the first returned row. 
+                Defaults to None.
+            end (int, optional): The index number of the last returned row. 
+                Defaults to None.
+        
+        Returns:
+            List: A list of entries from the named 'column'.
+        """
+        return [getattr(i, column_name) for i in self.data[start:end]]
+
+    
     def preprocess(
         self, 
         bigrams: bool = False, 
-        custom_filter: Union[bool, object] = False, 
+        custom_filter: bool = False, 
         model: str = "en_core_web_sm"
         ):
-        """[summary]
+        """Defines a `spaCy` pipeline and uses it to process text data.
+
+        This method *must* be called before any of the other non-`SVOnet` pipelines
+        in the `nate` package can be instantiated. 
         
         Args:
-            bigrams (bool, optional): [description]. Defaults to False.
-            custom_filter (Union[bool, object], optional): [description]. Defaults to False.
-            model (str, optional): [description]. Defaults to "en_core_web_sm".
+            bigrams (bool, optional): If True, bigrams will be used
+                in place of individual tokens. Defaults to False.
+            custom_filter (bool, optional): If supplied, the user-defined custom filter
+                will be used instead of the default filter. Defaults to False.
+            model (str, optional): Determines the trained `spaCy` model which will be applied. 
+                Defaults to "en_core_web_sm", which is suitable for english-language
+                applications. Other models can be found on the `spaCy` project's homepage.  
         """
         self.bigrams = bigrams
         self.model = model
@@ -110,78 +223,24 @@ class Nate(EdgelistMixin):
             self.post_nlp = mp(self.texts, nlp_helpers.spacy_process, self.nlp)
 
 
-    def head(self, start:int = 0, end:int = 5):
-        """[summary]
+    def cooc_pipeline(self, minimum_offsets: int = 20) -> Cooc: 
+        """Instantiates, initializes, and returns an instance of the `Cooc` pipeline.
+
+        The `Cooc` pipeline is used for examining patterns of token/term co-occurrence
+        in a text corpus. 
+
+        *Note: this method will not resolve unless the containing instance of the `Nate`
+        class has been supplied with valid `post_nlp` data, as produced by the
+        `preprocessing` method.*
         
         Args:
-            start (int, optional): [description]. Defaults to 0.
-            end (int, optional): [description]. Defaults to 5.
-        """
-        pprint(self.data[start:end])
-
-
-    def list_texts(self, start:int = None, end:int = None) -> List[str]:
-        """[summary]
-        
-        Args:
-            start (int, optional): [description]. Defaults to None.
-            end (int, optional): [description]. Defaults to None.
-        
+            minimum_offsets (int, optional): The minimum number of 'offsets' - or occurrences
+                in the dataset - a given token/term pair must have in order to be retained.
+                Lower values retain more of the dataset, but at considerable cost in computing
+                time. Defaults to 20.
+ 
         Returns:
-            List[str]: [description]
-        """
-        return [str(i.text) for i in self.data[start:end]]
-
-
-    def list_time(self, start:int = None, end:int = None) -> List[str]:
-        """[summary]
-        
-        Args:
-            start (int, optional): [description]. Defaults to None.
-            end (int, optional): [description]. Defaults to None.
-        
-        Returns:
-            List[str]: [description]
-        """
-        return [i.time for i in self.data[start:end]]
-
-
-    def list_ids(self, start:int = None, end:int = None) -> List: 
-        """[summary]
-        
-        Args:
-            start (int, optional): [description]. Defaults to None.
-            end (int, optional): [description]. Defaults to None.
-        
-        Returns:
-            List: [description]
-        """
-        return [i.unique_id for i in self.data[start:end]]
-
-
-    def list_column(self, column_name:str, start:int = None, end:int = None) -> List: 
-        """[summary]
-        
-        Args:
-            column_name (str): [description]
-            start (int, optional): [description]. Defaults to None.
-            end (int, optional): [description]. Defaults to None.
-        
-        Returns:
-            List: [description]
-        """
-        return [getattr(i, column_name) for i in self.data[start:end]]
-
-
-    def cooc_pipeline(self, minimum_offsets: int = 20, custom_filter: Union[bool, object] = False) -> Cooc: 
-        """[summary]
-        
-        Args:
-            minimum_offsets (int, optional): [description]. Defaults to 20.
-            custom_filter (Union[bool, object], optional): [description]. Defaults to False.
-        
-        Returns:
-            Cooc: [description]
+            Cooc: An instance of the `Cooc` class.
         """
             
         offset_dict, lookup = cooc_offsets(self.post_nlp, self.time, minimum_offsets)
@@ -190,37 +249,64 @@ class Nate(EdgelistMixin):
 
 
     def socnet_pipeline(self, subset: int = None) -> SOCnet:
-        """[summary]
+        """Instantiates, initializes, and returns an instance of the `SOCnet` pipeline.
 
-        Returns an instance of the 'socnet_pipe' class, initialized with the relevant data contained.
-        The 'Subset' parameter allows users to specify the maximum number of edges to calculate.
+        Returns an instance of the 'socnet_pipe' class, initialized with the relevant 
+        data contained. The `SOCnet` pipeline is used for examining the impact of 
+        intellectual or topical diversity on nodes in a network.
+
+        *Note: this method will not resolve unless the containing instance of the `Nate`
+        class has been supplied with valid `post_nlp` data, as produced by the
+        `preprocessing` method.*
+
+        *Note: this method will not resolve unless the containing instance of the `Nate`
+        class has been supplied with a valid edgelist, either directly or via one of
+        the edgelist importer methods.*
         
         Args:
-            subset (int, optional): [description]. Defaults to None.
+            subset (int, optional): Allows users to specify the maximum number of edges 
+                to calculate. Defaults to None, which processes the entire dataset.
         
         Returns:
-            SOCnet: [description]
+            SOCnet: An instance of the `SOCnet` class.
         """
         return SOCnet(self.data, self.edgelist[slice(subset)])
 
 
     def svo_pipeline(
         self, 
-        sub_tags: Union[bool, List] = False, 
-        obj_tags: Union[bool, List] = False, 
+        sub_tags: bool = False, 
+        obj_tags: bool = False, 
         bigrams: bool = False, 
         model: str ="en_core_web_sm"
         ) -> SVOnet:
-        """[summary]
+        """Instantiates, initializes, and returns an instance of the `SVOnet` pipeline.
+
+        The `SVOnet` pipeline is used to explore the narrative structures present in 
+        a text corpus. It does so by locating semantic content in the supplied documents
+        in the form of Subject -> Verb -> Object, where the subject performs the 
+        verb to or with respect to the object. 
+        
+        The `SVOnet` pipeline places unusual requirements on `spaCy`, and thus cannot
+        be supplied with NLP data from the `preprocessing` method. Instead, calling 
+        `svo_pipeline` processes text data using an internal call to `spaCy`, and 
+        uses the resulting output to initialize and instance of the `SVOnet` class. 
         
         Args:
-            sub_tags (Union[bool, List], optional): [description]. Defaults to False.
-            obj_tags (Union[bool, List], optional): [description]. Defaults to False.
-            bigrams (bool, optional): [description]. Defaults to False.
-            model (str, optional): [description]. Defaults to "en_core_web_sm".
-        
+            sub_tags (bool, optional): If not False, an optional list of user-defined 
+                tags is passed `spaCy` to, and is used to isolate subjects in the text 
+                data. Defaults to False.
+            obj_tags (bool, optional): If not False, an optional list of user-defined 
+                tags is passed `spaCy` to, and is used to isolate objects in the text 
+                data. Defaults to False.
+            bigrams (bool, optional): If True, bigrams will be used in place of 
+                individual tokens. Defaults to False.
+            model (str, optional): Determines the trained `spaCy` model which will be applied. 
+                Defaults to "en_core_web_sm", which is suitable for english-language
+                applications. Other models can be found on the `spaCy` project's homepage.  
+                
         Returns:
-            SVOnet: [description]
+            SVOnet: An instance of the `SVOnet` class.
         """
 
         # add error check for custom_filter, which cannot be applied in this step for svo

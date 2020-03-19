@@ -4,9 +4,9 @@ This is a MODULE docstring
 from . import pybursts
 from ..utils.mp_helpers import mp
 from .visualize_bursts import plot_bursts
-from .export import df_export, max_bursts_export, all_bursts_export, offsets_export
+from .export import df_export, max_bursts_export
 from nate.edgeburst import visualize_bursts
-from typing import Tuple, Dict
+from typing import Tuple, Dict, Callable
  
 def get_bursts(s, gamma, offset_list):
     """
@@ -43,6 +43,9 @@ class Bursts():
         self.bdf = None
         self.odf = None
         self.lookup = lookup
+        self.save_svo_graph: Callable
+        self.create_svo_animation: Callable
+        self.get_giant_component: Callable
 
     def export_df(self):
         """

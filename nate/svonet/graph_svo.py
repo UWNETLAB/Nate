@@ -3,10 +3,10 @@ This is a MODULE docstring
 """
 
 import networkx as nx
-from PIL import Image, ImageDraw
+from PIL import Image
 from os import remove
 from typing import Tuple, List
-from datetime import datetime, timezone
+from datetime import datetime
 
 color_dict = {
     0: "#F62D2D",

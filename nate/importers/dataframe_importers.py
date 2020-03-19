@@ -5,7 +5,6 @@ This is a MODULE docstring
 import pandas
 from typing import List, Union
 from .named_tuple_generator import tupleize
-from abc import ABC, abstractmethod
 from .nate_class import Nate
 from .timestamp_process import convert_times
   
