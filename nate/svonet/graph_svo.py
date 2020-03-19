@@ -3,9 +3,10 @@ This is a MODULE docstring
 """
 
 import networkx as nx
-from ..edgeburst.visualize_bursts import generate_ticks
 from PIL import Image, ImageDraw
 from os import remove
+from typing import Tuple, List
+from datetime import datetime, timezone
 
 color_dict = {
     0: "#F62D2D",
@@ -16,6 +17,27 @@ color_dict = {
     5: "#1F0033",
     6: "#000000"
 }
+
+def generate_ticks(offsets, number_of_ticks = 10) -> Tuple[List[int], List[str]]:
+    """
+    This is a docstring
+    """ 
+    chunk_size = round((max(offsets) - min(offsets))/number_of_ticks)
+
+    tick_positions:List[int] = []
+
+    for i in range(0, number_of_ticks + 1):
+        tick_positions.append(int(min(offsets) + (i * chunk_size)))
+
+    tick_labels:List[str] = []
+
+    for tick in tick_positions:
+
+        time_label = datetime.utcfromtimestamp(tick).strftime("%b %d, %Y")
+
+        tick_labels.append(time_label)
+
+    return tick_positions, tick_labels
 
 
 def find_max_burst(burst_list:list, offset_start, offset_end):

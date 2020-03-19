@@ -33,7 +33,15 @@ def to_pandas(ebursts, offsets, svo, unit='s'):
     return bdf, odf
 
 
-def plot_bursts(odf, bdf, lowest_level=0, title=True, daterange=None, xrangeoffsets=3):
+def plot_bursts(
+    odf, 
+    bdf, 
+    lowest_level=0, 
+    title=True, 
+    daterange=None, 
+    xrangeoffsets=3, 
+    s = None,
+    gamma = None):
     """
     TODO: write docstring
 
@@ -75,8 +83,12 @@ def plot_bursts(odf, bdf, lowest_level=0, title=True, daterange=None, xrangeoffs
     # hooked back up to the class, taking self...
     # When you review this code, can you drop it the attribute values
     # into the strings for the label. Thanks. John.
-    axb.set_ylabel(
-        f'Burst levels (s = {svo_bursts.s}, $\gamma$ = {svo_bursts.gamma})')
+
+    if self != None:
+        axb.set_ylabel('Burst levels (s = {}, $\gamma$ = {})'.format(svo_burst.s, svo_burst.gamma))
+    else:
+        axb.set_ylabel('Burst level')
+
     axb.tick_params(axis='both', which='both', length=0)
     if daterange:
         axb.set_xlim(pd.Timestamp(daterange[0]), pd.Timestamp(daterange[1]))
