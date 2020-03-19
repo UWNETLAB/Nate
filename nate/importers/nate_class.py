@@ -45,11 +45,14 @@ class Nate(EdgelistMixin):
     """
     
     def __init__(self, data: List[NamedTuple]):
-        """Inits `nate`. See `nate` class docstring.
+        """Inits `nate`.
+        
+        See `nate` class docstring.
         """ 
         self.data: List[NamedTuple] = data
         self.texts = self.list_texts()
         self.time = self.list_time()
+
 
     def __call__(self, start: int = 0, end: int = 5):
         """[summary]
@@ -60,23 +63,30 @@ class Nate(EdgelistMixin):
         """
         pprint(self.data[start:end])
 
-    def __getitem__(self, index) -> NamedTuple:
+
+    def __getitem__(self, index: Union[slice, int]) -> NamedTuple:
         """[summary]
         
         Args:
-            index ([type]): [description]
+            index (Union[slice, int]): [description]
         
         Returns:
-            [type]: [description]
+            NamedTuple: [description]
         """
         return self.data[index]
-        
-    def preprocess(self, bigrams: bool = False, custom_filter = False, model="en_core_web_sm"):
+
+
+    def preprocess(
+        self, 
+        bigrams: bool = False, 
+        custom_filter: Union[bool, object] = False, 
+        model: str = "en_core_web_sm"
+        ):
         """[summary]
         
         Args:
             bigrams (bool, optional): [description]. Defaults to False.
-            custom_filter (bool, optional): [description]. Defaults to False.
+            custom_filter (Union[bool, object], optional): [description]. Defaults to False.
             model (str, optional): [description]. Defaults to "en_core_web_sm".
         """
         self.bigrams = bigrams
@@ -99,6 +109,7 @@ class Nate(EdgelistMixin):
                 self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
             self.post_nlp = mp(self.texts, nlp_helpers.spacy_process, self.nlp)
 
+
     def head(self, start:int = 0, end:int = 5):
         """[summary]
         
@@ -108,7 +119,8 @@ class Nate(EdgelistMixin):
         """
         pprint(self.data[start:end])
 
-    def list_texts(self, start:int = None, end:int = None):
+
+    def list_texts(self, start:int = None, end:int = None) -> List[str]:
         """[summary]
         
         Args:
@@ -116,11 +128,12 @@ class Nate(EdgelistMixin):
             end (int, optional): [description]. Defaults to None.
         
         Returns:
-            [type]: [description]
+            List[str]: [description]
         """
         return [str(i.text) for i in self.data[start:end]]
 
-    def list_time(self, start:int = None, end:int = None):
+
+    def list_time(self, start:int = None, end:int = None) -> List[str]:
         """[summary]
         
         Args:
@@ -128,11 +141,12 @@ class Nate(EdgelistMixin):
             end (int, optional): [description]. Defaults to None.
         
         Returns:
-            [type]: [description]
+            List[str]: [description]
         """
         return [i.time for i in self.data[start:end]]
 
-    def list_ids(self, start:int = None, end:int = None): 
+
+    def list_ids(self, start:int = None, end:int = None) -> List: 
         """[summary]
         
         Args:
@@ -140,11 +154,12 @@ class Nate(EdgelistMixin):
             end (int, optional): [description]. Defaults to None.
         
         Returns:
-            [type]: [description]
+            List: [description]
         """
         return [i.unique_id for i in self.data[start:end]]
 
-    def list_column(self, column_name:str, start:int = None, end:int = None): 
+
+    def list_column(self, column_name:str, start:int = None, end:int = None) -> List: 
         """[summary]
         
         Args:
@@ -153,26 +168,28 @@ class Nate(EdgelistMixin):
             end (int, optional): [description]. Defaults to None.
         
         Returns:
-            [type]: [description]
+            List: [description]
         """
         return [getattr(i, column_name) for i in self.data[start:end]]
 
-    def cooc_pipeline(self, minimum_offsets = 20, custom_filter = False): 
+
+    def cooc_pipeline(self, minimum_offsets: int = 20, custom_filter: Union[bool, object] = False) -> Cooc: 
         """[summary]
         
         Args:
             minimum_offsets (int, optional): [description]. Defaults to 20.
-            custom_filter (bool, optional): [description]. Defaults to False.
+            custom_filter (Union[bool, object], optional): [description]. Defaults to False.
         
         Returns:
-            [type]: [description]
+            Cooc: [description]
         """
             
         offset_dict, lookup = cooc_offsets(self.post_nlp, self.time, minimum_offsets)
         
         return Cooc(offset_dict, lookup, minimum_offsets)
 
-    def socnet_pipeline(self, subset:int = None):
+
+    def socnet_pipeline(self, subset: int = None) -> SOCnet:
         """[summary]
 
         Returns an instance of the 'socnet_pipe' class, initialized with the relevant data contained.
@@ -182,21 +199,28 @@ class Nate(EdgelistMixin):
             subset (int, optional): [description]. Defaults to None.
         
         Returns:
-            [type]: [description]
+            SOCnet: [description]
         """
         return SOCnet(self.data, self.edgelist[slice(subset)])
 
-    def svo_pipeline(self, sub_tags=False, obj_tags=False, bigrams = False, model="en_core_web_sm"):
+
+    def svo_pipeline(
+        self, 
+        sub_tags: Union[bool, List] = False, 
+        obj_tags: Union[bool, List] = False, 
+        bigrams: bool = False, 
+        model: str ="en_core_web_sm"
+        ) -> SVOnet:
         """[summary]
         
         Args:
-            sub_tags (bool, optional): [description]. Defaults to False.
-            obj_tags (bool, optional): [description]. Defaults to False.
+            sub_tags (Union[bool, List], optional): [description]. Defaults to False.
+            obj_tags (Union[bool, List], optional): [description]. Defaults to False.
             bigrams (bool, optional): [description]. Defaults to False.
             model (str, optional): [description]. Defaults to "en_core_web_sm".
         
         Returns:
-            [type]: [description]
+            SVOnet: [description]
         """
 
         # add error check for custom_filter, which cannot be applied in this step for svo

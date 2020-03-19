@@ -34,7 +34,7 @@ class Bursts():
     """
     This is a docstring.
     """
-    def __init__(self, offset_dict, edge_burst_dict, s, gamma, from_svo):
+    def __init__(self, offset_dict, edge_burst_dict, s, gamma, from_svo, lookup):
         self.offset_dict:dict = offset_dict
         self.edge_burst_dict:dict = edge_burst_dict
         self.s = s
@@ -42,18 +42,19 @@ class Bursts():
         self.from_svo = from_svo
         self.bdf = None
         self.odf = None
+        self.lookup = lookup
 
     def export_df(self):
         """
         This is a docstring.
         """
-        return df_export(self.edge_burst_dict, self.offset_dict, self.from_svo)
+        return df_export(self.edge_burst_dict, self.offset_dict, self.lookup, self.from_svo)
         
     def export_max_bursts(self):
         """
         This is a docstring.
         """
-        return max_bursts_export(self.edge_burst_dict, self.from_svo)
+        return max_bursts_export(self.edge_burst_dict, self.lookup, self.from_svo)
 
     def to_pandas(self, key: Tuple, unit = 's') -> Tuple[Dict, Dict]:
         """[summary]
