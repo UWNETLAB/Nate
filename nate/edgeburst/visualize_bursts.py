@@ -50,6 +50,7 @@ def plot_bursts(
     daterange = a tuple with two elements: a start date and end date as *strings*. format is 'year-month-day'
     xrangeoffsets = the number of days to add before and after the min and max x dates
     """
+
     svo_title = str(set(bdf['svo']).pop())
 
     if lowest_level > 0:
@@ -79,7 +80,7 @@ def plot_bursts(
     axb.bar(bdf['start'], bdf['level'], color='#32363A')
 
     if s != None and gamma != None:
-        axb.set_ylabel('Burst levels (s = {}, $\gamma$ = {})'.format(s, gamma))
+        axb.set_ylabel(r'Burst levels (s = {}, $\gamma$ = {})'.format(s, gamma))
     else:
         axb.set_ylabel('Burst level')
 

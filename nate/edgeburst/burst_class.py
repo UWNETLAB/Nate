@@ -80,6 +80,7 @@ class Bursts():
     key: Tuple, 
     unit = 's', 
     lowest_level = 0, 
+    title = True,
     daterange = None, 
     xrangeoffsets = 3):
         """[summary]
@@ -91,8 +92,18 @@ class Bursts():
             daterange ([type], optional): [description]. Defaults to None.
             xrangeoffsets (int, optional): [description]. Defaults to 3.
         """
-        odf, bdf = self.to_pandas(key, unit)
-        visualize_bursts.plot_bursts(odf, bdf, lowest_level, daterange, xrangeoffsets, self.s, self.gamma)
+        bdf, odf = self.to_pandas(key, unit)
+
+        visualize_bursts.plot_bursts(
+            odf = odf, 
+            bdf = bdf, 
+            lowest_level = lowest_level, 
+            title = True,
+            daterange = daterange, 
+            xrangeoffsets = xrangeoffsets, 
+            s = self.s, 
+            gamma = self.gamma
+            )
 
 
     

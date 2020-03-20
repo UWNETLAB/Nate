@@ -15,7 +15,7 @@ from spacy.pipeline import merge_entities
 
 from ..cooc.cooc_class import Cooc
 from ..cooc.cooc_offsets import cooc_offsets
-from ..socnet.socnet import SOCnet
+#from ..socnet.socnet import SOCnet
 from ..svonet.svonet_class import process_svo, SVOnet
 from ..utils import nlp_helpers
 from ..utils.mp_helpers import mp, mp2
@@ -248,7 +248,7 @@ class Nate(EdgelistMixin):
         return Cooc(offset_dict, lookup, minimum_offsets)
 
 
-    def socnet_pipeline(self, subset: int = None) -> SOCnet:
+    def socnet_pipeline(self, subset: int = None) :
         """Instantiates, initializes, and returns an instance of the `SOCnet` pipeline.
 
         Returns an instance of the 'socnet_pipe' class, initialized with the relevant 
@@ -270,7 +270,10 @@ class Nate(EdgelistMixin):
         Returns:
             SOCnet: An instance of the `SOCnet` class.
         """
-        return SOCnet(self.data, self.edgelist[slice(subset)])
+        
+        print("NOT CURRENTLY IMPLEMENTED")
+
+        return "NOT CURRENTLY IMPLEMENTED"#SOCnet(self.data, self.edgelist[slice(subset)])
 
 
     def svo_pipeline(
