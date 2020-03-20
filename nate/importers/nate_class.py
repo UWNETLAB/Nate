@@ -52,7 +52,7 @@ class Nate(EdgelistMixin):
         self.data: List = data
         self.texts = self.list_texts()
         self.time = self.list_time()
-        self.post_nlp: List | Dict
+        self.post_nlp: List 
 
 
     def __call__(self, start: int = 0, end: int = 5):
@@ -65,7 +65,7 @@ class Nate(EdgelistMixin):
         pprint(self.data[start:end])
 
 
-    def __getitem__(self, index: slice | int) -> List:
+    def __getitem__(self, index: slice) -> List:
         """Called when `Nate` is accessed using indexing or slicing.
         
         Args:
