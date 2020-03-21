@@ -3,6 +3,7 @@ This is a MODULE docstring
 """
 from typing import Dict
 from ..edgeburst.burst_mixin import BurstMixin
+from nate.edgeburst.burst_class import Bursts
 
 class Cooc(BurstMixin):
     """
@@ -13,4 +14,11 @@ class Cooc(BurstMixin):
         self.lookup = lookup
         self.minimum_offsets = minimum_offsets
         self.from_svo = False
+
+    def cooc_to_burst(self, s = 2, gamma = 1):
+        offset_dict_strings, edge_burst_dict_strings, s, gamma, from_svo, lookup = self.burst_detection(s, gamma)
+
+        return Bursts(offset_dict_strings, edge_burst_dict_strings, s, gamma, from_svo, lookup)
+
+        
 

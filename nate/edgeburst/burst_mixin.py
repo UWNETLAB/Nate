@@ -28,27 +28,27 @@ class BurstMixin():
         edge_burst_dict_int = detect_bursts(self.offset_dict, s, gamma)
         edge_burst_dict_strings = all_bursts_export(edge_burst_dict_int, self.offset_dict, self.lookup, self.from_svo)
 
-        return Bursts(offset_dict_strings, edge_burst_dict_strings, s, gamma, self.from_svo, self.lookup)
+        return offset_dict_strings, edge_burst_dict_strings, s, gamma, self.from_svo, self.lookup
 
 
-    def multi_burst(self, token_pairs, s, gamma):
-        """
-        The lists passed to s and gamma must be exactly the same length.
+    # def multi_burst(self, token_pairs, s, gamma):
+    #     """
+    #     The lists passed to s and gamma must be exactly the same length.
 
-        Returns a dictionary where keys are strings containing two numbers separated by an underscore, corresponding to the s and gamma values for the run, respectively.
-        The values of each entry in the dictionary consists of {SOMETHING}
-        """
-        assert len(s) == len(gamma)
+    #     Returns a dictionary where keys are strings containing two numbers separated by an underscore, corresponding to the s and gamma values for the run, respectively.
+    #     The values of each entry in the dictionary consists of {SOMETHING}
+    #     """
+    #     assert len(s) == len(gamma)
 
-        run_dict = {}
-        offset_subset_dict = {}
+    #     run_dict = {}
+    #     offset_subset_dict = {}
 
-        for token_pair in token_pairs:
-            offset_subset_dict[token_pair] = self.offset_dict[token_pair]
+    #     for token_pair in token_pairs:
+    #         offset_subset_dict[token_pair] = self.offset_dict[token_pair]
 
-        for i in range(0,len(s)):
-            run_name = "{}_{}".format(str(s[i]), str(gamma[i]))
-            run_result = Bursts(self.offset_dict,self.lookup, s[i], gamma[i], self.from_svo, self.lookup)
-            run_dict[run_name] = run_result
+    #     for i in range(0,len(s)):
+    #         run_name = "{}_{}".format(str(s[i]), str(gamma[i]))
+    #         run_result = Bursts(self.offset_dict,self.lookup, s[i], gamma[i], self.from_svo, self.lookup)
+    #         run_dict[run_name] = run_result
 
-        return run_dict
+    #     return run_dict

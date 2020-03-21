@@ -43,9 +43,7 @@ class Bursts():
         self.bdf = None
         self.odf = None
         self.lookup = lookup
-        self.save_svo_graph: Callable
-        self.create_svo_animation: Callable
-        self.get_giant_component: Callable
+
 
     def export_df(self):
         """

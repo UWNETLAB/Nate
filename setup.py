@@ -12,9 +12,7 @@ setup(
         "joblib",
         "matplotlib",
         "networkx",
-        "PIL",
-        
-
+        "pillow",
         ], # A bunch of things will need to go here; we'll have to do an audit of every package we use
     packages = find_packages(),
     include_package_data=True,
