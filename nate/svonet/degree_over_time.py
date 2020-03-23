@@ -84,11 +84,9 @@ class DegreeOverTimeMixIn():
 
             degree_list.sort(key=lambda x: x[1], reverse=True)
 
-            if remove_stop_words:
-                stops = sw.get_stop_words("english")
-                degree_list = []
-
-
+            # if remove_stop_words:
+            #     stops = sw.get_stop_words("english")
+            #     degree_list = []
 
             top_degree_by_slice[time_labels[i]] = degree_list[0:list_top]
 
