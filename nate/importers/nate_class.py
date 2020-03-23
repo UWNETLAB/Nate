@@ -13,13 +13,13 @@ from pprint import pprint
 import spacy
 from spacy.pipeline import merge_entities
 
-from ..cooc.cooc_class import Cooc
-from ..cooc.cooc_offsets import cooc_offsets
+from nate.cooc.cooc_class import Cooc
+from nate.cooc.cooc_offsets import cooc_offsets
 #from ..socnet.socnet import SOCnet
-from ..svonet.svonet_class import process_svo, SVOnet
-from ..utils import nlp_helpers
-from ..utils.mp_helpers import mp, mp2
-from .edgelist_importers import EdgelistMixin
+from nate.svonet.svonet_class import process_svo, SVOnet
+from nate.utils import nlp_helpers
+from nate.utils.mp_helpers import mp, mp2
+from nate.importers.edgelist_importers import EdgelistMixin
 from collections import namedtuple
 from typing import List, NamedTuple, Union, Dict
 
@@ -213,14 +213,14 @@ class Nate(EdgelistMixin):
             self.nlp.add_pipe(custom_filter, name="custom_filter", last=True)
             if bigrams == True:
                 self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
-            self.post_nlp = mp(self.texts, custom_filter, nlp_helpers.spacy_process, self.nlp)
+            self.post_nlp = mp(self.texts, custom_filter, nlp_helpers.spacy_process, self.nlp, None, None)
         else:
             self.nlp = spacy.load(self.model, disable=['parser'])
             self.nlp.add_pipe(merge_entities)
             self.nlp.add_pipe(nlp_helpers.default_filter_lemma, name="filter_lemmatize", last=True)
             if bigrams == True:
                 self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
-            self.post_nlp = mp(self.texts, nlp_helpers.spacy_process, self.nlp)
+            self.post_nlp = mp(self.texts, nlp_helpers.spacy_process, self.nlp, None, None)
 
 
     def cooc_pipeline(self, minimum_offsets: int = 20) -> Cooc: 

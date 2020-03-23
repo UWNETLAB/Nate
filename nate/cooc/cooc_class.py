@@ -16,6 +16,15 @@ class Cooc(BurstMixin):
         self.from_svo = False
 
     def cooc_to_burst(self, s = 2, gamma = 1):
+        """[summary]
+        
+        Args:
+            s (int, optional): [description]. Defaults to 2.
+            gamma (int, optional): [description]. Defaults to 1.
+        
+        Returns:
+            [type]: [description]
+        """
         offset_dict_strings, edge_burst_dict_strings, s, gamma, from_svo, lookup = self.burst_detection(s, gamma)
 
         return Bursts(offset_dict_strings, edge_burst_dict_strings, s, gamma, from_svo, lookup)
