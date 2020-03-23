@@ -1,5 +1,6 @@
 from nate.svonet.graph_svo import generate_ticks, find_max_burst
 import networkx as nx
+import stop_words as sw
 import copy
 import pandas as pd
 import matplotlib as mpl
@@ -25,7 +26,8 @@ class DegreeOverTimeMixIn():
         number_of_slices: int = 20, 
         list_top: int = 10,
         minimum_burst_level: int = 0, 
-        degree_type = "both"):
+        degree_type = "both",
+        remove_stop_words = True):
         """[summary]
         
         Args:
@@ -82,6 +84,12 @@ class DegreeOverTimeMixIn():
 
             degree_list.sort(key=lambda x: x[1], reverse=True)
 
+            if remove_stop_words:
+                stops = sw.get_stop_words("english")
+                degree_list = []
+
+
+
             top_degree_by_slice[time_labels[i]] = degree_list[0:list_top]
 
         return top_degree_by_slice
@@ -92,7 +100,8 @@ class DegreeOverTimeMixIn():
         tokens: list, 
         number_of_slices: int = 20, 
         minimum_burst_level: int = 0,
-        degree_type = "both"):
+        degree_type = "both",
+        remove_stop_words = False):
 
         if isinstance(tokens, list) == False:
             tokens = [tokens]
@@ -101,7 +110,8 @@ class DegreeOverTimeMixIn():
             number_of_slices = number_of_slices,
             list_top =  None,
             minimum_burst_level=minimum_burst_level,
-            degree_type = degree_type)
+            degree_type = degree_type,
+            remove_stop_words=remove_stop_words)
 
         token_rank_dict = {}
 
@@ -117,44 +127,95 @@ class DegreeOverTimeMixIn():
         number_of_slices: int = 20, 
         list_top: int = 10,
         minimum_burst_level: int = 0, 
-        degree_type = "both"):
+        degree_type = "both",
+        remove_stop_words = True):
 
         data = self.top_degree(
             number_of_slices = number_of_slices, 
             list_top = list_top,
             minimum_burst_level = minimum_burst_level, 
-            degree_type = degree_type)
+            degree_type = degree_type,
+            remove_stop_words = remove_stop_words)
 
-        for date_name, time_slice in data.items():
-            fig, ax = plt.subplots()
-            fig.set_figwidth(10)
-            fig.set_figheight(6)
-            fig.suptitle('from last plot to {}'.format(date_name), fontsize=16)
-            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+        date_names = []
+        time_slices = []
+
+        for k, v in data.items():
+            date_names.append(k)
+            time_slices.append(v)
+   
+        for i in range(1, len(date_names)):
 
             x = np.arange(list_top)
             values = []
             names = []
 
-            for thing in time_slice:
-                values.append(thing[1])
-                names.append(thing[0])
+            for top_degrees in time_slices[i]:
+                values.append(top_degrees[1])
+                names.append(top_degrees[0])
 
-            plt.bar(x, values)
-            plt.xticks(x, names, rotation="vertical")
-            plt.show()
+            if np.sum(values) > 0:
+                fig, ax = plt.subplots()
+                fig.set_figwidth(10)
+                fig.set_figheight(6)
+                fig.suptitle('{} to {}'.format(date_names[i-1], date_names[i]), fontsize=16)
+                ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+                plt.bar(x, values, color='#32363A')
+                plt.xticks(x, names, rotation="vertical")
+                plt.show()
+            else:
+                print("No nodes with degree > 0 in this time slice.")
+
 
     def plot_specific_degree(
         self,
         tokens: list, 
         number_of_slices: int = 20, 
         minimum_burst_level: int = 0,
-        degree_type = "both"):
+        degree_type = "both",
+        plot_type = "line",
+        remove_stop_words = False):
 
-        pass
+        if plot_type != "line" and plot_type != "bar":
+            raise Exception("`plot_type` must be one of 'line' or 'bar'")
 
-            
 
-            
+        data = self.specific_degree(
+            tokens = tokens, 
+            number_of_slices = number_of_slices, 
+            minimum_burst_level = minimum_burst_level,
+            degree_type = degree_type,
+            remove_stop_words=remove_stop_words
+        )
 
+        inverted_dict = {}
+
+        for token in tokens:
+            full_list = []
+
+            for date, degree_list in data.items():
+                degree = [item[1] for item in degree_list if item[0] == token]
+                full_list.append((date, degree[0]))
+
+            inverted_dict[token] = full_list
+
+        x = np.arange(number_of_slices)
+
+        for k, v in inverted_dict.items():
+
+            values = [item[1] for item in v]
+            dates = [item[0].replace(", ", "\n")  for item in v]
+
+
+            fig, ax = plt.subplots()
+            fig.set_figwidth(10)
+            fig.set_figheight(6)
+            fig.suptitle("'{}'".format(k), fontsize=16)
+            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
+            if plot_type == "bar":
+                plt.bar(x, values, color='#32363A')
+            elif plot_type == "line":
+                plt.plot(x, values, color='#32363A')
+            plt.xticks(x, dates)
+            plt.show()
 
