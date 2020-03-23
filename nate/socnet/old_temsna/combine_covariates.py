@@ -13,11 +13,18 @@ node_covariates.head()
 
 sim_scores.head()
 
-sim_scores = sim_scores.merge(node_covariates, left_on="author", right_on="author")
+sim_scores = sim_scores.merge(node_covariates,
+                              left_on="author",
+                              right_on="author")
 
-sim_scores.columns = ["author", "dissim_alters", "dissim_alters_2", "alter_dissim_avg", "bridge_dissim_avg", "first_ring_dissim_avg", "num_citations", "num_papers", "career_start", "num_alter1", "num_alter2"]
+sim_scores.columns = [
+    "author", "dissim_alters", "dissim_alters_2", "alter_dissim_avg",
+    "bridge_dissim_avg", "first_ring_dissim_avg", "num_citations",
+    "num_papers", "career_start", "num_alter1", "num_alter2"
+]
 
-
-sim_scores = sim_scores.merge(centralities, left_on="author", right_on="author")
+sim_scores = sim_scores.merge(centralities,
+                              left_on="author",
+                              right_on="author")
 
 sim_scores.to_csv("../output/author_covariates.csv", index=False)

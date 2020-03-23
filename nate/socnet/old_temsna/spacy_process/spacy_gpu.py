@@ -55,14 +55,14 @@
 #     results2 = list(itertools.chain(*results2))
 #     results3 = list(itertools.chain(*results3))
 #     return results1, results2, results3
-    
+
 # def mp_shared(items, function, cpu, *args):
 #     batch_size = round(len(items)/cpu)  # split the list of items so that each CPU receives one batch
 #     partitions = partition_all(batch_size, items)
 #     temp = Parallel(n_jobs=cpu, require='sharedmem', max_nbytes=None)(delayed(function)(v, *args) for v in partitions) #executes the function on each batch
 #     results = list(itertools.chain(*temp)) # joblib.delayed returns a list of lists (ie. list of each batch result), concatenate them
 #     return results
-    
+
 # def mp2_shared(items, function, cpu, *args):
 #     batch_size = round(len(items)/cpu)
 #     partitions = partition_all(batch_size, items)
@@ -71,7 +71,7 @@
 #     results1 = list(itertools.chain(*results1))
 #     results2 = list(itertools.chain(*results2))
 #     return results1, results2
-    
+
 # def mp3_shared(items, function, cpu, *args):
 #     batch_size = round(len(items)/cpu)
 #     partitions = partition_all(batch_size, items)
@@ -81,7 +81,7 @@
 #     results2 = list(itertools.chain(*results2))
 #     results3 = list(itertools.chain(*results3))
 #     return results1, results2, results3
-    
+
 # def dissim_rba_gpu(auth_list, auth_alt_dict, auth_alt_dict_2, auth_vectors):
 #     rb_avg_dissims = []
 #     ring_avg_dissims = []
@@ -102,7 +102,7 @@
 #         cp_v_array = cpx.scipy.sparse.csr_matrix(v_array)
 #         dissim_matrix = cp_v_array * cp_v_array.T
 #         dissim_matrix = dissim_matrix.todense()
-        
+
 #         for author in batch_list:
 
 #             rb_dissims = []
@@ -123,7 +123,7 @@
 #                             rb_dissims.append(alter_dissim)
 #                         if len(ring_list) > 0:
 #                             alter_dissim = create_average_dissim_gpu(alter, ring_list, comp_dict, dissim_matrix)
-#                             ring_dissims.append(alter_dissim)                        
+#                             ring_dissims.append(alter_dissim)
 #                         if len(bridge_list_trim) > 0:
 #                             alter_dissim = create_average_dissim_gpu(alter, bridge_list_trim, comp_dict, dissim_matrix)
 #                             bridge_dissims.append(alter_dissim)
@@ -144,15 +144,13 @@
 #                 bridge_avg_dissims.append('NA')
 
 #     return (rb_avg_dissims, ring_avg_dissims, bridge_avg_dissims)
-    
-
 
 # # perform NLP on a list of texts, requires NLP object from main() function (note for future work: NLP object can't be pickled using
 # # python's pickle module (fast), so there may be performance gains possible by sorting this out re: disabling Loky in mp() functions)
 # def spacy_process(texts, nlp):
 #     processed_list = []
 #     copyright_stops = ['elsevier', 'right', 'rights', '(c)', 'ltd']   # domain specific stop words to remove
-#     allowed_postags=['NOUN', 'PROPN']   # parts of speech to keep 
+#     allowed_postags=['NOUN', 'PROPN']   # parts of speech to keep
 #     for doc in nlp.pipe(texts):  # nlp.pipe sends texts to spacy_process in batches for efficiency. Default is 128 (should experiment)
 #         processed = []
 #         for token in doc:
@@ -163,12 +161,11 @@
 #         processed_list.append(processed) # add the doc's processed words to the list of processed documents
 #     return processed_list
 
-
 # # same as above, but with a small batch size for memory constraints
 # def spacy_process_large(texts, nlp):
 #     processed_list = []
 #     copyright_stops = ['elsevier', 'right', 'rights', '(c)', 'ltd']
-#     allowed_postags=['NOUN', 'PROPN']    
+#     allowed_postags=['NOUN', 'PROPN']
 #     for doc in nlp.pipe(texts, batch_size=1):
 #         processed = []
 #         for token in doc:
@@ -182,7 +179,7 @@
 # def spacy_process_gpu(texts, nlp):
 #     processed_list = []
 #     copyright_stops = ['elsevier', 'right', 'rights', '(c)', 'ltd']   # domain specific stop words to remove
-#     allowed_postags=['NOUN', 'PROPN']   # parts of speech to keep 
+#     allowed_postags=['NOUN', 'PROPN']   # parts of speech to keep
 #     for doc in nlp.pipe(texts, batch_size=64):  # nlp.pipe sends texts to spacy_process in batches for efficiency. Default is 128 (should experiment)
 #         processed = []
 #         for token in doc:
@@ -193,7 +190,7 @@
 #         processed_list.append(processed) # add the doc's processed words to the list of processed documents
 #     return processed_list
 
-# # bigram detection on a list of texts using sklearn's Phrases module. Note: test whether creating trigrams is as simple as calling 
+# # bigram detection on a list of texts using sklearn's Phrases module. Note: test whether creating trigrams is as simple as calling
 # # this process on the text again
 # def bigram_process(texts):
 #     words = [simple_preprocess(x, deacc=False) for x in texts]  # very efficient preprocessing into tokens based on white space only
@@ -203,28 +200,23 @@
 #     bigrams = [' '.join(words) for words in bigrams]
 #     return bigrams
 
-
-
 # def list_difference(list1, list2):
 #     return (list(set(list1) - set(list2)))
 
 # def list_common(list1, list2):
 #     return (list(set(list1).intersection(list2)))
 
-
-
 # def batch(batch_list, n=1):
 #     l = len(batch_list)
 #     for ndx in range(0, l, n):
 #         yield batch_list[ndx:min(ndx + n, l)]
-
 
 # def create_average_dissim(ego, alters, index_dict, matrix):
 #     dissims = []
 #     ego_idx = index_dict[ego]
 #     for alter in alters:
 #         alter_idx = index_dict[alter]
-        
+
 #         dissim = matrix[ego_idx, alter_idx]
 
 #         dissims.append(dissim)
@@ -237,7 +229,7 @@
 #     ego_idx = index_dict[ego]
 #     for alter in alters:
 #         alter_idx = index_dict[alter]
-        
+
 #         dissim = matrix[ego_idx, alter_idx]
 #         dissims.append(dissim)
 
@@ -245,8 +237,6 @@
 #     dissim_avg = cp.around(cp.average(dissims), 3)
 #     return dissim_avg
 
-
-        
 # def dissim_alters_gpu(auth_list, auth_alt_dict, auth_vectors):
 #     alters_avg_dissims = []
 
@@ -266,7 +256,7 @@
 #         cp_v_array = cpx.scipy.sparse.csr_matrix(v_array)
 #         dissim_matrix = cp_v_array.dot(cp_v_array.transpose())
 #         dissim_matrix = dissim_matrix.todense()
-        
+
 #         for author in batch_list:
 #             if author in auth_alt_dict and len(auth_alt_dict[author]) > 0:
 #                 alter_list = auth_alt_dict[author]
@@ -276,7 +266,6 @@
 #                 alters_avg_dissims.append('NA')
 
 #     return (alters_avg_dissims)
-
 
 # def dissim_alters(auth_list, auth_alt_dict, auth_alt_dict_2, auth_vectors):
 #     alters_avg_dissims = []
@@ -297,7 +286,7 @@
 #         v_array = vstack(comp_vectors)
 #         dissim_matrix = v_array @ v_array.T
 #         dissim_matrix = dissim_matrix.todense()
-        
+
 #         for author in batch_list:
 #             if author in auth_alt_dict and len(auth_alt_dict[author]) > 0:
 #                 alter_list = auth_alt_dict[author]
@@ -313,7 +302,6 @@
 #                 alters_2_avg_dissims.append('NA')
 
 #     return (alters_avg_dissims, alters_2_avg_dissims)
-
 
 # def dissim_rba(auth_list, auth_alt_dict, auth_alt_dict_2, auth_vectors):
 #     rb_avg_dissims = []
@@ -334,7 +322,6 @@
 #         dissim_matrix = v_array @ v_array.T
 #         dissim_matrix = dissim_matrix.todense()
 
-        
 #         for author in batch_list:
 
 #             rb_dissims = []
@@ -355,7 +342,7 @@
 #                             rb_dissims.append(alter_dissim)
 #                         if len(ring_list) > 0:
 #                             alter_dissim = create_average_dissim(alter, ring_list, comp_dict, dissim_matrix)
-#                             ring_dissims.append(alter_dissim)                        
+#                             ring_dissims.append(alter_dissim)
 #                         if len(bridge_list_trim) > 0:
 #                             alter_dissim = create_average_dissim(alter, bridge_list_trim, comp_dict, dissim_matrix)
 #                             bridge_dissims.append(alter_dissim)
@@ -377,7 +364,6 @@
 
 #     return (rb_avg_dissims, ring_avg_dissims, bridge_avg_dissims)
 
-    
 # #not used for now
 # def single_avg_dissim(ego, alter_list, vectors):
 #     ego_vector = vectors[ego]
@@ -405,31 +391,27 @@
 
 #     return dissim_avg
 
-
-    
 # def main():   #execute all functions within main to protect against multiprocessing infinite feedback loop
-    
+
 #         if cpu_count() >= 8:   #to avoid overtaxing Brad, save some cores
 #             cpu = 8
 #         else:
 #             cpu = cpu_count()
-            
-#         with open('../input/generated_meta_strings.pkl', "rb") as pkl:   # dictionary with authors as keys and their strings as values 
+
+#         with open('../input/generated_meta_strings.pkl', "rb") as pkl:   # dictionary with authors as keys and their strings as values
 #             auth_strings = pickle.load(pkl)
 
 #         with open('../input/alter_lists.pkl', "rb") as pkl:  # dataframe with author column, alters column, and alters_2 column
 #             alter_lists = pickle.load(pkl)
 
-
 #         auth_alt_dict = dict(zip(alter_lists.author, alter_lists.alter)) # dict of {auth:alter list}
 #         auth_alt_dict_2 = dict(zip(alter_lists.author, alter_lists.alter_2)) # dict of {auth: alter_2 list}
 #         auth_list = sorted(list(auth_strings.keys()))[:] # list of author names
 
-            
 #         abs_list = [] # list of author strings to process
-        
+
 #         # NOTE: this is only safe because the auth_strings dict hasn't been modified. Should be modified for posterity
-#         for author in auth_strings: 
+#         for author in auth_strings:
 #             abs_list.append(auth_strings[author]["meta_string"])
 
 #         del auth_strings
@@ -438,18 +420,17 @@
 
 #         # load spacy model, disable unnecessary parser and named entity recog for performance
 #         spacy.require_gpu()
-#         nlp = spacy.load('en', disable=['parser', 'ner'])   
-        
+#         nlp = spacy.load('en', disable=['parser', 'ner'])
+
 #         #nlp.max_length = 10000000   # community strings are very large, may cause memory problems on modest PCs - needs rethinking
-        
+
 #         # send bigrammed text and spacy function + its required variables to multiprocess function for execution
-#         processed_list = spacy_process_gpu(bigram_text, nlp)  
-#         vectorizer = TfidfVectorizer(max_df=0.5, min_df=3, stop_words='english', norm='l2')  
+#         processed_list = spacy_process_gpu(bigram_text, nlp)
+#         vectorizer = TfidfVectorizer(max_df=0.5, min_df=3, stop_words='english', norm='l2')
 #         matrix = vectorizer.fit_transform(processed_list) # Tfidf vectors for each author string
 #         auth_vectors = dict(zip(auth_list, matrix)) # creat a dict of {author : tfidf vector}
-        
 
-#         #create a dataframe by sending list of authors and the dissim function + its required variables to multiprocess function 
+#         #create a dataframe by sending list of authors and the dissim function + its required variables to multiprocess function
 #         sim_df = pd.DataFrame()
 #         sim_df['author'] = pd.Series(auth_list)
 #         sim_df['dissim_alters'], sim_df['dissim_alters_2'] = pd.Series(mp2_shared(auth_list, dissim_alters, cpu, auth_alt_dict, auth_alt_dict_2, auth_vectors)).array
@@ -457,7 +438,6 @@
 #             pd.Series(mp3_shared(auth_list, dissim_rba, cpu, auth_alt_dict, auth_alt_dict_2, auth_vectors)).array
 
 #         sim_df.to_csv('../output/sim_scores.csv', index=False)
-        
+
 # if __name__ == '__main__':
 #     main()
-

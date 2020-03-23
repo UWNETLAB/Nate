@@ -7,5 +7,3 @@ the same social network with similarity values between i,j as an edge attribute
 # class SOCnet():
 #     def __init__(self, data, edgelist):
 #         self.centrality = compute_centralities(edgelist)
-
-
