@@ -43,17 +43,16 @@ class Nate(EdgelistMixin):
             `Nate`'s pipelines.
 
     """
-    
+
     def __init__(self, data: List):
         """Inits `Nate`.
         
         See `Nate` class docstring.
-        """ 
+        """
         self.data: List = data
         self.texts = self.list_texts()
         self.time = self.list_time()
-        self.post_nlp: List 
-
+        self.post_nlp: List
 
     def __call__(self, start: int = 0, end: int = 5):
         """Returns complete 'rows' from the contained dataset. 
@@ -63,7 +62,6 @@ class Nate(EdgelistMixin):
             end (int, optional): The index number of the last returned row. Defaults to 5.
         """
         pprint(self.data[start:end])
-
 
     def __getitem__(self, index: slice) -> List:
         """Called when `Nate` is accessed using indexing or slicing.
@@ -78,8 +76,7 @@ class Nate(EdgelistMixin):
 
         return self.data[index]
 
-
-    def head(self, start:int = 0, end:int = 5):
+    def head(self, start: int = 0, end: int = 5):
         """Returns complete 'rows' from the contained dataset. 
         
         Args:
@@ -90,8 +87,7 @@ class Nate(EdgelistMixin):
         """
         pprint(self.data[start:end])
 
-
-    def list_texts(self, start:int = None, end:int = None) -> List:
+    def list_texts(self, start: int = None, end: int = None) -> List:
         """Returns the 'text' field from data in the range provided.
 
         Note that if both `start` and `end` are left at their default (None),
@@ -112,8 +108,7 @@ class Nate(EdgelistMixin):
         """
         return [str(i.text) for i in self.data[start:end]]
 
-
-    def list_time(self, start:int = None, end:int = None) -> List:
+    def list_time(self, start: int = None, end: int = None) -> List:
         """Returns the 'time' field from data in the range provided.
 
         Note that if both `start` and `end` are left at their default (None),
@@ -135,8 +130,7 @@ class Nate(EdgelistMixin):
         """
         return [i.time for i in self.data[start:end]]
 
-
-    def list_ids(self, start:int = None, end:int = None) -> List: 
+    def list_ids(self, start: int = None, end: int = None) -> List:
         """Returns the 'unique_id' field from data in the range provided.
 
         Note that if both `start` and `end` are left at their default (None),
@@ -157,8 +151,10 @@ class Nate(EdgelistMixin):
         """
         return [i.unique_id for i in self.data[start:end]]
 
-
-    def list_column(self, column_name:str, start:int = None, end:int = None) -> List: 
+    def list_column(self,
+                    column_name: str,
+                    start: int = None,
+                    end: int = None) -> List:
         """Returns the named field from data in the range provided.
 
         Note that if both `start` and `end` are left at their default (None),
@@ -181,13 +177,10 @@ class Nate(EdgelistMixin):
         """
         return [getattr(i, column_name) for i in self.data[start:end]]
 
-    
-    def preprocess(
-        self, 
-        bigrams: bool = False, 
-        custom_filter: bool = False, 
-        model: str = "en_core_web_sm"
-        ):
+    def preprocess(self,
+                   bigrams: bool = False,
+                   custom_filter: bool = False,
+                   model: str = "en_core_web_sm"):
         """Defines a `spaCy` pipeline and uses it to process text data.
 
         This method *must* be called before any of the other non-`SVOnet` pipelines
@@ -212,18 +205,23 @@ class Nate(EdgelistMixin):
             self.nlp.add_pipe(merge_entities)
             self.nlp.add_pipe(custom_filter, name="custom_filter", last=True)
             if bigrams == True:
-                self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
-            self.post_nlp = mp(self.texts, custom_filter, nlp_helpers.spacy_process, self.nlp, None, None)
+                self.texts = nlp_helpers.bigram_process(self.texts,
+                                                        tokenized=False)
+            self.post_nlp = mp(self.texts, custom_filter,
+                               nlp_helpers.spacy_process, self.nlp, None, None)
         else:
             self.nlp = spacy.load(self.model, disable=['parser'])
             self.nlp.add_pipe(merge_entities)
-            self.nlp.add_pipe(nlp_helpers.default_filter_lemma, name="filter_lemmatize", last=True)
+            self.nlp.add_pipe(nlp_helpers.default_filter_lemma,
+                              name="filter_lemmatize",
+                              last=True)
             if bigrams == True:
-                self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
-            self.post_nlp = mp(self.texts, nlp_helpers.spacy_process, self.nlp, None, None)
+                self.texts = nlp_helpers.bigram_process(self.texts,
+                                                        tokenized=False)
+            self.post_nlp = mp(self.texts, nlp_helpers.spacy_process, self.nlp,
+                               None, None)
 
-
-    def cooc_pipeline(self, minimum_offsets: int = 20) -> Cooc: 
+    def cooc_pipeline(self, minimum_offsets: int = 20) -> Cooc:
         """Instantiates, initializes, and returns an instance of the `Cooc` pipeline.
 
         The `Cooc` pipeline is used for examining patterns of token/term co-occurrence
@@ -242,13 +240,13 @@ class Nate(EdgelistMixin):
         Returns:
             Cooc: An instance of the `Cooc` class.
         """
-            
-        offset_dict, lookup = cooc_offsets(self.post_nlp, self.time, minimum_offsets)
-        
+
+        offset_dict, lookup = cooc_offsets(self.post_nlp, self.time,
+                                           minimum_offsets)
+
         return Cooc(offset_dict, lookup, minimum_offsets)
 
-
-    def socnet_pipeline(self, subset: int = None) :
+    def socnet_pipeline(self, subset: int = None):
         """Instantiates, initializes, and returns an instance of the `SOCnet` pipeline.
 
         Returns an instance of the 'socnet_pipe' class, initialized with the relevant 
@@ -270,19 +268,16 @@ class Nate(EdgelistMixin):
         Returns:
             SOCnet: An instance of the `SOCnet` class.
         """
-        
+
         print("NOT CURRENTLY IMPLEMENTED")
 
-        return "NOT CURRENTLY IMPLEMENTED"#SOCnet(self.data, self.edgelist[slice(subset)])
+        return "NOT CURRENTLY IMPLEMENTED"  #SOCnet(self.data, self.edgelist[slice(subset)])
 
-
-    def svo_pipeline(
-        self, 
-        sub_tags: bool = False, 
-        obj_tags: bool = False, 
-        bigrams: bool = False, 
-        model: str ="en_core_web_sm"
-        ) -> SVOnet:
+    def svo_pipeline(self,
+                     sub_tags: bool = False,
+                     obj_tags: bool = False,
+                     bigrams: bool = False,
+                     model: str = "en_core_web_sm") -> SVOnet:
         """Instantiates, initializes, and returns an instance of the `SVOnet` pipeline.
 
         The `SVOnet` pipeline is used to explore the narrative structures present in 
@@ -314,17 +309,20 @@ class Nate(EdgelistMixin):
 
         # add error check for custom_filter, which cannot be applied in this step for svo
         self.model = model
-        
+
         if bigrams == True:
-            self.texts = nlp_helpers.bigram_process(self.texts, tokenized = False)
-            
+            self.texts = nlp_helpers.bigram_process(self.texts, tokenized=False)
+
         self.nlp = spacy.load(self.model)
         self.nlp.add_pipe(merge_entities)
-        self.nlp.add_pipe(nlp_helpers.svo_component, name="svo_component", last=True)
-        
-        self.post_svo = mp(self.texts, nlp_helpers.spacy_process, self.nlp, sub_tags, obj_tags)
-        
+        self.nlp.add_pipe(nlp_helpers.svo_component,
+                          name="svo_component",
+                          last=True)
+
+        self.post_svo = mp(self.texts, nlp_helpers.spacy_process, self.nlp,
+                           sub_tags, obj_tags)
+
         sentences = [x[0] for x in self.post_svo]
         svo_items = [x[1] for x in self.post_svo]
-        
+
         return SVOnet(sentences, svo_items, self.time)

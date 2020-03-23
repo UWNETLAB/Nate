@@ -8,14 +8,8 @@ class SVOburst(Bursts, SVOgraphMixin, DegreeOverTimeMixIn):
     
     """
 
-    def __init__(
-        self, 
-        offset_dict, 
-        edge_burst_dict, 
-        s, 
-        gamma, 
-        from_svo, 
-        lookup):
+    def __init__(self, offset_dict, edge_burst_dict, s, gamma, from_svo,
+                 lookup):
         """[summary]
         
         Args:
@@ -27,8 +21,8 @@ class SVOburst(Bursts, SVOgraphMixin, DegreeOverTimeMixIn):
             lookup ([type]): [description]
         """
 
-        self.offset_dict:dict = offset_dict
-        self.edge_burst_dict:dict = edge_burst_dict
+        self.offset_dict: dict = offset_dict
+        self.edge_burst_dict: dict = edge_burst_dict
         self.s = s
         self.gamma = gamma
         self.from_svo = from_svo

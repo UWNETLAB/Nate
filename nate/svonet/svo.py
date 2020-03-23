@@ -54,9 +54,15 @@ def _get_subs_from_conjunctions(subs):
         rightDeps = {tok.lower_ for tok in rights}
         if contains_conj(rightDeps):
             if sub_ner_tags:
-                more_subs.extend([tok for tok in rights if tok.dep_ in SUBJECTS and tok.ent_type_ in sub_ner_tags])
+                more_subs.extend([
+                    tok for tok in rights
+                    if tok.dep_ in SUBJECTS and tok.ent_type_ in sub_ner_tags
+                ])
             else:
-                more_subs.extend([tok for tok in rights if tok.dep_ in SUBJECTS or tok.pos_ == "NOUN"])
+                more_subs.extend([
+                    tok for tok in rights
+                    if tok.dep_ in SUBJECTS or tok.pos_ == "NOUN"
+                ])
             if len(more_subs) > 0:
                 more_subs.extend(_get_subs_from_conjunctions(more_subs))
     return more_subs
@@ -74,9 +80,16 @@ def _get_objs_from_conjunctions(objs):
         rightDeps = {tok.lower_ for tok in rights}
         if contains_conj(rightDeps):
             if obj_ner_tags:
-                more_objs.extend([tok for tok in rights if (tok.dep_ in OBJECTS and tok.ent_type_ in obj_ner_tags) or (tok.pos_ == "NOUN" and tok.ent_type_ in obj_ner_tags)])
-            else:            
-                more_objs.extend([tok for tok in rights if tok.dep_ in OBJECTS or tok.pos_ == "NOUN"])
+                more_objs.extend([
+                    tok for tok in rights
+                    if (tok.dep_ in OBJECTS and tok.ent_type_ in obj_ner_tags)
+                    or (tok.pos_ == "NOUN" and tok.ent_type_ in obj_ner_tags)
+                ])
+            else:
+                more_objs.extend([
+                    tok for tok in rights
+                    if tok.dep_ in OBJECTS or tok.pos_ == "NOUN"
+                ])
             if len(more_objs) > 0:
                 more_objs.extend(_get_objs_from_conjunctions(more_objs))
     return more_objs
@@ -92,7 +105,10 @@ def _find_subs(tok):
         head = head.head
     if head.pos_ == "VERB":
         if sub_ner_tags:
-            subs = [tok for tok in head.lefts if tok.dep_ == "SUB" and tok.ent_type_ in sub_ner_tags]
+            subs = [
+                tok for tok in head.lefts
+                if tok.dep_ == "SUB" and tok.ent_type_ in sub_ner_tags
+            ]
         else:
             subs = [tok for tok in head.lefts if tok.dep_ == "SUB"]
         if len(subs) > 0:
@@ -131,7 +147,8 @@ def _find_svs(tokens):
         subs, verbNegated = _get_all_subs(v)
         if len(subs) > 0:
             for sub in subs:
-                svs.append((sub.orth_, "!" + v.orth_ if verbNegated else v.orth_))
+                svs.append(
+                    (sub.orth_, "!" + v.orth_ if verbNegated else v.orth_))
     return svs
 
 
@@ -143,14 +160,21 @@ def _get_objs_from_prepositions(deps, is_pas):
     objs = []
     for dep in deps:
         if obj_ner_tags:
-            if dep.pos_ == "ADP" and (dep.dep_ == "prep" or (is_pas and dep.dep_ == "agent")):
-                objs.extend([tok for tok in dep.rights if (tok.dep_  in OBJECTS and tok.ent_type_ in obj_ner_tags)])
-                             #(is_pas and tok.ent_type_ in obj_ner_tags and tok.dep_ == 'pobj')]) #temporarily disabled
+            if dep.pos_ == "ADP" and (dep.dep_ == "prep" or
+                                      (is_pas and dep.dep_ == "agent")):
+                objs.extend([
+                    tok for tok in dep.rights
+                    if (tok.dep_ in OBJECTS and tok.ent_type_ in obj_ner_tags)
+                ])
+                #(is_pas and tok.ent_type_ in obj_ner_tags and tok.dep_ == 'pobj')]) #temporarily disabled
         else:
-            if dep.pos_ == "ADP" and (dep.dep_ == "prep" or (is_pas and dep.dep_ == "agent")):
-                objs.extend([tok for tok in dep.rights if tok.dep_ in OBJECTS or
-                             (tok.pos_ == "PRON" and tok.lower_ == "me") or
-                             (is_pas and tok.dep_ == 'pobj')])
+            if dep.pos_ == "ADP" and (dep.dep_ == "prep" or
+                                      (is_pas and dep.dep_ == "agent")):
+                objs.extend([
+                    tok for tok in dep.rights if tok.dep_ in OBJECTS or
+                    (tok.pos_ == "PRON" and tok.lower_ == "me") or
+                    (is_pas and tok.dep_ == 'pobj')
+                ])
     return objs
 
 
@@ -183,7 +207,10 @@ def _get_obj_from_xcomp(deps, is_pas):
             v = dep
             rights = list(v.rights)
             if obj_ner_tags:
-                objs = [tok for tok in rights if tok.dep_ in OBJECTS and tok.ent_type_ in obj_ner_tags]
+                objs = [
+                    tok for tok in rights
+                    if tok.dep_ in OBJECTS and tok.ent_type_ in obj_ner_tags
+                ]
             else:
                 objs = [tok for tok in rights if tok.dep_ in OBJECTS]
             objs.extend(_get_objs_from_prepositions(rights, is_pas))
@@ -199,9 +226,14 @@ def _get_all_subs(v):
     """
     verb_negated = _is_negated(v)
     if sub_ner_tags:
-        subs = [tok for tok in v.lefts if tok.dep_ in SUBJECTS and tok.ent_type_ in sub_ner_tags and tok.pos_ != "DET"]
+        subs = [
+            tok for tok in v.lefts if tok.dep_ in SUBJECTS and
+            tok.ent_type_ in sub_ner_tags and tok.pos_ != "DET"
+        ]
     else:
-        subs = [tok for tok in v.lefts if tok.dep_ in SUBJECTS and tok.pos_ != "DET"]
+        subs = [
+            tok for tok in v.lefts if tok.dep_ in SUBJECTS and tok.pos_ != "DET"
+        ]
     if len(subs) > 0:
         subs.extend(_get_subs_from_conjunctions(subs))
     else:
@@ -210,7 +242,7 @@ def _get_all_subs(v):
 
     global sub_ent_types
     sub_ent_types = [sub.ent_type_ for sub in subs]
-        
+
     return subs, verb_negated
 
 
@@ -248,9 +280,16 @@ def _get_all_objs(v, is_pas):
     # rights is a generator
     rights = list(v.rights)
     if obj_ner_tags:
-        objs = [tok for tok in rights if (tok.dep_ in OBJECTS and tok.ent_type_ in obj_ner_tags) or (is_pas and tok.dep_ == 'pobj' and tok.ent_type_ in obj_ner_tags)]
+        objs = [
+            tok for tok in rights
+            if (tok.dep_ in OBJECTS and tok.ent_type_ in obj_ner_tags) or
+            (is_pas and tok.dep_ == 'pobj' and tok.ent_type_ in obj_ner_tags)
+        ]
     else:
-        objs = [tok for tok in rights if tok.dep_ in OBJECTS or (is_pas and tok.dep_ == 'pobj')]
+        objs = [
+            tok for tok in rights
+            if tok.dep_ in OBJECTS or (is_pas and tok.dep_ == 'pobj')
+        ]
     objs.extend(_get_objs_from_prepositions(rights, is_pas))
 
     #potentialNewVerb, potentialNewObjs = _get_objs_from_attrs(rights)
@@ -259,12 +298,13 @@ def _get_all_objs(v, is_pas):
     #    v = potentialNewVerb
 
     potential_new_verb, potential_new_objs = _get_obj_from_xcomp(rights, is_pas)
-    if potential_new_verb is not None and potential_new_objs is not None and len(potential_new_objs) > 0:
+    if potential_new_verb is not None and potential_new_objs is not None and len(
+            potential_new_objs) > 0:
         objs.extend(potential_new_objs)
         v = potential_new_verb
     if len(objs) > 0:
         objs.extend(_get_objs_from_conjunctions(objs))
-    
+
     global obj_ent_types
     obj_ent_types = [obj.ent_type_ for obj in objs]
 
@@ -298,7 +338,7 @@ def _get_lemma(word: str):
     """ 
     This is a docstring.
     """
-    tokens = word #nlp(word)
+    tokens = word  #nlp(word)
     if len(tokens) == 1:
         return tokens[0].lemma_
     return word
@@ -310,7 +350,8 @@ def printDeps(toks):
     This is a docstring.
     """
     for tok in toks:
-        print(tok.orth_, tok.dep_, tok.pos_, tok.head.orth_, [t.orth_ for t in tok.lefts], [t.orth_ for t in tok.rights])
+        print(tok.orth_, tok.dep_, tok.pos_, tok.head.orth_,
+              [t.orth_ for t in tok.lefts], [t.orth_ for t in tok.rights])
 
 
 # expand an obj / subj np using its chunk
@@ -384,38 +425,55 @@ def findSVOs(tokens, sub_tags=False, obj_tags=False):
                     for obj in objs:
                         objNegated = _is_negated(obj)
                         if is_pas:  # reverse object / subject for passive
-                            svos.append((to_str(expand(obj, tokens, visited)),
-                                         "!" + v.lemma_ if verbNegated or objNegated else v.lemma_, to_str(expand(sub, tokens, visited))))
+                            svos.append(
+                                (to_str(expand(obj, tokens,
+                                               visited)), "!" + v.lemma_
+                                 if verbNegated or objNegated else v.lemma_,
+                                 to_str(expand(sub, tokens, visited))))
                             sub_ent_types.append(sub.ent_type_)
                             obj_ent_types.append(obj.ent_type_)
-                            svos.append((to_str(expand(obj, tokens, visited)),
-                                         "!" + v2.lemma_ if verbNegated or objNegated else v2.lemma_, to_str(expand(sub, tokens, visited))))
+                            svos.append(
+                                (to_str(expand(obj, tokens,
+                                               visited)), "!" + v2.lemma_
+                                 if verbNegated or objNegated else v2.lemma_,
+                                 to_str(expand(sub, tokens, visited))))
                             sub_ent_types.append(sub.ent_type_)
                             obj_ent_types.append(obj.ent_type_)
                         else:
-                            svos.append((to_str(expand(sub, tokens, visited)),
-                                         "!" + v.lower_ if verbNegated or objNegated else v.lower_, to_str(expand(obj, tokens, visited))))
+                            svos.append(
+                                (to_str(expand(sub, tokens,
+                                               visited)), "!" + v.lower_
+                                 if verbNegated or objNegated else v.lower_,
+                                 to_str(expand(obj, tokens, visited))))
                             sub_ent_types.append(sub.ent_type_)
-                            obj_ent_types.append(obj.ent_type_)                            
-                            svos.append((to_str(expand(sub, tokens, visited)),
-                                         "!" + v2.lower_ if verbNegated or objNegated else v2.lower_, to_str(expand(obj, tokens, visited))))
+                            obj_ent_types.append(obj.ent_type_)
+                            svos.append(
+                                (to_str(expand(sub, tokens,
+                                               visited)), "!" + v2.lower_
+                                 if verbNegated or objNegated else v2.lower_,
+                                 to_str(expand(obj, tokens, visited))))
                             sub_ent_types.append(sub.ent_type_)
-                            obj_ent_types.append(obj.ent_type_)         
+                            obj_ent_types.append(obj.ent_type_)
             else:
                 v, objs = _get_all_objs(v, is_pas)
                 for sub in subs:
                     for obj in objs:
                         objNegated = _is_negated(obj)
                         if is_pas:  # reverse object / subject for passive
-                            svos.append((to_str(expand(obj, tokens, visited)),
-                                         "!" + v.lemma_ if verbNegated or objNegated else v.lemma_, to_str(expand(sub, tokens, visited))))
-                            sub_ent_types.append(sub.ent_type_)
-                            obj_ent_types.append(obj.ent_type_)                        
-                        else:
-                            svos.append((to_str(expand(sub, tokens, visited)),
-                                         "!" + v.lower_ if verbNegated or objNegated else v.lower_, to_str(expand(obj, tokens, visited))))
+                            svos.append(
+                                (to_str(expand(obj, tokens,
+                                               visited)), "!" + v.lemma_
+                                 if verbNegated or objNegated else v.lemma_,
+                                 to_str(expand(sub, tokens, visited))))
                             sub_ent_types.append(sub.ent_type_)
                             obj_ent_types.append(obj.ent_type_)
-                            
-    return (svos, sub_ent_types, obj_ent_types)
+                        else:
+                            svos.append(
+                                (to_str(expand(sub, tokens,
+                                               visited)), "!" + v.lower_
+                                 if verbNegated or objNegated else v.lower_,
+                                 to_str(expand(obj, tokens, visited))))
+                            sub_ent_types.append(sub.ent_type_)
+                            obj_ent_types.append(obj.ent_type_)
 
+    return (svos, sub_ent_types, obj_ent_types)

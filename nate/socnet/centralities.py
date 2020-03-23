@@ -5,14 +5,12 @@
 # from collections import namedtuple
 # #import igraph as ig
 
-
 # cent_tuple = namedtuple('centralities', ['vertex', 'betweenness', 'closeness', 'eigenvector'])
-
 
 # def compute_centralities(tuples, force_igraph = False):
 #     """
 #     This is a docstring
-#     """ 
+#     """
 
 #     if find_spec('graph_tool') != None and force_igraph == False:
 #         print("using graph-tool")
@@ -25,18 +23,17 @@
 #     else:
 #         raise Exception("Please ensure that either graph_tool or python_igraph are installed.")
 
-
 # def gt_cents(tuples):
 #     """
 #     This is a docstring
-#     """ 
+#     """
 #     author_lookup = {}
 #     author_number = 0
 
 #     for entry in tuples:
 #         for i in range(2):
 #             if entry[i] not in author_lookup:
-#                 author_lookup[entry[i]] = author_number 
+#                 author_lookup[entry[i]] = author_number
 #                 author_number += 1
 
 #     import graph_tool as gt
@@ -64,11 +61,10 @@
 
 #     return return_list
 
-
 # def igraph_cents(tuples):
 #     """
 #     This is a docstring
-#     """ 
+#     """
 #     G = ig.Graph.TupleList(tuples, directed = False)
 
 #     vertex_list = G.vs()
@@ -80,9 +76,9 @@
 
 #     for i in range(len(vertex_list)):
 #         cent = cent_tuple(
-#             vertex_list[i]['name'], 
-#             between_list[i], 
-#             close_list[i], 
+#             vertex_list[i]['name'],
+#             between_list[i],
+#             close_list[i],
 #             eigen_list[i]
 #         )
 #         return_list.append(cent)
