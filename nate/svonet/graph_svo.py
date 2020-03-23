@@ -76,6 +76,7 @@ def find_max_burst(burst_list: list, offset_start, offset_end):
 
 
 class SVOgraphMixin():
+
     def get_giant_component(self):
         """[summary]
         
@@ -201,8 +202,7 @@ class SVOgraphMixin():
             for key in svo_keys:
 
                 burst_level = find_max_burst(self.edge_burst_dict[key],
-                                             time_slices[i - 1],
-                                             time_slices[i])
+                                             time_slices[i - 1], time_slices[i])
 
                 G[key[0]][key[2]]['burst_level'] = burst_level
 

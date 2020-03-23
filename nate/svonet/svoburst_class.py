@@ -7,6 +7,7 @@ class SVOburst(Bursts, SVOgraphMixin, DegreeOverTimeMixIn):
     """[summary]
     
     """
+
     def __init__(self, offset_dict, edge_burst_dict, s, gamma, from_svo,
                  lookup):
         """[summary]

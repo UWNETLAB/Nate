@@ -28,6 +28,7 @@ class EdgelistMixin():
     """
     This is a docstring
     """
+
     def add_edges_from_csv(self, file_path, From, To, Weight=None):
         """
         Note that the capitalized arguments are a result of 'from' being a reserved keyword in Python.

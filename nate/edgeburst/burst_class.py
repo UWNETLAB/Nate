@@ -36,6 +36,7 @@ class Bursts():
     """
     This is a docstring.
     """
+
     def __init__(self, offset_dict, edge_burst_dict, s, gamma, from_svo,
                  lookup):
         self.offset_dict: dict = offset_dict

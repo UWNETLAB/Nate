@@ -22,8 +22,7 @@ def generate_svo_offsets(svo_list: List, time: List, minimum_offsets):
     svo_int_dict, lookup = text_to_int(svo_dict)
 
     offsets = {
-        k: v
-        for k, v in svo_int_dict.items() if len(v) >= minimum_offsets
+        k: v for k, v in svo_int_dict.items() if len(v) >= minimum_offsets
     }
 
     print("Finished offset generation in {} seconds".format(
@@ -33,7 +32,8 @@ def generate_svo_offsets(svo_list: List, time: List, minimum_offsets):
     for item in offsets.keys():
         offsets[item].sort()
         offsets[item] = [
-            g + i * 0.001 for k, group in groupby(offsets[item])
+            g + i * 0.001
+            for k, group in groupby(offsets[item])
             for i, g in enumerate(group)
         ]
 

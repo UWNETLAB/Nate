@@ -61,8 +61,7 @@ for i in range(0, len(wos_dict['wosString'])):
         except TypeError:
             pass
 
-        abs_dict[wosID]['keywords'] = list(set(x.lower()
-                                               for x in abs_keywords))
+        abs_dict[wosID]['keywords'] = list(set(x.lower() for x in abs_keywords))
 
     except TypeError:
         pass

@@ -43,6 +43,7 @@ class Nate(EdgelistMixin):
             `Nate`'s pipelines.
 
     """
+
     def __init__(self, data: List):
         """Inits `Nate`.
         
@@ -310,8 +311,7 @@ class Nate(EdgelistMixin):
         self.model = model
 
         if bigrams == True:
-            self.texts = nlp_helpers.bigram_process(self.texts,
-                                                    tokenized=False)
+            self.texts = nlp_helpers.bigram_process(self.texts, tokenized=False)
 
         self.nlp = spacy.load(self.model)
         self.nlp.add_pipe(merge_entities)

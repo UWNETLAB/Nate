@@ -27,6 +27,7 @@ class SVOnet(BurstMixin):
     """
     This is a docstring.
     """
+
     def __init__(self, sentences, svo_items, timestamps):
 
         self.doc_ids = []

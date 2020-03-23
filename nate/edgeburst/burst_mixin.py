@@ -6,6 +6,7 @@ from .burst_class import Bursts, detect_bursts
 
 
 class BurstMixin():
+
     def __init__(self):
         self.offset_dict: dict
         self.lookup: dict

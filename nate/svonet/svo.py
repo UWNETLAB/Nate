@@ -171,9 +171,9 @@ def _get_objs_from_prepositions(deps, is_pas):
             if dep.pos_ == "ADP" and (dep.dep_ == "prep" or
                                       (is_pas and dep.dep_ == "agent")):
                 objs.extend([
-                    tok for tok in dep.rights if tok.dep_ in OBJECTS or (
-                        tok.pos_ == "PRON" and tok.lower_ == "me") or (
-                            is_pas and tok.dep_ == 'pobj')
+                    tok for tok in dep.rights if tok.dep_ in OBJECTS or
+                    (tok.pos_ == "PRON" and tok.lower_ == "me") or
+                    (is_pas and tok.dep_ == 'pobj')
                 ])
     return objs
 
@@ -227,13 +227,12 @@ def _get_all_subs(v):
     verb_negated = _is_negated(v)
     if sub_ner_tags:
         subs = [
-            tok for tok in v.lefts if tok.dep_ in SUBJECTS
-            and tok.ent_type_ in sub_ner_tags and tok.pos_ != "DET"
+            tok for tok in v.lefts if tok.dep_ in SUBJECTS and
+            tok.ent_type_ in sub_ner_tags and tok.pos_ != "DET"
         ]
     else:
         subs = [
-            tok for tok in v.lefts
-            if tok.dep_ in SUBJECTS and tok.pos_ != "DET"
+            tok for tok in v.lefts if tok.dep_ in SUBJECTS and tok.pos_ != "DET"
         ]
     if len(subs) > 0:
         subs.extend(_get_subs_from_conjunctions(subs))
@@ -298,8 +297,7 @@ def _get_all_objs(v, is_pas):
     #    objs.extend(potentialNewObjs)
     #    v = potentialNewVerb
 
-    potential_new_verb, potential_new_objs = _get_obj_from_xcomp(
-        rights, is_pas)
+    potential_new_verb, potential_new_objs = _get_obj_from_xcomp(rights, is_pas)
     if potential_new_verb is not None and potential_new_objs is not None and len(
             potential_new_objs) > 0:
         objs.extend(potential_new_objs)

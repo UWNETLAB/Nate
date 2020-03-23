@@ -22,8 +22,7 @@ def cooc_offsets(processed_list: List, time: List, minimum_offsets):
     offset_dict = mp(word_ints, cooc, time)
 
     offsets = {
-        k: v
-        for k, v in offset_dict.items() if len(v) >= minimum_offsets
+        k: v for k, v in offset_dict.items() if len(v) >= minimum_offsets
     }
 
     print("Finished offset generation in {} seconds".format(
@@ -33,7 +32,8 @@ def cooc_offsets(processed_list: List, time: List, minimum_offsets):
     for item in offsets.keys():
         offsets[item].sort()
         offsets[item] = [
-            g + i * 0.001 for k, group in groupby(offsets[item])
+            g + i * 0.001
+            for k, group in groupby(offsets[item])
             for i, g in enumerate(group)
         ]
 

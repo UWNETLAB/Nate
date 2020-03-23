@@ -10,6 +10,7 @@ class Cooc(BurstMixin):
     """
     This is a docstring
     """
+
     def __init__(self,
                  offset_dict: Dict,
                  lookup: Dict,

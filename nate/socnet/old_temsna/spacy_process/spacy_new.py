@@ -44,8 +44,8 @@ def mp(items, function, cpu, *args):
 def mp2(items, function, cpu, *args):
     batch_size = round(len(items) / cpu)
     partitions = partition_all(batch_size, items)
-    temp = Parallel(n_jobs=cpu, max_nbytes=None)(delayed(function)(v, *args)
-                                                 for v in partitions)
+    temp = Parallel(n_jobs=cpu, max_nbytes=None)(
+        delayed(function)(v, *args) for v in partitions)
     results1, results2 = zip(*temp)
     results1 = list(itertools.chain(*results1))
     results2 = list(itertools.chain(*results2))
@@ -56,8 +56,8 @@ def mp2(items, function, cpu, *args):
 def mp3(items, function, cpu, *args):
     batch_size = round(len(items) / cpu)
     partitions = partition_all(batch_size, items)
-    temp = Parallel(n_jobs=cpu, max_nbytes=None)(delayed(function)(v, *args)
-                                                 for v in partitions)
+    temp = Parallel(n_jobs=cpu, max_nbytes=None)(
+        delayed(function)(v, *args) for v in partitions)
     results1, results2, results3 = zip(*temp)
     results1 = list(itertools.chain(*results1))
     results2 = list(itertools.chain(*results2))
@@ -82,9 +82,8 @@ def mp_shared(items, function, cpu, *args):
 def mp2_shared(items, function, cpu, *args):
     batch_size = round(len(items) / cpu)
     partitions = partition_all(batch_size, items)
-    temp = Parallel(n_jobs=cpu, require='sharedmem',
-                    max_nbytes=None)(delayed(function)(v, *args)
-                                     for v in partitions)
+    temp = Parallel(n_jobs=cpu, require='sharedmem', max_nbytes=None)(
+        delayed(function)(v, *args) for v in partitions)
     results1, results2 = zip(*temp)
     results1 = list(itertools.chain(*results1))
     results2 = list(itertools.chain(*results2))
@@ -94,9 +93,8 @@ def mp2_shared(items, function, cpu, *args):
 def mp3_shared(items, function, cpu, *args):
     batch_size = round(len(items) / cpu)
     partitions = partition_all(batch_size, items)
-    temp = Parallel(n_jobs=cpu, require='sharedmem',
-                    max_nbytes=None)(delayed(function)(v, *args)
-                                     for v in partitions)
+    temp = Parallel(n_jobs=cpu, require='sharedmem', max_nbytes=None)(
+        delayed(function)(v, *args) for v in partitions)
     results1, results2, results3 = zip(*temp)
     results1 = list(itertools.chain(*results1))
     results2 = list(itertools.chain(*results2))
@@ -336,8 +334,7 @@ def single_avg_dissim(ego, alter_list, vectors):
         dissim_avg = np.round(np.average(ego_dissim),
                               3)  # average the above results
     else:
-        alter = alter_list[
-            0]  # if author has only 1 alter, no vstack is needed
+        alter = alter_list[0]  # if author has only 1 alter, no vstack is needed
         dissim_avg = np.round(
             np.average(1 - linear_kernel(ego_vector, vectors[alter])), 3)
     return dissim_avg

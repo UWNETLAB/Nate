@@ -11,6 +11,7 @@ import numpy as np
 
 
 class DegreeOverTimeMixIn():
+
     def __init__(self):
         self.offset_dict: dict
         self.edge_burst_dict: dict
@@ -69,8 +70,7 @@ class DegreeOverTimeMixIn():
 
             for key in self.edge_burst_dict:
                 burst_level = find_max_burst(self.edge_burst_dict[key],
-                                             time_slices[i - 1],
-                                             time_slices[i])
+                                             time_slices[i - 1], time_slices[i])
 
                 if burst_level > minimum_burst_level:
                     graphCopy.add_edge(key[0], key[-1])

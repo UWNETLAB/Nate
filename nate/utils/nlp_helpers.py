@@ -33,15 +33,16 @@ def default_filter_lemma(doc):  # to do: make this user-configurable
     This is a docstring.
     """
     doc = [
-        token.lemma_.lower() for token in doc if token.is_stop == False
-        and len(token) > 2 and token.is_alpha and token.is_ascii
+        token.lemma_.lower() for token in doc if token.is_stop == False and
+        len(token) > 2 and token.is_alpha and token.is_ascii
     ]
     return doc
 
 
 def custom_spacy_component(doc):
     return [
-        token.lemma_.lower() for token in doc
+        token.lemma_.lower()
+        for token in doc
         if token.is_stop == False and token.is_ascii
     ]
 

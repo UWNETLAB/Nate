@@ -135,9 +135,8 @@ def mp(items, function, cpu, *args):
 def mp2(items, function, cpu, *args):
     batch_size = round(len(items) / cpu)
     partitions = partition_all(batch_size, items)
-    temp = Parallel(n_jobs=cpu, verbose=10,
-                    max_nbytes=None)(delayed(function)(v, *args)
-                                     for v in partitions)
+    temp = Parallel(n_jobs=cpu, verbose=10, max_nbytes=None)(
+        delayed(function)(v, *args) for v in partitions)
     results1, results2 = zip(*temp)
     results1 = list(itertools.chain(*results1))
     results2 = list(itertools.chain(*results2))
@@ -148,9 +147,8 @@ def mp2(items, function, cpu, *args):
 def mp3(items, function, cpu, *args):
     batch_size = round(len(items) / cpu)
     partitions = partition_all(batch_size, items)
-    temp = Parallel(n_jobs=cpu, verbose=10,
-                    max_nbytes=None)(delayed(function)(v, *args)
-                                     for v in partitions)
+    temp = Parallel(n_jobs=cpu, verbose=10, max_nbytes=None)(
+        delayed(function)(v, *args) for v in partitions)
     results1, results2, results3 = zip(*temp)
     results1 = list(itertools.chain(*results1))
     results2 = list(itertools.chain(*results2))
@@ -340,9 +338,7 @@ def rba_dissim(auth_list, auth_alt_dict, auth_vectors):
                     alter_2_list = auth_alt_dict[alter]
                     ring_list = list_common(alter_list, alter_2_list)
                     bridge_list = list_difference(alter_2_list, alter_list)
-                    alter_2_list_trim = [
-                        x for x in alter_2_list if x != author
-                    ]
+                    alter_2_list_trim = [x for x in alter_2_list if x != author]
                     bridge_list_trim = [x for x in bridge_list if x != author]
                     if len(alter_2_list_trim) > 0:
                         alter_dissim = single_avg_dissim(

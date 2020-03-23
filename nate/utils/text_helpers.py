@@ -86,8 +86,7 @@ def write_topics(model, feature_names, no_top_words, filename='topics.txt'):
         for topic_idx, topic in enumerate(model.components_):
             f.write("Topic {}: ".format(topic_idx))
             f.write(" ".join([
-                feature_names[i]
-                for i in topic.argsort()[:-no_top_words - 1:-1]
+                feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]
             ]))
             f.write('\n')
 
