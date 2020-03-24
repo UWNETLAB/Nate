@@ -90,6 +90,9 @@ def write_topics(model, feature_names, no_top_words, filename='topics.txt'):
             ]))
             f.write('\n')
 
-
-def is_ascii(s):
-    return re.search('[^\x00-\x7F]*$', s) is not None
+def is_ascii(s):        
+    try:
+        s.encode('ascii')
+    except UnicodeEncodeError:
+        return False
+    return True
