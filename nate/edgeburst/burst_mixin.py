@@ -3,17 +3,16 @@ This is a MODULE docstring
 """
 from .export import all_bursts_export, offsets_export
 from .burst_class import Bursts, detect_bursts
- 
+
 
 class BurstMixin():
-    
+
     def __init__(self):
         self.offset_dict: dict
         self.lookup: dict
         self.from_svo: bool
 
-
-    def burst_detection(self, s:float = 2, gamma:float = 1):
+    def burst_detection(self, s: float = 2, gamma: float = 1):
         """
         Returns an object of the class `bursts`
 
@@ -24,12 +23,14 @@ class BurstMixin():
 
         If you wish to detect bursts using a variety of different values for the s and gamma parameters, instead utilize the `multi_bursts` method contained in this class. 
         """
-        offset_dict_strings = offsets_export(self.offset_dict, self.lookup, self.from_svo)
+        offset_dict_strings = offsets_export(self.offset_dict, self.lookup,
+                                             self.from_svo)
         edge_burst_dict_int = detect_bursts(self.offset_dict, s, gamma)
-        edge_burst_dict_strings = all_bursts_export(edge_burst_dict_int, self.offset_dict, self.lookup, self.from_svo)
+        edge_burst_dict_strings = all_bursts_export(edge_burst_dict_int,
+                                                    self.offset_dict,
+                                                    self.lookup, self.from_svo)
 
         return offset_dict_strings, edge_burst_dict_strings, s, gamma, self.from_svo, self.lookup
-
 
     # def multi_burst(self, token_pairs, s, gamma):
     #     """

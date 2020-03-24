@@ -3,11 +3,11 @@ This is a MODULE docstring
 """
 from datetime import datetime, timezone
 
- 
-def convert_times(times, timezone = timezone.utc):
+
+def convert_times(times, timezone=timezone.utc):
     """
     This is a docstring
-    """ 
+    """
     timestamps = []
 
     for time in times:
@@ -16,9 +16,10 @@ def convert_times(times, timezone = timezone.utc):
 
     return timestamps
 
-def convert_time(time, timezone = timezone.utc):
+
+def convert_time(time, timezone=timezone.utc):
     """
     This is a docstring
-    """ 
+    """
     dt = datetime.strptime(time, "%m/%d/%Y %H:%M")
     return int(dt.replace(tzinfo=timezone.utc).timestamp())

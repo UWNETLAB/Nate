@@ -8,15 +8,16 @@ from .timestamp_process import convert_time
 
 text_only_namedtuple = define_named_tuple('obs', ['text'])
 
+
 def import_text(strings):
     """
     This is a docstring
     """
     if isinstance(strings, str):
         strings = [strings]
-    
+
     return Nate([text_only_namedtuple(string) for string in strings])
- 
+
 
 def import_files(files):
     """
@@ -25,17 +26,18 @@ def import_files(files):
 
     if isinstance(files, str):
         files = [files]
-    
+
     obs_list = []
 
     for filepath in files:
         with open(filepath, 'r', encoding='utf-8') as stream:
-            obs_list.append(text_only_namedtuple(stream.read().replace('\n', '')))
+            obs_list.append(
+                text_only_namedtuple(stream.read().replace('\n', '')))
 
     return Nate(obs_list)
 
 
-def import_dict_of_dicts(dictionary, text, time = None, values_to_keep = []):
+def import_dict_of_dicts(dictionary, text, time=None, values_to_keep=[]):
     """
     Used for importing data contained in a dictionary of dictionaries, where the keys of the outer dict correspond with unique_ids. 
     
@@ -73,9 +75,8 @@ def import_dict_of_dicts(dictionary, text, time = None, values_to_keep = []):
     return Nate(obs_list)
 
 
-def import_lists(text:List,  time:List = None, unique_id:List = None):
+def import_lists(text: List, time: List = None, unique_id: List = None):
     """
     Not yet implemented
     """
     pass
-

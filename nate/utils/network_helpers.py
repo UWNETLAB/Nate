@@ -1,5 +1,4 @@
-# CREDIT CHAIN OF DEVS FOR THIS... INCLUDING MALCOLM... 
-
+# CREDIT CHAIN OF DEVS FOR THIS... INCLUDING MALCOLM...
 '''
 This module implements the disparity filter to compute a significance score of edge weights in networks.
 Forked from: https://github.com/aekpalakorn/python-backbone-network/blob/master/backbone.py
@@ -11,7 +10,7 @@ With the following changes:
  - copy all the original edge attributes so that they are not removed
  - bug fix: changed G.in_degree(G.successors(u)[0]) to G.in_degree(list(G.successors(u))[0])
 '''
- 
+
 import networkx as nx
 import numpy as np
 from scipy import integrate
@@ -48,11 +47,13 @@ def compute_disparity_filter_directed(G, weight='weight'):
         k_in = G.in_degree(u)
 
         if k_out > 1:
-            sum_w_out = sum(np.absolute(G[u][v][weight]) for v in G.successors(u))
+            sum_w_out = sum(
+                np.absolute(G[u][v][weight]) for v in G.successors(u))
             for v in G.successors(u):
                 w = G[u][v][weight]
-                p_ij_out = float(np.absolute(w))/sum_w_out
-                alpha_ij_out = 1 - (k_out-1) * integrate.quad(lambda x: (1-x)**(k_out-2), 0, p_ij_out)[0] # pylint: disable=cell-var-from-loop
+                p_ij_out = float(np.absolute(w)) / sum_w_out
+                alpha_ij_out = 1 - (k_out - 1) * integrate.quad(
+                    lambda x: (1 - x)**(k_out - 2), 0, p_ij_out)[0]  # pylint: disable=cell-var-from-loop
                 N.add_edge(u, v, alpha_out=float('%.4f' % alpha_ij_out))
                 N[u][v].update(G[u][v])
 
@@ -64,11 +65,13 @@ def compute_disparity_filter_directed(G, weight='weight'):
             #there is no need to do the same for the k_in, since the link is built already from the tail
 
         if k_in > 1:
-            sum_w_in = sum(np.absolute(G[v][u][weight]) for v in G.predecessors(u))
+            sum_w_in = sum(
+                np.absolute(G[v][u][weight]) for v in G.predecessors(u))
             for v in G.predecessors(u):
                 w = G[v][u][weight]
-                p_ij_in = float(np.absolute(w))/sum_w_in
-                alpha_ij_in = 1 - (k_in-1) * integrate.quad(lambda x: (1-x)**(k_in-2), 0, p_ij_in)[0] # pylint: disable=cell-var-from-loop
+                p_ij_in = float(np.absolute(w)) / sum_w_in
+                alpha_ij_in = 1 - (k_in - 1) * integrate.quad(
+                    lambda x: (1 - x)**(k_in - 2), 0, p_ij_in)[0]  # pylint: disable=cell-var-from-loop
                 N.add_edge(v, u, alpha_in=float('%.4f' % alpha_ij_in))
                 N[v][u].update(G[v][u])
     return N
@@ -84,8 +87,9 @@ def compute_disparity_filter_undirected(G, weight='weight'):
             sum_w = sum(np.absolute(G[u][v][weight]) for v in G[u])
             for v in G[u]:
                 w = G[u][v][weight]
-                p_ij = float(np.absolute(w))/sum_w
-                alpha_ij = 1 - (k-1) * integrate.quad(lambda x: (1-x)**(k-2), 0, p_ij)[0] # pylint: disable=cell-var-from-loop
+                p_ij = float(np.absolute(w)) / sum_w
+                alpha_ij = 1 - (k - 1) * integrate.quad(
+                    lambda x: (1 - x)**(k - 2), 0, p_ij)[0]  # pylint: disable=cell-var-from-loop
                 B.add_edge(u, v, alpha=float('%.4f' % alpha_ij))
                 B[u][v].update(G[u][v])
     return B
@@ -124,11 +128,11 @@ def apply_disparity_filter_directed(G, alpha_t=0.8, cut_mode='or'):
     for u, v, w in G.edges(data=True):
         try:
             alpha_in = w['alpha_in']
-        except KeyError: #there is no alpha_in, so we assign 1. It will never pass the cut
+        except KeyError:  #there is no alpha_in, so we assign 1. It will never pass the cut
             alpha_in = 1
         try:
             alpha_out = w['alpha_out']
-        except KeyError: #there is no alpha_out, so we assign 1. It will never pass the cut
+        except KeyError:  #there is no alpha_out, so we assign 1. It will never pass the cut
             alpha_out = 1
 
         if cut_mode == 'or':
@@ -150,7 +154,7 @@ def apply_disparity_filter_undirected(G, alpha_t=0.8):
 
         try:
             alpha = w['alpha']
-        except KeyError: #there is no alpha, so we assign 1. It will never pass the cut
+        except KeyError:  #there is no alpha, so we assign 1. It will never pass the cut
             alpha = 1
 
         if alpha < alpha_t:

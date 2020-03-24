@@ -25,22 +25,22 @@ def to_pandas(ebursts, offsets, svo, unit='s'):
 
     odf = pd.DataFrame()
     i = pd.to_datetime(offsets, unit='s')
-    odf['Date'], odf['Year'], odf['Month'], odf['Day'] = i.date, i.year, i.month, i.day
+    odf['Date'], odf['Year'], odf['Month'], odf[
+        'Day'] = i.date, i.year, i.month, i.day
     odf = odf.set_index(i)
     odf['svo'] = svos
 
     return bdf, odf
 
 
-def plot_bursts(
-    odf, 
-    bdf, 
-    lowest_level=0, 
-    title=True, 
-    daterange=None, 
-    xrangeoffsets=3, 
-    s = None,
-    gamma = None):
+def plot_bursts(odf,
+                bdf,
+                lowest_level=0,
+                title=True,
+                daterange=None,
+                xrangeoffsets=3,
+                s=None,
+                gamma=None):
     """
     TODO: write docstring
 

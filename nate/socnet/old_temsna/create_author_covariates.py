@@ -1,28 +1,29 @@
 import pandas as pd
 import pickle
 
-
 alter_list = pd.read_pickle("../input/alter_lists.pkl")
 alter_list = alter_list.set_index('author').to_dict()
 nodes = pd.read_csv("../input/coauthorship_nodeAttributes.csv")
 with open("../input/author_metadata.pkl", "rb") as pkl:
     author_metadata = pickle.load(pkl)
 
-
 num_citations = {}
 num_papers = {}
-career_start = {} 
+career_start = {}
 num_alter1 = {}
 num_alter2 = {}
 
 for author in author_metadata:
-    num_citations[author] = author_metadata[author]["wosTimesCited"] 
-    num_papers[author] = author_metadata[author]["num_papers"] = len(author_metadata[author]["wosString"])
-    author_metadata[author]["year"] = list(filter(None, author_metadata[author]["year"]))
+    num_citations[author] = author_metadata[author]["wosTimesCited"]
+    num_papers[author] = author_metadata[author]["num_papers"] = len(
+        author_metadata[author]["wosString"])
+    author_metadata[author]["year"] = list(
+        filter(None, author_metadata[author]["year"]))
     try:
-        career_start[author] = min([int(i) for i in author_metadata[author]["year"]])
+        career_start[author] = min(
+            [int(i) for i in author_metadata[author]["year"]])
     except ValueError:
-        career_start[author] = 2018 
+        career_start[author] = 2018
     try:
         num_alter1[author] = len(alter_list['alter'][author])
     except KeyError:
@@ -31,8 +32,6 @@ for author in author_metadata:
         num_alter2[author] = len(alter_list['alter_2'][author])
     except KeyError:
         pass
-    
-
 
 covariates = pd.DataFrame.from_dict(num_citations, orient='index')
 

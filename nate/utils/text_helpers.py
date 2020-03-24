@@ -33,10 +33,10 @@ def window_text(string_of_text, window_lr=3):
     for _ in tokens:
         context = []
         for index in range(len(tokens)):
-            start = max(0, index-window_lr)
-            finish = min(len(tokens), index+window_lr)
+            start = max(0, index - window_lr)
+            finish = min(len(tokens), index + window_lr)
             left = " ".join(tokens[start:index])
-            right = " ".join(tokens[index+1:finish])
+            right = " ".join(tokens[index + 1:finish])
             context.append("{} {} {}".format(left, tokens[index], right))
     return context
 
@@ -60,21 +60,21 @@ def adjmat_to_wel(adjmat, remove_self_loops=True):
     """
     Accepts an adjacency matrix and outputs a weighted edgelist.
     """
-    adjmat = pd.read_csv('~/Desktop/testing/ajm.csv', index_col = 0)
+    adjmat = pd.read_csv('~/Desktop/testing/ajm.csv', index_col=0)
     adjmat.fillna(0, inplace=True)
 
     if remove_self_loops is True:
         # zero out the diagonal
         for i in adjmat.index:
-            adjmat.loc[i,i] = 0
+            adjmat.loc[i, i] = 0
     else:
         pass
 
-    wel=[('i','j','Weight')]
+    wel = [('i', 'j', 'Weight')]
     for source in adjmat.index.values:
         for target in adjmat.index.values:
             if adjmat[source][target] > 0:
-                wel.append((target,source,adjmat[source][target]))
+                wel.append((target, source, adjmat[source][target]))
     return wel
 
 
@@ -85,8 +85,11 @@ def write_topics(model, feature_names, no_top_words, filename='topics.txt'):
     with open(filename, 'w') as f:
         for topic_idx, topic in enumerate(model.components_):
             f.write("Topic {}: ".format(topic_idx))
-            f.write(" ".join([feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]]))
+            f.write(" ".join([
+                feature_names[i] for i in topic.argsort()[:-no_top_words - 1:-1]
+            ]))
             f.write('\n')
-            
+
+
 def is_ascii(s):
     return re.search('[^\x00-\x7F]*$', s) is not None
