@@ -10,17 +10,11 @@
 
 # Installation 
 
-## pip 
-
-In the very near future, you will be able to install the most recent stable version of `nate` with pip. 
-
-`pip install nate`
-
 ## Github 
 
-If you want access to the most recent development version of `nalanna`, you can install it from the source code in this repository. 
+If you want access to the most recent development version of `nate`, you can install it from the source code in this repository. 
 
-`git clone https://github.com/UWNETLAB/nate.git && cd nate && pip install .`
+`git clone https://github.com/UWNETLAB/nate.git && cd nate && pip install -e .`
 
 # Documentation 
 
