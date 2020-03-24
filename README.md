@@ -10,7 +10,7 @@
 
 # Installation 
 
-## Github 
+## GitHub 
 
 If you want access to the most recent development version of `nate`, you can install it from the source code in this repository. 
 
