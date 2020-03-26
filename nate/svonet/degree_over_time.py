@@ -100,6 +100,18 @@ class DegreeOverTimeMixIn():
                         minimum_burst_level: int = 0,
                         degree_type="both",
                         remove_stop_words=False):
+        """[summary]
+        
+        Args:
+            tokens (list): [description]
+            number_of_slices (int, optional): [description]. Defaults to 20.
+            minimum_burst_level (int, optional): [description]. Defaults to 0.
+            degree_type (str, optional): [description]. Defaults to "both".
+            remove_stop_words (bool, optional): [description]. Defaults to False.
+        
+        Returns:
+            [type]: [description]
+        """
 
         if isinstance(tokens, list) == False:
             tokens = [tokens]
@@ -124,6 +136,15 @@ class DegreeOverTimeMixIn():
                         minimum_burst_level: int = 0,
                         degree_type="both",
                         remove_stop_words=True):
+        """[summary]
+        
+        Args:
+            number_of_slices (int, optional): [description]. Defaults to 20.
+            list_top (int, optional): [description]. Defaults to 10.
+            minimum_burst_level (int, optional): [description]. Defaults to 0.
+            degree_type (str, optional): [description]. Defaults to "both".
+            remove_stop_words (bool, optional): [description]. Defaults to True.
+        """
 
         data = self.top_degree(number_of_slices=number_of_slices,
                                list_top=list_top,
@@ -169,6 +190,22 @@ class DegreeOverTimeMixIn():
                              degree_type="both",
                              plot_type="line",
                              remove_stop_words=False):
+        """[summary]
+        
+        Args:
+            tokens (list): [description]
+            number_of_slices (int, optional): [description]. Defaults to 20.
+            minimum_burst_level (int, optional): [description]. Defaults to 0.
+            degree_type (str, optional): [description]. Defaults to "both".
+            plot_type (str, optional): [description]. Defaults to "line".
+            remove_stop_words (bool, optional): [description]. Defaults to False.
+        
+        Raises:
+            Exception: [description]
+        """
+
+        if isinstance(tokens, list) == False:
+            tokens = [tokens]
 
         if plot_type != "line" and plot_type != "bar":
             raise Exception("`plot_type` must be one of 'line' or 'bar'")
