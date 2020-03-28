@@ -49,15 +49,23 @@ def import_dataframe(input_dataframe: pandas.DataFrame,
 
     Required Parameters:
         input_dataframe (pandas.DataFrame): The dataframe to be loaded.  
-        text (str): The name of the column containing the text data to be analyzed with nate. Required for all uses of nate. 
+        text (str): The name of the column containing the text data to be
+            analyzed with nate. Required for all uses of nate. 
 
     Optional Keyword Parameters:
-        unique_id (str): The name of the column containing unique identifiers (e.g. a unique name or hash ID#). Required for some uses of nate (e.g. Divsim).
-        time (str): The name of the column containing the time the observation was recorded. Required for some uses of nate (e.g. edge_burst).
-        columns_to_keep (list): A list of column names indicating which columns not specified elsewhere (e.g. for the time parameter) are kept. 
+        unique_id (str): The name of the column containing unique 
+            identifiers (e.g. a unique name or hash ID#). Required 
+            for some uses of nate (e.g. Divsim).
+        time (str): The name of the column containing the time the
+            observation was recorded. Required for some uses of 
+            nate (e.g. edge_burst).
+        columns_to_keep (list): A list of column names indicating 
+            which columns not specified elsewhere (e.g. for the 
+            time parameter) are kept. 
 
-    The columns indicated in the text, unique_id, and time parameters will be renamed to 'text', 'unique_id', and 'time', accordingly. The names of the
-    columns listed in 'columns_to_keep' will be preserved as-is. 
+    The columns indicated in the text, unique_id, and time parameters will
+    be renamed to 'text', 'unique_id', and 'time', accordingly. The names 
+    of the columns listed in 'columns_to_keep' will be preserved as-is. 
     """
     return process_dataframe(input_dataframe, text, unique_id, time,
                              columns_to_keep)
@@ -70,26 +78,42 @@ def import_csv(file_paths: Union[List, str],
                columns_to_keep: List = [],
                observation_threshold=0):
     """
-    This function uses pandas to read in a comma-separated value file (.csv) into nate.
+    This function uses pandas to read in a comma-separated value 
+    file (.csv) into nate.
 
     Required Parameters:
-        file_path (str or path-like): The location of the file to be loaded from disk.  
-        text (str): The name of the column containing the text data to be analyzed with nate. Required for all uses of nate. 
+        file_path (str or path-like): The location of the file to
+            be loaded from disk.  
+        text (str): The name of the column containing the text 
+            data to be analyzed with nate. Required for all uses of nate. 
 
     Optional Keyword Parameters:
-        unique_id (str): The name of the column containing unique identifiers (e.g. a unique name or hash ID#). Required for some uses of nate (e.g. Divsim).
-        time (str): The name of the column containing the time the observation was recorded. Required for some uses of nate (e.g. edge_burst).
-        columns_to_keep (list): A list of column names indicating which columns not specified elsewhere (e.g. for the time parameter) are kept. 
-        observation_threshold (int): An integer indicating how many observations to include in the imported data, at minimum.
-            once the number of rows in the imported dataset exceeds this value, the importer will not import the next file in the list of file paths passed to `file_path`.
-            Has no effect if a string or path-like object is passed to `file_paths`.
+        unique_id (str): The name of the column containing unique 
+            identifiers (e.g. a unique name or hash ID#). Required for 
+            some uses of nate (e.g. Divsim).
+        time (str): The name of the column containing the time the 
+            observation was recorded. Required for some uses of nate 
+            (e.g. edge_burst).
+        columns_to_keep (list): A list of column names indicating 
+            which columns not specified elsewhere (e.g. for the time 
+            parameter) are kept. 
+        observation_threshold (int): An integer indicating how many 
+            observations to include in the imported data, at minimum.
+            Once the number of rows in the imported dataset exceeds this value, 
+            the importer will not import the next file in the list of 
+            file paths passed to `file_path`. Has no effect if a string 
+            or path-like object is passed to `file_paths`.
 
-    The columns indicated in the text, unique_id, and time parameters will be renamed to 'text', 'unique_id', and 'time', accordingly. The names of the
+    The columns indicated in the text, unique_id, and time parameters will 
+    be renamed to 'text', 'unique_id', and 'time', accordingly. The names of the
     columns listed in 'columns_to_keep' will be preserved as-is. 
 
-    Note that this function is only equipped to handle pre-processed .csv files that are ready to be loaded into a pandas dataframe with no additional manipulation. If
-    the data requires any kind of special treatment, prudent users will first load their data using pandas directly into python, and then use the 'import_dataframe'
-    function to load their data into nate.
+    Note that this function is only equipped to handle pre-processed .csv 
+    files that are ready to be loaded into a pandas dataframe with no 
+    additional manipulation. If the data requires any kind of special 
+    treatment, prudent users will first load their data using pandas 
+    directly into python, and then use the 'import_dataframe' function 
+    to load their data into nate.
     """
     columns_to_import = [*columns_to_keep]
 
@@ -131,23 +155,34 @@ def import_excel(file_paths: Union[List, str],
     This function uses pandas to read in an excel file (.xlsx) into nate. 
 
     Required Parameters:
-        file_path (str or path-like): The location of the file to be loaded from disk. 
-        text (str): The name of the column containing the text data to be analyzed with nate. Required for all uses of nate. 
+        file_path (str or path-like): The location of the file to be 
+            loaded from disk. 
+        text (str): The name of the column containing the text data 
+            to be analyzed with nate. Required for all uses of nate. 
 
     Optional Keyword Parameters:
-        unique_id (str): The name of the column containing unique identifiers (e.g. a unique name or hash ID#). Required for some uses of nate (e.g. Divsim).
-        time (str): The name of the column containing the time the observation was recorded. Required for some uses of nate (e.g. edge_burst).
-        columns_to_keep (list): A list of column names indicating which columns not specified elsewhere (e.g. for the time parameter) are kept. 
-        observation_threshold (int): An integer indicating how many observations to include in the imported data, at minimum.
-            once the number of rows in the imported dataset exceeds this value, the importer will not import the next file in the list of file paths passed to `file_path`.
+        unique_id (str): The name of the column containing unique identifiers 
+            (e.g. a unique name or hash ID#). Required for some uses of Nate.
+        time (str): The name of the column containing the time the observation
+             was recorded. Required for some uses of nate (e.g. edge_burst).
+        columns_to_keep (list): A list of column names indicating which 
+            columns not specified elsewhere (e.g. for the time parameter) are kept. 
+        observation_threshold (int): An integer indicating how many observations 
+            to include in the imported data, at minimum. Once the number of rows
+            in the imported dataset exceeds this value, the importer will not 
+            import the next file in the list of file paths passed to `file_path`.
             Has no effect if a string or path-like object is passed to `file_paths`.
 
-    The columns indicated in the text, unique_id, and time parameters will be renamed to 'text', 'unique_id', and 'time', accordingly. The names of the
+    The columns indicated in the text, unique_id, and time parameters will be 
+    renamed to 'text', 'unique_id', and 'time', accordingly. The names of the
     columns listed in 'columns_to_keep' will be preserved as-is. 
 
-    Note that this function is only equipped to handle pre-processed .xlsx files that are ready to be loaded into a pandas dataframe with no additional manipulation. If
-    the data requires any kind of special treatment, prudent users will first load their data using pandas directly into python, and then use the 'import_dataframe'
-    function to load their data into nate.
+    Note that this function is only equipped to handle pre-processed .xlsx 
+    files that are ready to be loaded into a pandas dataframe with no 
+    additional manipulation. If the data requires any kind of special 
+    treatment, prudent users will first load their data using pandas 
+    directly into python, and then use the 'import_dataframe' function to 
+    load their data into nate.
     """
     columns_to_import = [*columns_to_keep]
 
