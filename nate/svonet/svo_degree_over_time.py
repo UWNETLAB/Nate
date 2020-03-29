@@ -90,7 +90,7 @@ class SVODegreeOverTimeMixin():
     
     def top_svo_degree(
         self, 
-        number_of_slices: int = 20, 
+        number_of_slices: int = 8, 
         list_top: int = 10,
         minimum_burst_level: int = 0,
         return_edge_overlaps: bool = True,
@@ -202,7 +202,7 @@ class SVODegreeOverTimeMixin():
 
     def specific_svo_degree(self,
                         tokens: list,
-                        number_of_slices: int = 20,
+                        number_of_slices: int = 15,
                         minimum_burst_level: int = 0,
                         overlap_filter: int = 1,
                         degree_type="both",):
@@ -242,7 +242,7 @@ class SVODegreeOverTimeMixin():
 
     def plot_top_svo_degree( 
         self, 
-        number_of_slices: int = 20, 
+        number_of_slices: int = 8, 
         list_top: int = 10,
         minimum_burst_level: int = 0,
         overlap_filter: int = 1,
@@ -284,7 +284,7 @@ class SVODegreeOverTimeMixin():
             fig, ax = plt.subplots()
             fig.set_figwidth(10)
             fig.set_figheight(6)
-            fig.suptitle('{} to {}'.format(date_names[i-1], date_names[i]), fontsize=16)
+            fig.suptitle('{} to {}'.format(date_names[i-1], date_names[i]), fontsize=12, ha="center")
             ax.yaxis.set_major_locator(MaxNLocator(integer=True))
             plt.bar(x, values, color='#32363A')
             plt.xticks(x, names, rotation="vertical")
@@ -293,7 +293,7 @@ class SVODegreeOverTimeMixin():
 
     def plot_specific_svo_degree(self,
                              tokens: list,
-                             number_of_slices: int = 20,
+                             number_of_slices: int = 15,
                              minimum_burst_level: int = 0,
                              overlap_filter: int = 1,
                              plot_type="line",
@@ -333,7 +333,7 @@ class SVODegreeOverTimeMixin():
             fig, ax = plt.subplots()
             fig.set_figwidth(10)
             fig.set_figheight(6)
-            fig.suptitle("'{}'".format(k), fontsize=16)
+            fig.suptitle("'{}'".format(k), fontsize=12, ha="center")
             ax.yaxis.set_major_locator(MaxNLocator(integer=True))
             if plot_type == "bar":
                 plt.bar(x, values, color='#32363A')
