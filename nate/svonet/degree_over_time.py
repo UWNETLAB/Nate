@@ -21,7 +21,7 @@ class DegreeOverTimeMixIn():
         self.lookup: dict
 
     def top_degree(self,
-                   number_of_slices: int = 20,
+                   number_of_slices: int = 8,
                    list_top: int = 10,
                    minimum_burst_level: int = 0,
                    degree_type="both",
@@ -96,10 +96,22 @@ class DegreeOverTimeMixIn():
 
     def specific_degree(self,
                         tokens: list,
-                        number_of_slices: int = 20,
+                        number_of_slices: int = 15,
                         minimum_burst_level: int = 0,
                         degree_type="both",
                         remove_stop_words=False):
+        """[summary]
+        
+        Args:
+            tokens (list): [description]
+            number_of_slices (int, optional): [description]. Defaults to 20.
+            minimum_burst_level (int, optional): [description]. Defaults to 0.
+            degree_type (str, optional): [description]. Defaults to "both".
+            remove_stop_words (bool, optional): [description]. Defaults to False.
+        
+        Returns:
+            [type]: [description]
+        """
 
         if isinstance(tokens, list) == False:
             tokens = [tokens]
@@ -119,11 +131,20 @@ class DegreeOverTimeMixIn():
         return token_rank_dict
 
     def plot_top_degree(self,
-                        number_of_slices: int = 20,
+                        number_of_slices: int = 8,
                         list_top: int = 10,
                         minimum_burst_level: int = 0,
                         degree_type="both",
                         remove_stop_words=True):
+        """[summary]
+        
+        Args:
+            number_of_slices (int, optional): [description]. Defaults to 20.
+            list_top (int, optional): [description]. Defaults to 10.
+            minimum_burst_level (int, optional): [description]. Defaults to 0.
+            degree_type (str, optional): [description]. Defaults to "both".
+            remove_stop_words (bool, optional): [description]. Defaults to True.
+        """
 
         data = self.top_degree(number_of_slices=number_of_slices,
                                list_top=list_top,
@@ -154,7 +175,7 @@ class DegreeOverTimeMixIn():
                 fig.set_figheight(6)
                 fig.suptitle('{} to {}'.format(date_names[i - 1],
                                                date_names[i]),
-                             fontsize=16)
+                             fontsize=12, ha="center")
                 ax.yaxis.set_major_locator(MaxNLocator(integer=True))
                 plt.bar(x, values, color='#32363A')
                 plt.xticks(x, names, rotation="vertical")
@@ -164,11 +185,27 @@ class DegreeOverTimeMixIn():
 
     def plot_specific_degree(self,
                              tokens: list,
-                             number_of_slices: int = 20,
+                             number_of_slices: int = 15,
                              minimum_burst_level: int = 0,
                              degree_type="both",
                              plot_type="line",
                              remove_stop_words=False):
+        """[summary]
+        
+        Args:
+            tokens (list): [description]
+            number_of_slices (int, optional): [description]. Defaults to 20.
+            minimum_burst_level (int, optional): [description]. Defaults to 0.
+            degree_type (str, optional): [description]. Defaults to "both".
+            plot_type (str, optional): [description]. Defaults to "line".
+            remove_stop_words (bool, optional): [description]. Defaults to False.
+        
+        Raises:
+            Exception: [description]
+        """
+
+        if isinstance(tokens, list) == False:
+            tokens = [tokens]
 
         if plot_type != "line" and plot_type != "bar":
             raise Exception("`plot_type` must be one of 'line' or 'bar'")
@@ -200,7 +237,7 @@ class DegreeOverTimeMixIn():
             fig, ax = plt.subplots()
             fig.set_figwidth(10)
             fig.set_figheight(6)
-            fig.suptitle("'{}'".format(k), fontsize=16)
+            fig.suptitle("'{}'".format(k), fontsize=12, ha="center")
             ax.yaxis.set_major_locator(MaxNLocator(integer=True))
             if plot_type == "bar":
                 plt.bar(x, values, color='#32363A')

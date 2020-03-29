@@ -50,8 +50,7 @@ class Nate(EdgelistMixin):
         See `Nate` class docstring.
         """
         self.data: List = data
-        self.texts = self.list_texts()
-        self.time = self.list_time()
+        self.texts: List = self.list_texts()
         self.post_nlp: List
 
     def __call__(self, start: int = 0, end: int = 5):
@@ -108,7 +107,7 @@ class Nate(EdgelistMixin):
         """
         return [str(i.text) for i in self.data[start:end]]
 
-    def list_time(self, start: int = None, end: int = None) -> List:
+    def list_times(self, start: int = None, end: int = None) -> List:
         """Returns the 'time' field from data in the range provided.
 
         Note that if both `start` and `end` are left at their default (None),
@@ -241,7 +240,7 @@ class Nate(EdgelistMixin):
             Cooc: An instance of the `Cooc` class.
         """
 
-        offset_dict, lookup = cooc_offsets(self.post_nlp, self.time,
+        offset_dict, lookup = cooc_offsets(self.post_nlp, self.list_times(),
                                            minimum_offsets)
 
         return Cooc(offset_dict, lookup, minimum_offsets)
@@ -273,7 +272,7 @@ class Nate(EdgelistMixin):
 
         return "NOT CURRENTLY IMPLEMENTED"  #SOCnet(self.data, self.edgelist[slice(subset)])
 
-    def svo_pipeline(self,
+    def svonet_pipeline(self,
                      sub_tags: bool = False,
                      obj_tags: bool = False,
                      bigrams: bool = False,
@@ -325,4 +324,4 @@ class Nate(EdgelistMixin):
         sentences = [x[0] for x in self.post_svo]
         svo_items = [x[1] for x in self.post_svo]
 
-        return SVOnet(sentences, svo_items, self.time)
+        return SVOnet(sentences, svo_items, self.list_times())

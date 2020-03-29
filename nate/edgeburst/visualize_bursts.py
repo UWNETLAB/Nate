@@ -92,4 +92,4 @@ def plot_bursts(odf,
     fig.tight_layout(rect=[0, 0.03, 1, 0.95])
 
     if title is True:
-        fig.suptitle(f'SVO: {svo_title}', fontsize=12, ha='center')
+        fig.suptitle(f'{svo_title}', fontsize=12, ha='center')
