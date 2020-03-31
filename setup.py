@@ -13,7 +13,8 @@ setup(
         "matplotlib",
         "networkx",
         "pillow",
-        "stop_words"
+        "stop_words",
+        "gensim"
         ], # A bunch of things will need to go here; we'll have to do an audit of every package we use
     packages = find_packages(),
     include_package_data=True,
