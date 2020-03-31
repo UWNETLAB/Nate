@@ -51,7 +51,7 @@ class DegreeOverTimeMixIn():
                 offset_set.add(offset)
 
         time_slices, time_labels = generate_ticks(
-            offset_set, number_of_ticks=number_of_slices)
+            offset_set, number_of_ticks=(number_of_slices))
 
         # Create network consisting of all Subjects and Objects:
 

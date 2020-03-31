@@ -1,11 +1,10 @@
 from nate.edgeburst.burst_class import Bursts
-from nate.svonet.graph_svo import SVOgraphMixin
 from nate.svonet.degree_over_time import DegreeOverTimeMixIn
 from nate.svonet.svo_degree_over_time import SVODegreeOverTimeMixin
 from nate.svonet.svo_burst_animate import *
 
 
-class SVOburst(Bursts, SVOgraphMixin, DegreeOverTimeMixIn, SVODegreeOverTimeMixin):
+class SVOburst(Bursts, DegreeOverTimeMixIn, SVODegreeOverTimeMixin):
     """[summary]
     
     """

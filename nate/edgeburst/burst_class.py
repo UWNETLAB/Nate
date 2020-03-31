@@ -1,12 +1,12 @@
 """
 This is a MODULE docstring
 """
-from . import pybursts
+from nate.edgeburst import pybursts
 from ..utils.mp_helpers import mp
 from .visualize_bursts import plot_bursts
 from .export import df_export, max_bursts_export
 from nate.edgeburst import visualize_bursts
-from typing import Tuple, Dict, Callable
+from typing import Tuple, Dict, Callable, Union
 
 
 def get_bursts(s, gamma, offset_list):
@@ -47,6 +47,23 @@ class Bursts():
         self.bdf = None
         self.odf = None
         self.lookup = lookup
+
+    def __getitem__(self, index: Union[slice, int, tuple]):
+        """Called when `EdgeBurst` is accessed using indexing or slicing.
+        
+        Args:
+            index (slice): A range of integers used to retrieve corresponding entries
+                in the `offset_dict` attribute.
+        
+        Returns:
+            A list of named tuples, each corresponding to one row in the dataset. 
+        """
+
+        if isinstance(index, slice) or isinstance(index, int):
+            return list(self.edge_burst_dict.items())[index]
+        else:
+            return self.edge_burst_dict[index]
+
 
     def export_df(self):
         """

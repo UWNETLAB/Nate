@@ -33,6 +33,7 @@ def to_pandas(ebursts, offsets, svo, unit='s'):
     return bdf, odf
 
 
+
 def plot_bursts(odf,
                 bdf,
                 lowest_level=0,
@@ -53,12 +54,6 @@ def plot_bursts(odf,
 
     svo_title = str(set(bdf['svo']).pop())
 
-    if lowest_level > 0:
-        bdf = bdf[bdf['level'] >= lowest_level]
-        xmin = (min(bdf['start']) + pd.DateOffset(days=2)).date()
-        xmax = (max(bdf['start']) + pd.DateOffset(days=2)).date()
-        daterange = (xmin, xmax)
-
     fig, (axa, axb) = plt.subplots(2, sharey=False, sharex=True)
     fig.set_figwidth(10)
     fig.set_figheight(6)
@@ -77,7 +72,46 @@ def plot_bursts(odf,
         axa.set_xlim(pd.Timestamp(daterange[0]), pd.Timestamp(daterange[1]))
 
     # bursts plot
-    axb.bar(bdf['start'], bdf['level'], color='#32363A')
+
+    days = [day_freq.index[0]]
+    levels = [0]
+
+    for i in range(1, len(day_freq.index)):
+        
+        period_start = odf.resample('D').size().index[i - 1]
+        period_end = odf.resample('D').size().index[i]
+
+        max_burst = set()
+
+        days.append(period_end)
+
+        for j in range(len(bdf)):
+            
+            burst_start = bdf['start'][j]
+            burst_end = bdf['end'][j]
+            level = bdf['level'][j]
+            
+            if burst_end < period_start or period_end < burst_start :
+                pass
+            else:
+                max_burst.add(level)
+        
+        levels.append(max(max_burst))
+                
+    finaldf = pd.DataFrame({"start": days, "level": levels})
+
+    if lowest_level > 0:
+        bdf = bdf[bdf['level'] >= lowest_level]
+        xmin = min(bdf['start'])
+        xmax = max(bdf['start'])
+        
+        if xmin == xmax:
+            raise Exception("There must be at least two bursts at or above the specified level. Try reducing the `lowest_level` parameter.")
+
+        daterange = ((xmin + pd.DateOffset(days=2)).date(), (xmax + pd.DateOffset(days=2)).date())
+
+    # bursts plot
+    axb.bar(finaldf['start'], finaldf['level'], color='#32363A', width=1)
 
     if s != None and gamma != None:
         axb.set_ylabel(r'Burst levels (s = {}, $\gamma$ = {})'.format(s, gamma))

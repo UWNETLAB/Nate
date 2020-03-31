@@ -68,8 +68,9 @@ def find_max_burst(burst_list: list, offset_start, offset_end):
     burst_levels.add(0)
 
     for burst in burst_list:
-        if offset_start < burst[1] < offset_end or offset_start < burst[
-                2] < offset_end:
+        if burst[2] < offset_start or offset_end < burst[1]: #offset_start < burst[1] < offset_end or offset_start < burst[2] < offset_end:
+            pass
+        else:
             burst_levels.add(burst[0])
 
     return max(burst_levels)
