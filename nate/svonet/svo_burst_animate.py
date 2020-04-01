@@ -147,7 +147,10 @@ def build_graph(df, pos, time_interval):
 
 	interval_list = g.new_graph_property("object")
 	interval_list[g] = []
-	time_interval = int(86400)
+	
+	if time_interval == False:
+		time_interval = int(86400)
+		
 	for index, row in bursts_df_pruned.iterrows():
 		start, end = row['start'], row['end']
 		for current_time in range(int(start), int(end), time_interval):
