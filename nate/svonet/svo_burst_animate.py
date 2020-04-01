@@ -7,7 +7,9 @@ from collections import defaultdict
 from numpy.random import *
 import sys, os, os.path
 import time
+import datetime
 from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, GLib
+from PIL import Image, ImageDraw, ImageFont
 
 def prepare_df(burst_dict, offset_dict):
 	df = pd.DataFrame()
@@ -397,8 +399,30 @@ def animate_graph(graph, offscreen = True, offscreen_params = False, onscreen_pa
 		# if doing an offscreen animation, dump frame to disk
 		if offscreen:
 			global frame
+			this_filename = r'./frames/sirs%06d.png' % frame
+
 			pixbuf = win.get_pixbuf()
-			pixbuf.savev(r'./frames/sirs%06d.png' % frame, 'png', [], [])
+			pixbuf.savev(this_filename, 'png', [], [])
+
+			with Image.open(this_filename) as im:
+
+				myfont = ImageFont.truetype("Arial.ttf", 30)
+
+				width, height = im.size
+				
+				try:
+					date = datetime.datetime.fromtimestamp(times[frame - 1]).strftime('%Y-%m-%d')
+					msg = str(date)
+				except KeyError:
+					msg = "No time data for this slice"
+
+				draw = ImageDraw.Draw(im)
+				w, h = draw.textsize(msg, myfont)
+				draw.text(((width - w)/2, height/50), msg, font=myfont, fill="black")
+
+				im.save(this_filename)
+
+
 			frame += 1
 			if current_interval == max_count:
 				Gtk.main_quit()
@@ -421,3 +445,5 @@ def animate_graph(graph, offscreen = True, offscreen_params = False, onscreen_pa
 	# Actually show the window, and start the main loop.
 	win.show_all()
 	Gtk.main()
+
+
