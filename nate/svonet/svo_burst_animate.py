@@ -9,15 +9,6 @@ import sys, os, os.path
 import time
 from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, GLib
 
-#tweets = nate.import_csv('../data/right.csv', text='content', time='publish_date')
-#tags = ['PERSON', 'NORP', 'FAC', 'ORG', 'GPE', 'LOC', 'PRODUCT', 'EVENT', 'WORK_OF_ART', 'LAW']
-#svo = tweets.svo_pipeline(sub_tags = tags, obj_tags = tags)
-#svo_burst = svo.svo_to_burst(minimum_offsets = 2)
-
-#df = prepare_df(svo_burst)
-#graph = build_graph(df)
-
-
 def prepare_df(burst_dict, offset_dict):
 	df = pd.DataFrame()
 	svo_list = []
@@ -166,14 +157,12 @@ def build_graph(df, pos = False, time_interval = False):
 
 	interval_list = g.new_graph_property("object")
 	interval_list[g] = []
-	if time_interval:
-		time_interval = int(time_interval)
-	else:
-		time_interval = int(3600)
-	for current_time in range(int(start), int(stop+time_interval), time_interval):
-		interval_list[g].append(current_time)
+	time_interval = int(86400)
+	for index, row in bursts_df_pruned.iterrows():
+		start, end = row['start'], row['end']
+		for current_time in range(int(start), int(end), time_interval):
+			interval_list[g].append(current_time)
 
-	interval_list[g].extend(bursts_df_pruned['start'].tolist())
 	interval_list[g] = sorted(set(interval_list[g]))
 
 	for i, current_time in enumerate(interval_list[g]):
