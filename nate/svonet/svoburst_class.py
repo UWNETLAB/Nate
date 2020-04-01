@@ -1,7 +1,8 @@
 from nate.edgeburst.burst_class import Bursts
 from nate.svonet.degree_over_time import DegreeOverTimeMixIn
 from nate.svonet.svo_degree_over_time import SVODegreeOverTimeMixin
-from nate.svonet.svo_burst_animate import *
+from nate.svonet.svo_burst_animate import prepare_df, build_graph, animate_graph
+
 
 
 class SVOburst(Bursts, DegreeOverTimeMixIn, SVODegreeOverTimeMixin):

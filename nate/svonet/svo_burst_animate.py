@@ -60,7 +60,17 @@ def add_verbs(g, verb_list, vertex_shapes, vertex_names):
 		vertex_verb_dict.update({vertex:int(v)})
 	return g, vertex_verb_dict
 
-def build_graph(df, pos, time_interval):
+def build_graph(df, pos = False, time_interval = False):
+	"""
+	
+	Args:
+		df ([type]): [description]
+		pos (bool, optional): [description]. Defaults to False.
+		time_interval (bool, optional): [description]. Defaults to False.
+	
+	Returns:
+		[type]: [description]
+	"""
 
 	bursts_df = df[df['hierarchy'] > 0]
 	bursts_df = bursts_df.sort_values(by=['svo', 'hierarchy'])
@@ -129,7 +139,7 @@ def build_graph(df, pos, time_interval):
 
 		pos = pos
 	else:
-		pos = sfdp_layout(g, eweight = g.edge_properties['edge_weights'], K = 1, C = 1)
+		pos = graphviz_draw(g, vsize = 10, overlap = False, output = None)
 
 	g.vertex_properties['pos'] = pos
 
@@ -264,7 +274,8 @@ def build_graph(df, pos, time_interval):
 
 	return g
 
-def animate_graph(graph, offscreen, offscreen_params, onscreen_params):
+
+def animate_graph(graph, offscreen = True, offscreen_params = False, onscreen_params = False):
 	global g, frame
 	frame = 0
 	g = graph
