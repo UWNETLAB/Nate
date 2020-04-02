@@ -135,7 +135,9 @@ class DegreeOverTimeMixIn():
                         list_top: int = 10,
                         minimum_burst_level: int = 0,
                         degree_type="both",
-                        remove_stop_words=True):
+                        remove_stop_words=True,
+                        filename: str = False,
+                        ):
         """[summary]
         
         Args:
@@ -151,6 +153,8 @@ class DegreeOverTimeMixIn():
                                minimum_burst_level=minimum_burst_level,
                                degree_type=degree_type,
                                remove_stop_words=remove_stop_words)
+
+        print(data)
 
         date_names = []
         time_slices = []
@@ -169,17 +173,24 @@ class DegreeOverTimeMixIn():
                 values.append(top_degrees[1])
                 names.append(top_degrees[0])
 
+            values.reverse()
+            names.reverse()
+
             if np.sum(values) > 0:
                 fig, ax = plt.subplots()
-                fig.set_figwidth(10)
-                fig.set_figheight(6)
+                fig.set_figwidth(6)
+                fig.set_figheight(10)
                 fig.suptitle('{} to {}'.format(date_names[i - 1],
                                                date_names[i]),
                              fontsize=12, ha="center")
-                ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-                plt.bar(x, values, color='#32363A')
-                plt.xticks(x, names, rotation="vertical")
-                plt.show()
+                ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+                plt.barh(x, values, color='#32363A')
+                plt.yticks(x, names)
+
+                if filename:
+                    plt.savefig(str(filename) + str(i) + ".pdf")
+                else:
+                    plt.show()
             else:
                 print("No nodes with degree > 0 in this time slice.")
 
@@ -189,7 +200,8 @@ class DegreeOverTimeMixIn():
                              minimum_burst_level: int = 0,
                              degree_type="both",
                              plot_type="line",
-                             remove_stop_words=False):
+                             remove_stop_words=False,
+                             filename: str = False,):
         """[summary]
         
         Args:
@@ -244,4 +256,8 @@ class DegreeOverTimeMixIn():
             elif plot_type == "line":
                 plt.plot(x, values, color='#32363A')
             plt.xticks(x, dates)
-            plt.show()
+
+            if filename:
+                plt.savefig(str(filename) + str(k) + ".pdf")
+            else:
+                plt.show()

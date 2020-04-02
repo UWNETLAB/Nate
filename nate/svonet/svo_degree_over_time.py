@@ -224,7 +224,8 @@ class SVODegreeOverTimeMixin():
         number_of_slices: int = 8, 
         list_top: int = 10,
         minimum_burst_level: int = 0,
-        overlap_threshold: int = 1,):
+        overlap_threshold: int = 1,
+        filename: str = False,):
         """[summary]
         
         Args:
@@ -258,22 +259,28 @@ class SVODegreeOverTimeMixin():
                 values.append(top_degrees[1])
                 names.append(top_degrees[0])
 
-            fig, ax = plt.subplots()
-            fig.set_figwidth(10)
-            fig.set_figheight(6)
-            fig.suptitle('{} to {}'.format(date_names[i-1], date_names[i]), fontsize=12, ha="center")
-            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-            plt.bar(x, values, color='#32363A')
-            plt.xticks(x, names, rotation="vertical")
-            plt.show()
+            values.reverse()
+            names.reverse()
 
+            fig, ax = plt.subplots()
+            fig.set_figwidth(6)
+            fig.set_figheight(10)
+            fig.suptitle('{} to {}'.format(date_names[i-1], date_names[i]), fontsize=12, ha="center")
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            plt.barh(x, values, color='#32363A')
+            plt.yticks(x, names)
+            if filename:
+                plt.savefig(str(filename) + str(i) + ".pdf")
+            else:
+                plt.show()
 
     def plot_specific_svo_degree(self,
                              tokens: list,
                              number_of_slices: int = 15,
                              minimum_burst_level: int = 0,
                              overlap_threshold: int = 1,
-                             plot_type="line"):
+                             plot_type="line",
+                             filename: str = False,):
         
         if isinstance(tokens, list) == False:
             tokens = [tokens]
@@ -315,4 +322,7 @@ class SVODegreeOverTimeMixin():
             elif plot_type == "line":
                 plt.plot(x, values, color='#32363A')
             plt.xticks(x, dates)
-            plt.show()
+            if filename:
+                plt.savefig(str(filename) + str(k) + ".pdf")
+            else:
+                plt.show()
