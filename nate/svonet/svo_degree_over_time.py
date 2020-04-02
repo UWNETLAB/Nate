@@ -21,7 +21,6 @@ def get_degree_for_slice(
         minimum_burst_level, 
         stops, 
         overlap_threshold,
-        degree_type,
         return_edge_overlaps,
         list_top,
         time_label):
@@ -41,12 +40,8 @@ def get_degree_for_slice(
 
     graphCopy.remove_edges_from(nx.selfloop_edges(graphCopy))
 
-    if degree_type == "in":
-        degree_list = list(graphCopy.in_degree)
-    elif degree_type == "out":
-        degree_list = list(graphCopy.out_degree)
-    elif degree_type == "both":
-        degree_list = list(graphCopy.degree)
+
+    degree_list = list(graphCopy.degree)
 
     degree_list.sort(key=lambda x: x[1], reverse=True)
 
@@ -73,9 +68,6 @@ def get_degree_for_slice(
     else:
         q.put((time_label, time_slice_end, degree_list))
 
-    print("{} done".format(time_label))
-
-
 
 class SVODegreeOverTimeMixin():
 
@@ -94,7 +86,6 @@ class SVODegreeOverTimeMixin():
         list_top: int = 10,
         minimum_burst_level: int = 0,
         return_edge_overlaps: bool = True,
-        degree_type="both",
         overlap_threshold: int = 1):
         """[summary]
         
@@ -115,11 +106,6 @@ class SVODegreeOverTimeMixin():
         if overlap_threshold > 2 or overlap_threshold < 1:
             raise Exception("Overlap Filter must be 1 or 2.")
 
-        if degree_type != "in" and degree_type != "out" and degree_type != "both":
-            raise Exception(
-                "`degree_type` must be one of 'in', 'out', or 'both'")
-
-
         stops = sw.get_stop_words("english")
 
         # Create list of time slices:
@@ -134,7 +120,7 @@ class SVODegreeOverTimeMixin():
 
         # Create network consisting of all Subjects and Objects:
 
-        G = nx.DiGraph()
+        G = nx.Graph()
 
         for entry in self.edge_burst_dict:
             G.add_node(entry)
@@ -165,7 +151,6 @@ class SVODegreeOverTimeMixin():
                     minimum_burst_level,
                     stops,
                     overlap_threshold,
-                    degree_type,
                     return_edge_overlaps,
                     list_top,
                     time_label
@@ -179,8 +164,6 @@ class SVODegreeOverTimeMixin():
 
         for i in range(1, len(time_slices)):
             result_list.append(q.get())
-
-        print("join finished")
 
 
         top_degree_by_slice = {}
@@ -204,8 +187,7 @@ class SVODegreeOverTimeMixin():
                         tokens: list,
                         number_of_slices: int = 15,
                         minimum_burst_level: int = 0,
-                        overlap_threshold: int = 1,
-                        degree_type="both",):
+                        overlap_threshold: int = 1):
         """[summary]
         
         Args:
@@ -225,11 +207,9 @@ class SVODegreeOverTimeMixin():
                                      list_top=None,
                                      minimum_burst_level=minimum_burst_level,
                                      return_edge_overlaps=False, 
-                                     degree_type=degree_type,
                                      overlap_threshold=overlap_threshold,
                                      )
 
-        print("finished network!")
 
         token_rank_dict = {}
 
@@ -244,8 +224,7 @@ class SVODegreeOverTimeMixin():
         number_of_slices: int = 8, 
         list_top: int = 10,
         minimum_burst_level: int = 0,
-        overlap_threshold: int = 1,
-        degree_type="both"):
+        overlap_threshold: int = 1,):
         """[summary]
         
         Args:
@@ -260,8 +239,7 @@ class SVODegreeOverTimeMixin():
             list_top = list_top,
             minimum_burst_level = minimum_burst_level,
             return_edge_overlaps = False,
-            overlap_threshold=overlap_threshold,
-            degree_type=degree_type)
+            overlap_threshold=overlap_threshold,)
 
         date_names = []
         time_slices = []
@@ -295,8 +273,7 @@ class SVODegreeOverTimeMixin():
                              number_of_slices: int = 15,
                              minimum_burst_level: int = 0,
                              overlap_threshold: int = 1,
-                             plot_type="line",
-                             degree_type="both"):
+                             plot_type="line"):
         
         if isinstance(tokens, list) == False:
             tokens = [tokens]
@@ -308,7 +285,6 @@ class SVODegreeOverTimeMixin():
                                     number_of_slices=number_of_slices,
                                     minimum_burst_level=minimum_burst_level,
                                     overlap_threshold=overlap_threshold,
-                                    degree_type=degree_type,
                                     )
 
         inverted_dict = {}
