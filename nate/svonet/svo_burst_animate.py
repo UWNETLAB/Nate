@@ -256,7 +256,7 @@ def build_graph(df, pos = False, time_interval = False):
     return g
 
 
-def animate_graph(graph, pos= False, offscreen = True, dpi = 300, new_burst_halo = True):
+def animate_graph(graph, pos, offscreen, dpi = 300, new_burst_halo = True):
     global g, frame
     frame = 0
     g = graph
