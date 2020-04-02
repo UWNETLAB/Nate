@@ -259,13 +259,16 @@ class SVODegreeOverTimeMixin():
                 values.append(top_degrees[1])
                 names.append(top_degrees[0])
 
+            values.reverse()
+            names.reverse()
+
             fig, ax = plt.subplots()
-            fig.set_figwidth(10)
-            fig.set_figheight(6)
+            fig.set_figwidth(6)
+            fig.set_figheight(10)
             fig.suptitle('{} to {}'.format(date_names[i-1], date_names[i]), fontsize=12, ha="center")
-            ax.yaxis.set_major_locator(MaxNLocator(integer=True))
-            plt.bar(x, values, color='#32363A')
-            plt.xticks(x, names, rotation="vertical")
+            ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+            plt.barh(x, values, color='#32363A')
+            plt.yticks(x, names)
             if filename:
                 plt.savefig(str(filename) + str(i) + ".pdf")
             else:
