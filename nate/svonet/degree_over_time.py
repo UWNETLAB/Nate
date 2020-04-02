@@ -135,7 +135,9 @@ class DegreeOverTimeMixIn():
                         list_top: int = 10,
                         minimum_burst_level: int = 0,
                         degree_type="both",
-                        remove_stop_words=True):
+                        remove_stop_words=True,
+                        filename: str = False,
+                        ):
         """[summary]
         
         Args:
@@ -179,7 +181,11 @@ class DegreeOverTimeMixIn():
                 ax.yaxis.set_major_locator(MaxNLocator(integer=True))
                 plt.bar(x, values, color='#32363A')
                 plt.xticks(x, names, rotation="vertical")
-                plt.show()
+
+                if filename:
+                    plt.savefig(str(filename) + str(i) + ".pdf")
+                else:
+                    plt.show()
             else:
                 print("No nodes with degree > 0 in this time slice.")
 
@@ -189,7 +195,8 @@ class DegreeOverTimeMixIn():
                              minimum_burst_level: int = 0,
                              degree_type="both",
                              plot_type="line",
-                             remove_stop_words=False):
+                             remove_stop_words=False,
+                             filename: str = False,):
         """[summary]
         
         Args:
@@ -244,4 +251,8 @@ class DegreeOverTimeMixIn():
             elif plot_type == "line":
                 plt.plot(x, values, color='#32363A')
             plt.xticks(x, dates)
-            plt.show()
+            
+            if filename:
+                plt.savefig(str(filename) + str(k) + ".pdf")
+            else:
+                plt.show()
