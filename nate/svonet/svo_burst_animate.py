@@ -65,388 +65,389 @@ def build_graph(df, pos = False, time_interval = False):
 		[type]: [description]
 	"""
 
-	bursts_df = df[df['hierarchy'] > 0]
-	bursts_df = bursts_df.sort_values(by=['svo', 'hierarchy'])
-	bursts_df['max_hierarchy'] = bursts_df.groupby(['svo'])['hierarchy'].transform(max)
+    bursts_df = df[df['hierarchy'] > 0]
+    bursts_df = bursts_df.sort_values(by=['svo', 'hierarchy'])
+    bursts_df['max_hierarchy'] = bursts_df.groupby(['svo'])['hierarchy'].transform(max)
 
-	start = min(bursts_df['start'].tolist())
-	stop = max(bursts_df['end'].tolist())
 
-	edge_df = df[df['hierarchy'] == 0]
+    edge_df = df[df['hierarchy'] == 0]
 
-	edges = edge_df['svo'].tolist()
+    edges = edge_df['svo'].tolist()
 
-	edge_weights = edge_df['num_offsets'].tolist()
+    edge_weights = edge_df['num_offsets'].tolist()
 
-	vertex_dict = {}
-	vertex_verb_dict = {}
-	subs_obs = []
-	verbs = []
-	for svo in edges:
-		subs_obs.append(svo[0])
-		subs_obs.append(svo[2])
-		verbs.append(svo[1])
+    vertex_dict = {}
+    vertex_verb_dict = {}
+    subs_obs = []
+    verbs = []
+    for svo in edges:
+        subs_obs.append(svo[0])
+        subs_obs.append(svo[2])
+        verbs.append(svo[1])
 
 
-	so_vertexes = list(set(subs_obs))
-	v_vertexes = list(set(verbs))
+    so_vertexes = list(set(subs_obs))
+    v_vertexes = list(set(verbs))
 
-	g = Graph()
-	vertex_shapes = g.new_vertex_property("string")
-	vertex_names = g.new_vertex_property("string")
+    g = Graph()
+    vertex_shapes = g.new_vertex_property("string")
+    vertex_names = g.new_vertex_property("string")
 
-	g, vertex_dict = add_subs_obs(g, so_vertexes, vertex_shapes, vertex_names)
-	g, vertex_verb_dict = add_verbs(g, v_vertexes, vertex_shapes, vertex_names)
-	
-	g.vertex_properties['vertex_shape'] = vertex_shapes
-	g.vertex_properties['vertex_name'] = vertex_names
+    g, vertex_dict = add_subs_obs(g, so_vertexes, vertex_shapes, vertex_names)
+    g, vertex_verb_dict = add_verbs(g, v_vertexes, vertex_shapes, vertex_names)
+    
+    g.vertex_properties['vertex_shape'] = vertex_shapes
+    g.vertex_properties['vertex_name'] = vertex_names
 
 
-	sv_weight_dict = defaultdict(int)
-	vo_weight_dict = defaultdict(int)
+    sv_weight_dict = defaultdict(int)
+    vo_weight_dict = defaultdict(int)
 
-	for i, term in enumerate(edges):
-		sub, verb, obj = term[0], term[1], term[2]
-		sv_weight_dict[(sub,verb)] += edge_weights[i]
-		vo_weight_dict[(verb,obj)] += edge_weights[i]
+    for i, term in enumerate(edges):
+        sub, verb, obj = term[0], term[1], term[2]
+        sv_weight_dict[(sub,verb)] += edge_weights[i]
+        vo_weight_dict[(verb,obj)] += edge_weights[i]
+
+    edge_weights = g.new_edge_property("int")
 
-	edge_weights = g.new_edge_property("int")
-
-	for k, v in sv_weight_dict.items():
-		v1 = k[0]
-		v2 = k[1]
-
-		e = g.add_edge(vertex_dict[v1], vertex_verb_dict[v2])
-		edge_weights[e] = v
-
-	for k, v in vo_weight_dict.items():
-		v1 = k[0]
-		v2 = k[1]
-
-		e = g.add_edge(vertex_verb_dict[v1], vertex_dict[v2])
-		edge_weights[e] = v
-
-	g.edge_properties['edge_weights'] = edge_weights
-
-	if pos:
-
-		pos = pos
-	else:
-		pos = graphviz_draw(g, vsize = 10, overlap = False, output = None)
-
-	g.vertex_properties['pos'] = pos
-
-	bursting = g.new_vertex_property("object")
-	max_hierarchy = g.new_vertex_property("object")
-	hierarchies = g.new_vertex_property("object")
-	new_burst = g.new_vertex_property("object")
-	has_bursted = g.new_vertex_property('bool')
-	has_bursted.a = False
-
-	times = g.new_graph_property("object")
-
-	for v in g.vertices():
-		bursting[v] = []
-		max_hierarchy[v] = []
-		hierarchies[v] = []
-		new_burst[v] = []
-
-
-	times[g] = []
-
-	bursts_df_pruned = bursts_df.drop_duplicates(subset=['svo', 'start', 'end'], keep='last')
-	bursts_df_pruned = bursts_df_pruned.sort_values(by=['start'])
-
-	interval_list = g.new_graph_property("object")
-	interval_list[g] = []
-	
-	if time_interval == False:
-		time_interval = int(86400)
-		
-	for index, row in bursts_df_pruned.iterrows():
-		start, end = row['start'], row['end']
-		for current_time in range(int(start), int(end), time_interval):
-			interval_list[g].append(current_time)
-
-	interval_list[g] = sorted(set(interval_list[g]))
-
-	for i, current_time in enumerate(interval_list[g]):
-		for v in g.vertices():
-			bursting[v].append(False)
-			max_hierarchy[v].append(False)
-			hierarchies[v].append(0)
-			new_burst[v].append(False)
-		times[g].append(current_time)
-
-
-	for index, row in bursts_df_pruned.iterrows():
-		svo = row['svo']
-		sub,verb,obj = svo[0], svo[1], svo[2]
-
-		s_index = vertex_dict[sub]
-		v_index = vertex_verb_dict[verb]
-		o_index = vertex_dict[obj]
-
-		has_bursted[s_index] = False
-		has_bursted[v_index] = False
-		has_bursted[o_index] = False
-
-		for i, current_time in enumerate(interval_list[g]):
-
-			any_burst = False    
-			s_bursting = False
-			v_bursting = False
-			o_bursting = False
-			s_new_burst = False
-			v_new_burst = False
-			o_new_burst = False
-			max_h = False
-
-			if current_time >= row['start']:
-				if has_bursted[s_index] == False:
-					s_bursting = True
-					s_new_burst = True
-					has_bursted[s_index] = True
-				else:
-					s_new_burst = False
-
-				if has_bursted[v_index] == False:
-					v_bursting = True
-					v_new_burst = True
-					has_bursted[v_index] = True
-				else:
-					v_new_burst = False
-
-				if has_bursted[o_index] == False:
-					o_bursting = True
-					o_new_burst = True
-					has_bursted[o_index] = True
-				else:
-					o_new_burst = False
-
-				if current_time < row['end']:
-					s_bursting = True
-					v_bursting = True
-					o_bursting = True
-					
-					
-				if s_new_burst == True or v_new_burst == True or o_new_burst == True:
-					s_new_burst = True
-					v_new_burst = True
-					o_new_burst = True
-
-				if s_bursting == True or v_bursting == True or o_bursting == True:
-					s_bursting = True
-					v_bursting = True
-					o_bursting = True
-
-					if row['hierarchy'] == row['max_hierarchy']:
-						max_h = True
-
-
-
-					bursting[s_index][i] = s_bursting
-					bursting[v_index][i] = v_bursting
-					bursting[o_index][i] = o_bursting
-
-					max_hierarchy[s_index][i] = max_h
-					max_hierarchy[v_index][i] = max_h
-					max_hierarchy[o_index][i] = max_h
-
-					new_burst[s_index][i] = s_new_burst
-					new_burst[v_index][i] = v_new_burst
-					new_burst[o_index][i] = o_new_burst
-
-
-	g.vertex_properties["bursting"] = bursting
-	g.vertex_properties["max_hierarchy"] = max_hierarchy
-	g.vertex_properties["hierarchies"] = hierarchies
-	g.vertex_properties["new_burst"] = new_burst
-
-	g.graph_properties["times"] = times
-	g.graph_properties["interval_list"] = interval_list
-
-	return g
-
-
-def animate_graph(graph, offscreen = True, offscreen_params = False, onscreen_params = False):
-	global g, frame
-	frame = 0
-	g = graph
-	burst = [1, 1, 1, 1]           # White color = bursting
-	peak = [0, 0, 0, 1]           # Black color = peak burst
-	no_burst = [0.5, 0.5, 0.5, 1.]    # Grey color (will not actually be drawn) = not bursting
-
-	# Initialize all vertices to the not_bursting state
-	state = g.new_vertex_property("vector<double>")
-	for v in g.vertices():
-		state[v] = no_burst
-
-	# Initialize local graph properties
-
-	has_bursted = g.new_vertex_property('bool')
-	has_bursted.a = False
-	currently_bursting = g.new_vertex_property("bool")
-	currently_bursting.a = False
-	currently_new = g.new_vertex_property("bool")
-	currently_new.a = False
-
-	# Gather properties from imported graph
-
-	bursting = g.vertex_properties["bursting"]
-	max_hierarchy = g.vertex_properties["max_hierarchy"]
-	hierarchies = g.vertex_properties["hierarchies"]
-	new_burst = g.vertex_properties["new_burst"]
-	pos = g.vertex_properties["pos"]
-
-	times = g.graph_properties["times"]
-	interval_list = g.graph_properties["interval_list"]
-
-	# If True, the frames will be dumped to disk as images.
-	#the following was used when this script was run standalone
-	#offscreen = sys.argv[1] == "offscreen" if len(sys.argv) > 1 else False
-	#this is used in a notebook
-	#offscreen = False
-	global max_count
-	max_count = len(interval_list)-1
-	global current_interval
-	current_interval = 0
-	if offscreen and not os.path.exists("./frames"):
-		os.mkdir("./frames")
-
-	g.set_vertex_filter(None)
-
-	# This creates a GTK+ window with the initial graph layout
-	if not offscreen:
-		if onscreen_params:
-			custom_parameters = []
-		else:
-			win = GraphWindow(g, pos, geometry=(800, 800),
-							  edge_color=[0.6, 0.6, 0.6, 1],
-							  vertex_fill_color=state,
-							  vertex_halo=currently_new,
-							  vertex_halo_color=[0.8, 0, 0, 0.6],
-							  vertex_text = g.vertex_properties['vertex_name'],
-							  #edge_pen_width = g.edge_properties['edge_weights'],
-							  vertex_text_position = 2,
-							  vertex_text_color = 'black',
-							  vertex_shape = g.vertex_properties['vertex_shape'])
-	else:
-		frame = 0
-		win = Gtk.OffscreenWindow()
-
-		if offscreen_params:
-			custom_parameters = []
-		else:
-			win.set_default_size(800, 800)
-			win.graph = GraphWidget(g, pos,
-							  edge_color=[0.6, 0.6, 0.6, 1],
-							  vertex_fill_color=state,
-							  vertex_halo=currently_new,
-							  vertex_halo_color=[0.8, 0, 0, 0.6],
-							  vertex_text = g.vertex_properties['vertex_name'],
-							  #edge_pen_width = g.edge_properties['edge_weights'],
-							  vertex_text_position = 2,
-							  vertex_text_color = 'black',
-							  vertex_shape = g.vertex_properties['vertex_shape'])
-
-		win.add(win.graph)
-
-	# This function will be called repeatedly by the GTK+ main loop, and we use it
-	# to update the state according to the bursting status.
-
-	for v in g.vertices():
-		if any(bursting[v]):
-			has_bursted[v] = True
-
-	def update_state():
-		global max_count, current_interval, g, frame 
-
-		if current_interval == max_count:
-			Gtk.main_quit()
-			return False
-		
-		currently_bursting.a = False
-		g.set_vertex_filter(has_bursted)
-
-		currently_new.a = False
-		any_bursts = False
-		for v in g.vertices():
-				if bursting[v][current_interval] == True:
-					currently_bursting[v] = True
-					state[v] = burst
-					if new_burst[v][current_interval] == True:
-						currently_new[v] = True
-					if max_hierarchy[v][current_interval] == True:
-						state[v] = peak
-					any_bursts = True
-
-
-
-		# Filter out the non-bursting vertices
-		g.set_vertex_filter(currently_bursting)
-
-		#uncomment to slow-down the windowed animation
-
-		#if not offscreen:
-			#time.sleep(.3)
-
-		
-
-		# The following will force the re-drawing of the graph, and issue a
-		# re-drawing of the GTK window.
-
-		win.graph.regenerate_surface()
-		win.graph.queue_draw()
-
-		# if doing an offscreen animation, dump frame to disk
-		if offscreen:
-			global frame
-			this_filename = r'./frames/sirs%06d.png' % frame
-
-			pixbuf = win.get_pixbuf()
-			pixbuf.savev(this_filename, 'png', [], [])
-
-			with Image.open(this_filename) as im:
-
-				myfont = ImageFont.truetype("Arial.ttf", 30)
-
-				width, height = im.size
-				
-				try:
-					date = datetime.datetime.fromtimestamp(times[frame - 1]).strftime('%Y-%m-%d')
-					msg = str(date)
-				except KeyError:
-					msg = "No time data for this slice"
-
-				draw = ImageDraw.Draw(im)
-				w, h = draw.textsize(msg, myfont)
-				draw.text(((width - w)/2, height/50), msg, font=myfont, fill="black")
-
-				im.save(this_filename)
-
-
-			frame += 1
-			if current_interval == max_count:
-				Gtk.main_quit()
-				return False
-
-		g.set_vertex_filter(None)
-
-		# We need to return True so that the main loop will call this function more
-		# than once.
-		current_interval += 1
-		return True
-
-
-	# Bind the function above as an 'idle' callback.
-	cid = GLib.idle_add(update_state)
-
-	# We will give the user the ability to stop the program by closing the window.
-	win.connect("delete_event", Gtk.main_quit)
-
-	# Actually show the window, and start the main loop.
-	win.show_all()
-	Gtk.main()
+    for k, v in sv_weight_dict.items():
+        v1 = k[0]
+        v2 = k[1]
+
+        e = g.add_edge(vertex_dict[v1], vertex_verb_dict[v2])
+        edge_weights[e] = v
+
+    for k, v in vo_weight_dict.items():
+        v1 = k[0]
+        v2 = k[1]
+
+        e = g.add_edge(vertex_verb_dict[v1], vertex_dict[v2])
+        edge_weights[e] = v
+
+    g.edge_properties['edge_weights'] = edge_weights
+
+    if pos:
+
+        pos = pos
+    else:
+        pos = graphviz_draw(g, vsize = 10, overlap = False, elen = 2, output = None)
+
+    g.vertex_properties['pos'] = pos
+
+    bursting = g.new_vertex_property("object")
+    max_hierarchy = g.new_vertex_property("object")
+    hierarchies = g.new_vertex_property("object")
+    new_burst = g.new_vertex_property("object")
+
+    times = g.new_graph_property("object")
+    
+    e_bursting = g.new_edge_property("object")
+    e_weights = g.new_edge_property("object")
+
+    for v in g.vertices():
+        bursting[v] = []
+        max_hierarchy[v] = []
+        hierarchies[v] = []
+        new_burst[v] = []
+    
+    for e in g.edges():
+        e_bursting[e] = []
+        e_weights[e] = []
+
+
+    times[g] = []
+
+    bursts_df_pruned = bursts_df.drop_duplicates(subset=['svo', 'start', 'end'], keep='last')
+    bursts_df_pruned = bursts_df_pruned.sort_values(by=['start'])
+
+    interval_list = g.new_graph_property("object")
+    interval_list[g] = []
+    
+    if time_interval == False:
+        time_interval = int(86400)
+
+    for index, row in bursts_df_pruned.iterrows():
+        start, end = row['start'], row['end']
+        for current_time in range(int(start), int(end), time_interval):
+            interval_list[g].append(current_time)
+
+    interval_list[g] = sorted(set(interval_list[g]))
+
+    for i, current_time in enumerate(interval_list[g]):
+        for v in g.vertices():
+            bursting[v].append(False)
+            max_hierarchy[v].append(False)
+            hierarchies[v].append(0)
+            new_burst[v].append(False)
+        times[g].append(current_time)
+        
+        for e in g.edges():
+            e_bursting[e].append(False)
+            e_weights[e].append(0)
+
+    bursted_with = defaultdict(list)
+    
+    for index, row in bursts_df_pruned.iterrows():
+        svo = row['svo']
+        sub,verb,obj = svo[0], svo[1], svo[2]
+
+        s_index = vertex_dict[sub]
+        v_index = vertex_verb_dict[verb]
+        o_index = vertex_dict[obj]
+        
+        vo = (verb,obj)
+
+        for i, current_time in enumerate(interval_list[g]):
+
+            if current_time == row['start']:
+                first_burst = False
+                
+                if sub not in bursted_with:
+                    first_burst = True
+                elif vo not in bursted_with[sub]:
+                    first_burst = True
+                
+                if first_burst == True:
+
+                    new_burst[s_index][i] = True
+                    new_burst[v_index][i] = True
+                    new_burst[o_index][i] = True
+                    bursted_with[sub].append(vo)                        
+
+            if current_time >= row['start'] and current_time <= row['end']:
+                bursting[s_index][i] = True
+                bursting[v_index][i] = True
+                bursting[o_index][i] = True
+                
+                e1 = g.edge(s_index, v_index)
+                e2 = g.edge(v_index, o_index)
+                
+                e_bursting[e1][i] = True
+                e_bursting[e2][i] = True
+                
+                e_weights[e1][i] = row['num_offsets']
+                e_weights[e2][i] = row['num_offsets']
+
+                if row['hierarchy'] == row['max_hierarchy']:
+                    max_hierarchy[s_index][i] = True
+                    max_hierarchy[v_index][i] = True
+                    max_hierarchy[o_index][i] = True
+
+                if row['hierarchy'] > hierarchies[s_index][i]:
+                    hierarchies[s_index][i] = row['hierarchy']
+
+                if row['hierarchy'] > hierarchies[v_index][i]:
+                    hierarchies[v_index][i] = row['hierarchy']
+
+                if row['hierarchy'] > hierarchies[o_index][i]:
+                    hierarchies[o_index][i] = row['hierarchy']
+
+    g.vertex_properties["bursting"] = bursting
+    g.vertex_properties["max_hierarchy"] = max_hierarchy
+    g.vertex_properties["hierarchies"] = hierarchies
+    g.vertex_properties["new_burst"] = new_burst
+    
+    g.edge_properties["e_bursting"] = e_bursting
+    g.edge_properties['e_weights'] = e_weights
+
+    g.graph_properties["times"] = times
+    g.graph_properties["interval_list"] = interval_list
+    
+    return g
+
+
+def animate_graph(graph, pos= False, offscreen = True, dpi = 300, new_burst_halo = True):
+    global g, frame
+    frame = 0
+    g = graph
+
+    no_burst = [0.5, 0.5, 0.5, 0.25]    # Grey
+    e_burst = [0,0,0,1]                 # Black
+    e_no_burst = [0.5, 0.5, 0.5, 0.25]  # Grey
+    
+    blue_heatmap = {
+        **dict.fromkeys([0], [0.5, 0.5, 0.5, 0.25]),
+        **dict.fromkeys([1,2,3], [0.8978854286812764, 0.939038831218762, 0.977362552864283, 1]), 
+        **dict.fromkeys([4,5,6], [0.828881199538639, 0.8937639369473279, 0.954725105728566, 1]),
+        **dict.fromkeys([7,8,9], [0.7506343713956171, 0.8478431372549019, 0.9282122260668974, 1]),
+        **dict.fromkeys([10,11,12], [0.6325259515570935, 0.7976470588235294, 0.8868742791234141, 1]),
+        **dict.fromkeys([13,14,15], [0.491764705882353, 0.7219684736639754, 0.8547789311803152, 1]),
+        **dict.fromkeys([16,17,18], [0.36159938485198, 0.6427374086889658, 0.8165782391387928, 1]),
+        **dict.fromkeys([19,20,21], [0.24816608996539793, 0.5618915801614763, 0.7709803921568628, 1]),
+        **dict.fromkeys([22,23,24], [0.15072664359861593, 0.4644521337946943, 0.7207843137254902, 1]),
+        **dict.fromkeys([25,26,27], [0.07481737793156479, 0.3732564398308343, 0.6552095347943099, 1]),
+        **dict.fromkeys([28,29,30,31,32], [0.03137254901960784, 0.28161476355247983, 0.5582622068435218, 1])
+    }
+                    
+    # Initialize all vertices to the not_bursting state
+    state = g.new_vertex_property("vector<double>")
+    for v in g.vertices():
+        state[v] = no_burst
+        
+    e_state = g.new_edge_property("vector<double>")
+    for e in g.edges():
+        e_state[e] = e_no_burst
+
+    # Initialize local graph properties
+
+    currently_new = g.new_vertex_property("bool")
+    currently_new.a = False
+    current_hierarchy = g.new_vertex_property('vector<double>')
+    
+    current_v_name = g.new_vertex_property('string')
+    
+    current_edge_weight = g.new_edge_property("int")
+
+    # Gather properties from imported graph
+
+    bursting = g.vertex_properties["bursting"]
+    max_hierarchy = g.vertex_properties["max_hierarchy"]
+    hierarchies = g.vertex_properties["hierarchies"]
+    new_burst = g.vertex_properties["new_burst"]
+    if pos:
+        pos = pos
+    else:
+        pos = g.vertex_properties["pos"]
+
+    e_bursting = g.edge_properties["e_bursting"]
+    e_weights = g.edge_properties['e_weights']
+        
+    times = g.graph_properties["times"]
+    interval_list = g.graph_properties["interval_list"]
+
+
+    global max_count
+    max_count = len(interval_list)-1
+    global current_interval
+    current_interval = 0
+    if offscreen and not os.path.exists("./frames"):
+        os.mkdir("./frames")
+
+    g.set_vertex_filter(None)
+    g.set_edge_filter(None)
+
+    # This creates a GTK+ window with the initial graph layout
+    if not offscreen:
+        win = GraphWindow(g, pos, geometry=(800, 800),
+                          edge_color= e_state,
+                          vertex_fill_color=state,
+                          vertex_halo=currently_new,
+                          vertex_halo_color=[0.8, 0, 0, 0.6],
+                          vertex_text = current_v_name,
+                          #edge_pen_width = g.edge_properties['current_edge_weight'],
+                          vertex_text_position = 2,
+                          vertex_font_size = 13,
+                          vertex_text_color = 'black',
+                          vertex_shape = g.vertex_properties['vertex_shape'])
+    else:
+        frame = 0
+        win = Gtk.OffscreenWindow()
+        win.set_default_size(800, 800)
+        win.graph = GraphWidget(g, pos,
+                          edge_color=e_state,  
+                          vertex_fill_color=state,
+                          vertex_halo=currently_new,
+                          vertex_halo_color=[0.8, 0, 0, 0.6],
+                          vertex_text = current_v_name,
+                          #edge_pen_width = g.edge_properties['current_edge_weight'],
+                          vertex_text_position = 2,
+                          vertex_font_size = 13,  
+                          vertex_text_color = 'black',
+                          vertex_shape = g.vertex_properties['vertex_shape'])
+
+        win.add(win.graph)
+
+    # This function will be called repeatedly by the GTK+ main loop, and we use it
+    # to update the state according to the bursting status.
+
+    def update_state():
+        global max_count, current_interval, g, frame 
+
+        if current_interval == max_count:
+            Gtk.main_quit()
+            return False
+
+        for v in g.vertices():
+            if bursting[v][current_interval] == True:
+                #currently_bursting[v] = True
+                current_v_name[v] = g.vertex_properties.vertex_name[v]
+                if new_burst[v][current_interval] == True:
+                    currently_new[v] = True
+                else:
+                    currently_new[v] = False
+                
+                h_colour = blue_heatmap[hierarchies[v][current_interval]]
+                state[v] = h_colour
+            else:
+                state[v] = no_burst
+                current_v_name[v] = ''
+                currently_new[v] = False
+                        
+        for e in g.edges():
+            if e_bursting[e][current_interval] == True:
+                #currently_e_bursting[e] = True
+                current_edge_weight[e] = e_weights[e][current_interval]
+                e_state[e] = e_burst
+            else:
+                e_state[e] = e_no_burst
+
+        # Slow down the windowed animation
+
+        if not offscreen:
+            time.sleep(0.5)
+
+
+
+        # The following will force the re-drawing of the graph, and issue a
+        # re-drawing of the GTK window.
+
+        win.graph.regenerate_surface()
+        win.graph.queue_draw()
+
+        # if doing an offscreen animation, dump frame to disk
+        if offscreen:
+            global frame
+            this_filename = r'./data/frames/sirs%06d.png' % frame
+
+            pixbuf = win.get_pixbuf()
+            pixbuf.savev(this_filename, 'png', ["x-dpi", "y-dpi"], ["300","300"])
+
+            with Image.open(this_filename) as im:
+
+                myfont = ImageFont.truetype("./data/Arial.ttf", 30)
+
+                width, height = im.size
+                
+                try:
+                    date = datetime.datetime.fromtimestamp(times[frame - 1]).strftime('%Y-%m-%d')
+                    msg = str(date)
+                except KeyError:
+                    msg = "No time data for this slice"
+
+                draw = ImageDraw.Draw(im)
+                w, h = draw.textsize(msg, myfont)
+                draw.text(((width - w)/2, height/50), msg, font=myfont, fill="black")
+
+                im.save(this_filename)
+            frame += 1
+            if current_interval == max_count:
+                Gtk.main_quit()
+                return False
+
+        # We need to return True so that the main loop will call this function more
+        # than once.
+        current_interval += 1
+        return True
+
+
+    # Bind the function above as an 'idle' callback.
+    cid = GLib.idle_add(update_state)
+
+    # We will give the user the ability to stop the program by closing the window.
+    win.connect("delete_event", Gtk.main_quit)
+
+    # Actually show the window, and start the main loop.
+    win.show_all()
+    Gtk.main()
 
 
