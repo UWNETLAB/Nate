@@ -12,58 +12,58 @@ from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, GLib
 from PIL import Image, ImageDraw, ImageFont
 
 def prepare_df(burst_dict, offset_dict):
-	df = pd.DataFrame()
-	svo_list = []
-	hierarchy_list = []
-	start_list = []
-	end_list = []
-	num_offsets_list = []
-	
-	for k, v in burst_dict.items():
-		for interval in v:
-			svo_list.append(k)
-			hierarchy_list.append(interval[0])
-			start_list.append(interval[1])
-			end_list.append(interval[2])
-			i = 0
-			for offset in offset_dict[k]:
-				if offset >= interval[1] and offset <= interval[2]:
-					i+=1
-			num_offsets_list.append(i)
-			
-	df['svo'], df['hierarchy'], df['start'], df['end'], df['num_offsets']  = svo_list, hierarchy_list, start_list, end_list, num_offsets_list
-	
-	return df
+    df = pd.DataFrame()
+    svo_list = []
+    hierarchy_list = []
+    start_list = []
+    end_list = []
+    num_offsets_list = []
+    
+    for k, v in burst_dict.items():
+        for interval in v:
+            svo_list.append(k)
+            hierarchy_list.append(interval[0])
+            start_list.append(interval[1])
+            end_list.append(interval[2])
+            i = 0
+            for offset in offset_dict[k]:
+                if offset >= interval[1] and offset <= interval[2]:
+                    i+=1
+            num_offsets_list.append(i)
+            
+    df['svo'], df['hierarchy'], df['start'], df['end'], df['num_offsets']  = svo_list, hierarchy_list, start_list, end_list, num_offsets_list
+    
+    return df
 
 def add_subs_obs(g, subs_obs_list, vertex_shapes, vertex_names):
-	vertex_dict = {}
-	for vertex in subs_obs_list:
-		v = g.add_vertex()
-		vertex_shapes[v] = 'circle'
-		vertex_names[v] = vertex
-		vertex_dict.update({vertex:int(v)})
-	return g, vertex_dict
-		
+    vertex_dict = {}
+    for vertex in subs_obs_list:
+        v = g.add_vertex()
+        vertex_shapes[v] = 'circle'
+        vertex_names[v] = vertex
+        vertex_dict.update({vertex:int(v)})
+    return g, vertex_dict
+        
 def add_verbs(g, verb_list, vertex_shapes, vertex_names):
-	vertex_verb_dict = {}
-	for vertex in verb_list:
-		v = g.add_vertex()
-		vertex_shapes[v] = 'square'
-		vertex_names[v] = vertex
-		vertex_verb_dict.update({vertex:int(v)})
-	return g, vertex_verb_dict
+    vertex_verb_dict = {}
+    for vertex in verb_list:
+        v = g.add_vertex()
+        vertex_shapes[v] = 'square'
+        vertex_names[v] = vertex
+        vertex_verb_dict.update({vertex:int(v)})
+    return g, vertex_verb_dict
 
 def build_graph(df, pos = False, time_interval = False):
-	"""
-	
-	Args:
-		df ([type]): [description]
-		pos (bool, optional): [description]. Defaults to False.
-		time_interval (bool, optional): [description]. Defaults to False.
-	
-	Returns:
-		[type]: [description]
-	"""
+    """
+    
+    Args:
+        df ([type]): [description]
+        pos (bool, optional): [description]. Defaults to False.
+        time_interval (bool, optional): [description]. Defaults to False.
+    
+    Returns:
+        [type]: [description]
+    """
 
     bursts_df = df[df['hierarchy'] > 0]
     bursts_df = bursts_df.sort_values(by=['svo', 'hierarchy'])
