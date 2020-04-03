@@ -413,8 +413,10 @@ def animate_graph(graph, pos, offscreen, dpi = 300, new_burst_halo = True):
             pixbuf.savev(this_filename, 'png', ["x-dpi", "y-dpi"], ["300","300"])
 
             with Image.open(this_filename) as im:
-
-                myfont = ImageFont.truetype("./Arial.ttf", 30)
+                try:
+                    myfont = ImageFont.truetype("./Arial.ttf", 30)
+                except:
+                    myfont = ImageFont.load_default()
 
                 width, height = im.size
                 
