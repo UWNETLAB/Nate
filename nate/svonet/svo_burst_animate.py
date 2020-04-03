@@ -257,12 +257,12 @@ def build_graph(df, pos = False, time_interval = False):
     return g
 
 
-def animate_graph(graph, pos, offscreen, headless, new_burst_halo, dpi):
+def animate_graph(graph, pos, offscreen, new_burst_halo, dpi):
     global g, frame
     frame = 0
     g = graph
     
-    if headless == True:
+    if Gtk.init_check()[0] == False:
         vdisplay = Xvfb()
         vdisplay.start()
 
