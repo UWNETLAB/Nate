@@ -10,6 +10,7 @@ import time
 import datetime
 from gi.repository import Gtk, Gdk, GdkPixbuf, GObject, GLib
 from PIL import Image, ImageDraw, ImageFont
+from xvfbwrapper import Xvfb
 
 def prepare_df(burst_dict, offset_dict):
     df = pd.DataFrame()
@@ -256,10 +257,14 @@ def build_graph(df, pos = False, time_interval = False):
     return g
 
 
-def animate_graph(graph, pos, offscreen, dpi = 300, new_burst_halo = True):
+def animate_graph(graph, pos, offscreen, headless, new_burst_halo, dpi):
     global g, frame
     frame = 0
     g = graph
+    
+    if headless == True:
+        vdisplay = Xvfb()
+        vdisplay.start()
 
     no_burst = [0.5, 0.5, 0.5, 0.25]    # Grey
     e_burst = [0,0,0,1]                 # Black
