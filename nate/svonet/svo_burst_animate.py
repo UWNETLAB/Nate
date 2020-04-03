@@ -320,8 +320,8 @@ def animate_graph(graph, pos, offscreen, dpi = 300, new_burst_halo = True):
     max_count = len(interval_list)-1
     global current_interval
     current_interval = 0
-    if offscreen and not os.path.exists("./frames"):
-        os.mkdir("./frames")
+    if offscreen and not os.path.exists(r"./data/frames"):
+        os.makedirs(r"./data/frames")
 
     g.set_vertex_filter(None)
     g.set_edge_filter(None)
@@ -407,14 +407,14 @@ def animate_graph(graph, pos, offscreen, dpi = 300, new_burst_halo = True):
         # if doing an offscreen animation, dump frame to disk
         if offscreen:
             global frame
-            this_filename = r'./data/frames/sirs%06d.png' % frame
+            this_filename = r'./data/frames/graph%06d.png' % frame
 
             pixbuf = win.get_pixbuf()
             pixbuf.savev(this_filename, 'png', ["x-dpi", "y-dpi"], ["300","300"])
 
             with Image.open(this_filename) as im:
 
-                myfont = ImageFont.truetype("./data/Arial.ttf", 30)
+                myfont = ImageFont.truetype("./Arial.ttf", 30)
 
                 width, height = im.size
                 

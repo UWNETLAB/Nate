@@ -32,9 +32,9 @@ class SVOburst(Bursts, DegreeOverTimeMixIn, SVODegreeOverTimeMixin):
         self.odf = None
         self.lookup = lookup
 
-    def animate(self, pos = False, time_interval = False, offscreen = True, offscreen_params = False, onscreen_params = False, new_burst_halo = True):
+    def animate(self, pos = False, offscreen = True, time_interval = False, new_burst_halo = True, dpi = 300):
 
         df = prepare_df(self.edge_burst_dict, self.offset_dict)
         graph = build_graph(df, pos, time_interval)
-        animate_graph(graph, offscreen, offscreen_params, onscreen_params)
+        animate_graph(graph, pos, offscreen, dpi, new_burst_halo)
 
