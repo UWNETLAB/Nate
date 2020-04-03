@@ -265,6 +265,9 @@ def animate_graph(graph, pos, offscreen, new_burst_halo, dpi):
     if Gtk.init_check()[0] == False:
         vdisplay = Xvfb()
         vdisplay.start()
+        if Gtk.init_check()[0] == False:
+            print('Virtual display failed, quitting.')
+            return
 
     no_burst = [0.5, 0.5, 0.5, 0.25]    # Grey
     e_burst = [0,0,0,1]                 # Black
