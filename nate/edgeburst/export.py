@@ -9,7 +9,7 @@ import pickle
 from itertools import groupby
 
 
-def df_export(bursts, offsets, lookup, from_svo=False):
+def df_export(bursts, offsets, from_svo=False):
     """
     This is a docstring.
     """
@@ -23,16 +23,14 @@ def df_export(bursts, offsets, lookup, from_svo=False):
 
     if from_svo == True:
         df = pd.DataFrame()
-        df['svo_#'] = key_list
-        df['svo'] = df['svo_#'].map(lookup)
+        df['svo'] = key_list
+
 
         intensities = max_intensities(burst_list)
 
     else:
 
-        df = pd.DataFrame.from_records(key_list, columns=['word1_#', 'word2_#'])
-        df['word1'] = df['word1_#'].map(lookup)
-        df['word2'] = df['word2_#'].map(lookup)
+        df = pd.DataFrame.from_records(key_list, columns=['word1', 'word2'])
 
         intensities = max_intensities(burst_list)
 
@@ -78,7 +76,7 @@ def flatten(df, intensities):
     return return_df
 
 
-def max_bursts_export(bursts, lookup, from_svo=False):
+def max_bursts_export(bursts, from_svo=False):
     """
     This is a docstring.
     """
@@ -91,17 +89,14 @@ def max_bursts_export(bursts, lookup, from_svo=False):
 
     if from_svo:
         df = pd.DataFrame()
-        df['svo_#'] = key_list
-        df['svo'] = df['svo_#'].map(lookup)
+        df['svo'] = key_list
 
         intensities = max_intensities(burst_list)
 
         max_bursts = {df['svo'][x]: intensities[x] for x in df.index}
     else:
 
-        df = pd.DataFrame.from_records(key_list, columns=['word1_#', 'word2_#'])
-        df['word1'] = df['word1_#'].map(lookup)
-        df['word2'] = df['word2_#'].map(lookup)
+        df = pd.DataFrame.from_records(key_list, columns=['word1', 'word2'])
 
         intensities = max_intensities(burst_list)
 
