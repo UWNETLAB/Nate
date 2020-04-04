@@ -265,7 +265,6 @@ def animate_graph(graph, pos, offscreen, new_burst_halo, dpi):
         print('Display not found. Starting virtual display.')
         _xvfb = Xvfb(width=1920, height=1080)
         _xvfb.start()
-        atexit.register(_xvfb.stop)
 
 
     no_burst = [0.5, 0.5, 0.5, 0.25]    # Grey
