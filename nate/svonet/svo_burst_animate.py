@@ -258,16 +258,15 @@ def build_graph(df, pos = False, time_interval = False):
 
 
 def animate_graph(graph, pos, offscreen, new_burst_halo, dpi):
-    global g, frame
+    global g, frame, _xvfb
     frame = 0
     g = graph
-    
     if Gtk.init_check()[0] == False:
-        vdisplay = Xvfb()
-        vdisplay.start()
-        if Gtk.init_check()[0] == False:
-            print('Virtual display failed, quitting.')
-            return
+        print('Display not found. Starting virtual display.')
+        _xvfb = Xvfb(width=1920, height=1080)
+        _xvfb.start()
+        atexit.register(_xvfb.stop)
+
 
     no_burst = [0.5, 0.5, 0.5, 0.25]    # Grey
     e_burst = [0,0,0,1]                 # Black
@@ -369,8 +368,12 @@ def animate_graph(graph, pos, offscreen, new_burst_halo, dpi):
     # to update the state according to the bursting status.
 
     def update_state():
-        global max_count, current_interval, g, frame 
+        global max_count, current_interval, g, frame, _xvfb 
 
+        if Gtk.init_check()[0] == False:
+            print('Virtual display failed, quitting.')
+            Gtk.main_quit()
+            return False
         if current_interval == max_count:
             Gtk.main_quit()
             return False
