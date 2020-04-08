@@ -64,7 +64,7 @@ def bigram_process(texts, trigrams, bigram_threshold, tokenized=True):
     bigrammer = Phraser(model)
     bigrammed_list = [[bigrammer[sent] for sent in doc] for doc in sentences]
     if trigrams == True:
-        trigram_model = Phrases(model[all_sentences], min_count=1, threshold=bigram_threshold, scoring='npmi')
+        trigram_model = Phrases(bigrammer[all_sentences], min_count=1, threshold=bigram_threshold, scoring='npmi')
         trigrammer = Phraser(trigram_model)
         bigrammed_list = [[trigrammer[bigrammer[sent]] for sent in doc] for doc in sentences]
     bigrammed_list = [list(chain(*x)) for x in bigrammed_list]
