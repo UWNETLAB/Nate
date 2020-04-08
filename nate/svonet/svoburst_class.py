@@ -1,7 +1,7 @@
 from nate.edgeburst.burst_class import Bursts
 from nate.svonet.degree_over_time import DegreeOverTimeMixIn
 from nate.svonet.svo_degree_over_time import SVODegreeOverTimeMixin
-from nate.svonet.svo_burst_animate import prepare_df, build_graph, animate_graph
+#from nate.svonet.svo_burst_animate import prepare_df, build_graph, animate_graph
 
 
 class SVOburst(Bursts, DegreeOverTimeMixIn, SVODegreeOverTimeMixin):
@@ -32,7 +32,14 @@ class SVOburst(Bursts, DegreeOverTimeMixIn, SVODegreeOverTimeMixin):
         self.lookup = lookup
 
     def animate(self, pos = False, offscreen = True, time_interval = False, new_burst_halo = True, dpi = 300):
-        df = prepare_df(self.edge_burst_dict, self.offset_dict)
-        graph = build_graph(df, pos, time_interval)
-        animate_graph(graph, pos, offscreen, new_burst_halo, dpi)
+    
+        try:
+            from nate.svonet.svo_burst_animate import prepare_df, build_graph, animate_graph
+            
+            df = prepare_df(self.edge_burst_dict, self.offset_dict)
+            graph = build_graph(df, pos, time_interval)
+            animate_graph(graph, pos, offscreen, new_burst_halo, dpi)
+            
+        except ImportError:
+            print("Graph-tool does not appear to be installed or importable")
 

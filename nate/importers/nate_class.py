@@ -178,7 +178,11 @@ class Nate(EdgelistMixin):
 
     def preprocess(self,
                    bigrams: bool = False,
+                   trigrams: bool = False,
                    custom_filter: bool = False,
+                   tokenized: bool = False,
+                   joined: bool = False,
+                   bigram_threshold: float = 0.75,
                    model: str = "en_core_web_sm"):
         """Defines a `spaCy` pipeline and uses it to process text data.
 
@@ -205,9 +209,17 @@ class Nate(EdgelistMixin):
             self.nlp.add_pipe(custom_filter, name="custom_filter", last=True)
             if bigrams == True:
                 self.texts = nlp_helpers.bigram_process(self.texts,
-                                                        tokenized=False)
+                                                        trigrams,
+                                                        bigram_threshold,
+                                                        tokenized)
+            elif trigrams == True:
+                self.texts = nlp_helpers.bigram_process(self.texts,
+                                                        trigrams,
+                                                        bigram_threshold,
+                                                        tokenized)
+                                                        
             self.post_nlp = mp(self.texts, custom_filter,
-                               nlp_helpers.spacy_process, self.nlp, None, None)
+                               nlp_helpers.spacy_process, self.nlp, joined, None, None)
         else:
             self.nlp = spacy.load(self.model, disable=['parser'])
             self.nlp.add_pipe(merge_entities)
@@ -216,9 +228,17 @@ class Nate(EdgelistMixin):
                               last=True)
             if bigrams == True:
                 self.texts = nlp_helpers.bigram_process(self.texts,
-                                                        tokenized=False)
+                                                        trigrams,
+                                                        bigram_threshold,
+                                                        tokenized)
+            elif trigrams == True:
+                self.texts = nlp_helpers.bigram_process(self.texts,
+                                                        trigrams,
+                                                        bigram_threshold,
+                                                        tokenized)
+                                                        
             self.post_nlp = mp(self.texts, nlp_helpers.spacy_process, self.nlp,
-                               None, None)
+                               joined, None, None)
 
     def cooc_pipeline(self, minimum_offsets: int = 20) -> Cooc:
         """Instantiates, initializes, and returns an instance of the `Cooc` pipeline.
@@ -276,6 +296,8 @@ class Nate(EdgelistMixin):
                      sub_tags: bool = False,
                      obj_tags: bool = False,
                      bigrams: bool = False,
+                     trigrams: bool = False,
+                     bigram_threshold: float = 0.75,
                      model: str = "en_core_web_sm") -> SVOnet:
         """Instantiates, initializes, and returns an instance of the `SVOnet` pipeline.
 
@@ -308,9 +330,13 @@ class Nate(EdgelistMixin):
 
         # add error check for custom_filter, which cannot be applied in this step for svo
         self.model = model
-
+        joined = False
+        
         if bigrams == True:
-            self.texts = nlp_helpers.bigram_process(self.texts, tokenized=False)
+            self.texts = nlp_helpers.bigram_process(self.texts, trigrams, bigram_threshold, tokenized=False)
+        elif trigrams == True:
+            self.texts = nlp_helpers.bigram_process(self.texts, trigrams, bigram_threshold, tokenized=False)
+        
 
         self.nlp = spacy.load(self.model)
         self.nlp.add_pipe(merge_entities)
@@ -318,7 +344,7 @@ class Nate(EdgelistMixin):
                           name="svo_component",
                           last=True)
 
-        self.post_svo = mp(self.texts, nlp_helpers.spacy_process, self.nlp,
+        self.post_svo = mp(self.texts, nlp_helpers.spacy_process, self.nlp, joined,
                            sub_tags, obj_tags)
 
         sentences = [x[0] for x in self.post_svo]

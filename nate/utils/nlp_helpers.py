@@ -12,7 +12,7 @@ from ..svonet.svonet_class import process_svo
 # Everything from this point down was moved from the `text_helpers` module
 
 
-def spacy_process(nlp, sub_tags, obj_tags, texts):
+def spacy_process(nlp, joined, sub_tags, obj_tags, texts):
     if 'svo_component' in nlp.pipe_names:
         processed_list = [
             doc for doc in nlp.pipe(texts,
@@ -23,6 +23,8 @@ def spacy_process(nlp, sub_tags, obj_tags, texts):
                                         }
                                     })
         ]
+    elif joined == True:
+        processed_list = [' '.join(doc) for doc in nlp.pipe(texts)]
     else:
         processed_list = [doc for doc in nlp.pipe(texts)]
     return processed_list
@@ -32,11 +34,14 @@ def default_filter_lemma(doc):  # to do: make this user-configurable
     """
     This is a docstring.
     """
-    doc = [
-        token.lemma_.lower() for token in doc if token.is_stop == False and
-        len(token) > 2 and token.is_alpha and token.is_ascii
-    ]
-    return doc
+    proc = []
+    for token in doc:
+        if '_' in token.text and len(token) > 2 and token.is_ascii:
+            proc.append(token.text)
+        if token.is_alpha and len(token) >2 and token.is_stop is False and token.is_ascii:
+            proc.append(token.lemma_.lower())
+
+    return proc
 
 
 def custom_spacy_component(doc):
@@ -52,12 +57,16 @@ def svo_component(doc, sub_tags, obj_tags):
     return doc
 
 
-def bigram_process(texts, tokenized=True):
+def bigram_process(texts, trigrams, bigram_threshold, tokenized=True):
     sentences = [sent_tokenize(text) for text in texts]
     all_sentences = list(chain(*sentences))
-    model = Phrases(all_sentences, min_count=1, threshold=0.8, scoring='npmi')
+    model = Phrases(all_sentences, min_count=1, threshold=bigram_threshold, scoring='npmi')
     bigrammer = Phraser(model)
     bigrammed_list = [[bigrammer[sent] for sent in doc] for doc in sentences]
+    if trigrams == True:
+        trigram_model = Phrases(model[all_sentences], min_count=1, threshold=bigram_threshold, scoring='npmi')
+        trigrammer = Phraser(trigram_model)
+        bigrammed_list = [[trigrammer[bigrammer[sent]] for sent in doc] for doc in sentences]
     bigrammed_list = [list(chain(*x)) for x in bigrammed_list]
 
     if tokenized == False:
