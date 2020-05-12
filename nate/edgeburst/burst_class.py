@@ -11,7 +11,8 @@ from typing import Tuple, Dict, Callable, Union
 
 def get_bursts(s, gamma, offset_list):
     """
-	This is a docstring.
+	This is a docstring. Sends offset list and parameters to pybursts for processing. Returns a list of variably nested
+    burst data
 	"""
     burst_list = pybursts.process(offset_list, s, gamma)
 
@@ -20,7 +21,8 @@ def get_bursts(s, gamma, offset_list):
 
 def detect_bursts(offsets, s=2, gamma=1):
     """
-    This is a docstring
+    This is a docstring. Sends list of time offsets for each document to the get_bursts function. Returns dictionary
+    with bursting terms as keys and nested burst data as values
     """
     key_list = list(offsets.keys())
     offset_list = list(offsets.values())
@@ -43,7 +45,7 @@ class Bursts():
         self.edge_burst_dict: dict = edge_burst_dict
         self.s = s
         self.gamma = gamma
-        self.from_svo = from_svo
+        self.from_svo = from_svo # flag that determines whether the pipeline should be configured for bursts of SVOs
         self.bdf = None
         self.odf = None
         self.lookup = lookup
@@ -67,13 +69,14 @@ class Bursts():
 
     def export_df(self):
         """
-        This is a docstring.
+        This is a docstring. Uses objects attached to the burst class to return a dataframe of all bursts
         """
         return df_export(self.edge_burst_dict, self.offset_dict, self.from_svo)
 
     def export_max_bursts(self):
         """
-        This is a docstring.
+        This is a docstring. Uses objects attached to the burst class to return a dictionary with bursting
+        terms as keys and highest level burst as values
         """
         return max_bursts_export(self.edge_burst_dict, self.from_svo)
 

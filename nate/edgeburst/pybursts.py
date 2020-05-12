@@ -1,7 +1,10 @@
 """
-This is a MODULE docstring
+This is a MODULE docstring. This module is adapted from the pybursts package, which is an implementation of Kleinberg's
+burst detection algorithm by Renzo Poddighe: https://pypi.org/project/pybursts/
+Changes are primarily to increase performance by moving object creation outside of loops and using numba just-in-time 
+compilation to perform mathematical calculations in C.
+The process function was also added to perform burst detection on a list of documents
 """
-# modification of pybursts package by Renzo Poddighe: https://pypi.org/project/pybursts/
 import numpy as np
 import math
 import numba
@@ -9,9 +12,7 @@ from numba import njit, jit
 
 
 def single(offsets, s=2, gamma=1):
-    """
-	This is a docstring.
-	"""
+
     if s <= 1:
         raise ValueError("s must be greater than 1!")
     if gamma <= 0:
@@ -126,32 +127,24 @@ def single(offsets, s=2, gamma=1):
 
 @njit
 def f(alpha, x):
-    """
-	This is a docstring.
-	"""
+
     return alpha * math.exp(-alpha * x)
 
 
 @njit
 def min_cost(cost):
-    """
-	This is a docstring.
-	"""
+
     return np.argmin(cost)
 
 
 @njit(cache=False)
 def tau(i, j, gamma_log_n):
-    """
-	This is a docstring.
-	"""
+
     return np.where(i >= j, 0, ((j - i) * gamma_log_n))
 
 
 @jit(forceobj=True)
 def process(offset_list, s, gamma):
-    """
-	This is a docstring.
-	"""
+
     bursts = [single(x, s, gamma) for x in offset_list]
     return bursts

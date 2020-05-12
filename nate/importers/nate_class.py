@@ -187,23 +187,30 @@ class Nate(EdgelistMixin):
         """Defines a `spaCy` pipeline and uses it to process text data.
 
         This method *must* be called before any of the other non-`SVOnet` pipelines
-        in the `nate` package can be instantiated. 
+        in the `nate` package can be instantiated. It can also be used as a convenience 
+        function to multiprocess spaCy NLP on any list of texts loaded into the Nate class object
         
         Args:
-            bigrams (bool, optional): If True, bigrams will be used
-                in place of individual tokens. Defaults to False.
-            custom_filter (bool, optional): If supplied, the user-defined custom filter
-                will be used instead of the default filter. Defaults to False.
-            model (str, optional): Determines the trained `spaCy` model which will be applied. 
+            bigrams (bool, optional): If True, bigrams will be detected with gensim and used
+                alongside individual tokens. Defaults to False.
+            tigrams (bool, optional): If True, trigrams will be detected on top of bigrams. Defaults to False.
+            custom_filter (bool, optional): If supplied, a user-defined custom filter
+                will be used by spaCy instead of the default filter. Defaults to False.
+                Note: for multiprocessing on Windows, custom_filter must be defined in a python file and imported
+                before passing it as this parameter
+            tokenized (bool, optional): Determines whether to return tokenized text from bigram processing.
+                Should only be changed when used as a convenience function
+            joined (bool, optional): Determines whether to join `spaCy` tokens into a single string
+                for each document. Should only be changed when used as a convenience function
+            model (str, optional): Determines the pre-trained `spaCy` model to use. 
                 Defaults to "en_core_web_sm", which is suitable for english-language
-                applications. Other models can be found on the `spaCy` project's homepage.  
+                applications. Other models and explanations can be found on the `spaCy` project's homepage.  
         """
         self.bigrams = bigrams
         self.model = model
         self.custom_filter = custom_filter
 
         if custom_filter:
-            # note that for mp on Windows, custom_filter must be defined in a python file and imported
             self.nlp = spacy.load(self.model, disable=['parser'])
             self.nlp.add_pipe(merge_entities)
             self.nlp.add_pipe(custom_filter, name="custom_filter", last=True)
@@ -221,6 +228,7 @@ class Nate(EdgelistMixin):
             self.post_nlp = mp(self.texts, custom_filter,
                                nlp_helpers.spacy_process, self.nlp, joined, None, None)
         else:
+            # if no custom_filter is provided, use default parameters
             self.nlp = spacy.load(self.model, disable=['parser'])
             self.nlp.add_pipe(merge_entities)
             self.nlp.add_pipe(nlp_helpers.default_filter_lemma,
@@ -259,7 +267,7 @@ class Nate(EdgelistMixin):
         Returns:
             Cooc: An instance of the `Cooc` class.
         """
-
+        # pass list of texts processed by NLP functions to the co-occurrence function, alongside list of times, and occurrence threshold
         offset_dict, lookup = cooc_offsets(self.post_nlp, self.list_times(),
                                            minimum_offsets)
 
@@ -312,15 +320,17 @@ class Nate(EdgelistMixin):
         uses the resulting output to initialize and instance of the `SVOnet` class. 
         
         Args:
-            sub_tags (bool, optional): If not False, an optional list of user-defined 
-                tags is passed `spaCy` to, and is used to isolate subjects in the text 
-                data. Defaults to False.
-            obj_tags (bool, optional): If not False, an optional list of user-defined 
-                tags is passed `spaCy` to, and is used to isolate objects in the text 
-                data. Defaults to False.
-            bigrams (bool, optional): If True, bigrams will be used in place of 
-                individual tokens. Defaults to False.
-            model (str, optional): Determines the trained `spaCy` model which will be applied. 
+            sub_tags (bool, optional): If not False, an optional list of spaCy's named-entity 
+                tags is passed to `SVOnet`, returning only subjects matching those tags. Defaults to False.
+            obj_tags (bool, optional): If not False, an optional list of spaCy's named-entity 
+                tags is passed to `SVOnet`, returning only objects matching those tags. Defaults to False.
+            bigrams (bool, optional): If True, bigrams will be detected with gensim and used alongside
+                individual word tokens. Defaults to False.
+            trigrams (bool, optional): If True, trigrams will be detected on top of bigrams. The bigrams
+                parameter will automatically be considered True.
+            bigram_threshold (float, optional): determines the strictness of bigram detection. See gensim
+                documentation, with NPMI optional scoring, for an explanation of this parameter
+            model (str, optional): Determines the pre-trained `spaCy` model to use. 
                 Defaults to "en_core_web_sm", which is suitable for english-language
                 applications. Other models can be found on the `spaCy` project's homepage.  
                 
@@ -328,9 +338,12 @@ class Nate(EdgelistMixin):
             SVOnet: An instance of the `SVOnet` class.
         """
 
-        # add error check for custom_filter, which cannot be applied in this step for svo
+        if self.post_nlp:
+            print("SVO detection requires that text not be preprocessed")
+            return None
         self.model = model
-        joined = False
+
+        joined = False # SVO detection expects that documents will be tokenized
         
         if bigrams == True:
             self.texts = nlp_helpers.bigram_process(self.texts, trigrams, bigram_threshold, tokenized=False)
@@ -340,14 +353,23 @@ class Nate(EdgelistMixin):
 
         self.nlp = spacy.load(self.model)
         self.nlp.add_pipe(merge_entities)
+
+        # use spaCy pipeline component that will detect SVOs in each document during spaCy processing
         self.nlp.add_pipe(nlp_helpers.svo_component,
                           name="svo_component",
                           last=True)
 
+        # send list of raw texts and optional parameters to spacy_process
         self.post_svo = mp(self.texts, nlp_helpers.spacy_process, self.nlp, joined,
                            sub_tags, obj_tags)
 
+        # custom spaCy component for SVO returns a tuple for each document, with the first element being
+        # all sentences in the document and second element being the document's nested SVO data
+        # These become objects attached to the SVOnet class
         sentences = [x[0] for x in self.post_svo]
         svo_items = [x[1] for x in self.post_svo]
 
-        return SVOnet(sentences, svo_items, self.list_times())
+        if self.data.time:
+            return SVOnet(sentences, svo_items, self.list_times())
+        else:
+            return(SVOnet(sentences, svo_items, False))

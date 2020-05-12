@@ -8,10 +8,15 @@ from functools import partial
 from typing import Union, List, Dict
 
 
-# note: functions must now accept `*args` first and batched `items` come last
 def mp(items, function, *args) -> Union[List, Dict]:
     """
-    This is a docstring.
+    This is a convenience function for generalized multiprocessing of any function that
+    deals with a list or dictionary of items.
+    The functions passed to `mp` must accept the list of items to be processed at the end 
+    of their function call, with optional arguments first.
+    *args can be any number of optional arguments accepted by the function that will be multiprocessed.
+    On Windows, functions must be defined outside of the current python file and imported, to avoid 
+    infinite recursion.
     """
     if cpu_count() >= 10:  #to avoid overtaxing Brad, save some cores
         cpu = 10
@@ -40,10 +45,10 @@ def mp(items, function, *args) -> Union[List, Dict]:
     return results
 
 
-# for fuctions that return two lists (does not work for dictionaries yet)
 def mp2(items, function, *args):
     """
-    This is a docstring.
+    This is the same as `mp` but used when two lists of results need to be returned. Will perhaps be
+    generalized for any number of results in the future. Does not currently work for dictionaries.
     """
     if cpu_count() >= 10:  #to avoid overtaxing Brad, save some cores
         cpu = 10

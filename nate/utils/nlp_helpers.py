@@ -13,6 +13,12 @@ from ..svonet.svonet_class import process_svo
 
 
 def spacy_process(nlp, joined, sub_tags, obj_tags, texts):
+    """
+    Primary point of access to spaCy. Requires the NLP model object to be passed, as well as the texts to be processed.
+    Setting joined to True will combine tokens into strings, separated by white space.
+    If the svo_component is detected, will also accept subject tags and object tags to be passed to
+    `process_svo`
+    """
     if 'svo_component' in nlp.pipe_names:
         processed_list = [
             doc for doc in nlp.pipe(texts,
@@ -32,7 +38,8 @@ def spacy_process(nlp, joined, sub_tags, obj_tags, texts):
 
 def default_filter_lemma(doc):  # to do: make this user-configurable
     """
-    This is a docstring.
+    This is a docstring. This is the default filter to be used in the spaCy pipeline for tasks
+    that don't involve SVO.
     """
     proc = []
     for token in doc:
@@ -45,6 +52,9 @@ def default_filter_lemma(doc):  # to do: make this user-configurable
 
 
 def custom_spacy_component(doc):
+    """
+    Placeholder/example for a custom spaCy pipeline component
+    """
     return [
         token.lemma_.lower()
         for token in doc
@@ -53,22 +63,29 @@ def custom_spacy_component(doc):
 
 
 def svo_component(doc, sub_tags, obj_tags):
+    """
+    Necessary for processing text in the SVO pipeline
+    """
     doc = process_svo(sub_tags, obj_tags, doc)
     return doc
 
 
 def bigram_process(texts, trigrams, bigram_threshold, tokenized=True):
-    sentences = [sent_tokenize(text) for text in texts]
-    all_sentences = list(chain(*sentences))
-    model = Phrases(all_sentences, min_count=1, threshold=bigram_threshold, scoring='npmi')
-    bigrammer = Phraser(model)
-    bigrammed_list = [[bigrammer[sent] for sent in doc] for doc in sentences]
-    if trigrams == True:
+    """
+    Uses gensim to detect bigrams and trigrams. Expects a list of texts. See gensim documentation for explanations
+    of parameters: https://radimrehurek.com/gensim/models/phrases.html
+    """
+    sentences = [sent_tokenize(text) for text in texts] # gensim needs documents to come in as a list of sentences
+    all_sentences = list(chain(*sentences)) # flatten list of sentences for training purposes
+    model = Phrases(all_sentences, min_count=1, threshold=bigram_threshold, scoring='npmi') # train the model
+    bigrammer = Phraser(model) # create more efficient applicator of trained model
+    bigrammed_list = [[bigrammer[sent] for sent in doc] for doc in sentences] # apply the model to the original texts
+    if trigrams == True: # gensim detects trigrams by stacking bigram detection on text with detected bigrams
         trigram_model = Phrases(bigrammer[all_sentences], min_count=1, threshold=bigram_threshold, scoring='npmi')
         trigrammer = Phraser(trigram_model)
         bigrammed_list = [[trigrammer[bigrammer[sent]] for sent in doc] for doc in sentences]
     bigrammed_list = [list(chain(*x)) for x in bigrammed_list]
-
+    # option to return text in original form, but with underscores between bigrams
     if tokenized == False:
         bigrammed_list = [' '.join(doc) for doc in bigrammed_list]
 

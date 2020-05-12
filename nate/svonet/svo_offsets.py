@@ -9,7 +9,7 @@ from collections import defaultdict
 
 def generate_svo_offsets(svo_list: List, time: List, minimum_offsets):
     """
-    This is a docstring.
+    This is a docstring. Create offset dictionary and int-to-string lookup for text in SVO format.
     """
     print("Generating Offsets:")
 
@@ -21,6 +21,7 @@ def generate_svo_offsets(svo_list: List, time: List, minimum_offsets):
 
     svo_int_dict, lookup = text_to_int(svo_dict)
 
+    # prune SVOs, excluding those with fewer occurrences than specified by minimum_offsets
     offsets = {
         k: v for k, v in svo_int_dict.items() if len(v) >= minimum_offsets
     }
@@ -29,6 +30,7 @@ def generate_svo_offsets(svo_list: List, time: List, minimum_offsets):
         round(marktime() - start)))
     print("Commencing timestamp deduplication...")
 
+    # increment simultaneous occurrences by 1 millisecond to satisfy Kleinberg requirements
     for item in offsets.keys():
         offsets[item].sort()
         offsets[item] = [
@@ -47,7 +49,8 @@ def generate_svo_offsets(svo_list: List, time: List, minimum_offsets):
 
 def text_to_int(svo_dict):
     """
-    This is a docstring.
+    This is a docstring. Converts SVO terms to integers for memory and processing efficiency but also
+    to remain consistent with other pipelines
     """
     svo_int_dict = defaultdict(list)
     lookup_dict = defaultdict(tuple)

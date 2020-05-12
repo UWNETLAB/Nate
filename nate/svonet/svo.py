@@ -1,8 +1,12 @@
 """
-This is a MODULE docstring
+This is a MODULE docstring. This module is a modification of the `enhanced-subject-verb-object-extraction` 
+package by Rock de Vocht: https://github.com/peter3125/enhanced-subject-verb-object-extraction
+Changes are primarily to allow filtering for subjects and objects included in optional lists of spaCy's named
+entity tags, as well as including those tags in the output tuple.
+Note that this module must receive sentences one at a time, otherwise a passive sentence will flag
+all subsequent sentences as passive, reversing subject and object order incorrectly.
 """
 
-# modification of the `enhanced-subject-verb-object-extraction` package by Rock de Vocht: https://github.com/peter3125/enhanced-subject-verb-object-extraction
 #
 # Copyright 2017 Peter de Vocht
 #
@@ -35,18 +39,14 @@ obj_ent_types = []
 
 # does dependency set contain any coordinating conjunctions?
 def contains_conj(depSet):
-    """ 
-    This is a docstring.
-    """
+
     return "and" in depSet or "or" in depSet or "nor" in depSet or \
            "but" in depSet or "yet" in depSet or "so" in depSet or "for" in depSet
 
 
 # get subs joined by conjunctions
 def _get_subs_from_conjunctions(subs):
-    """ 
-    This is a docstring.
-    """
+
     more_subs = []
     for sub in subs:
         # rights is a generator
@@ -70,9 +70,7 @@ def _get_subs_from_conjunctions(subs):
 
 # get objects joined by conjunctions
 def _get_objs_from_conjunctions(objs):
-    """ 
-    This is a docstring.
-    """
+
     more_objs = []
     for obj in objs:
         # rights is a generator
@@ -97,9 +95,7 @@ def _get_objs_from_conjunctions(objs):
 
 # find sub dependencies
 def _find_subs(tok):
-    """ 
-    This is a docstring.
-    """
+
     head = tok.head
     while head.pos_ != "VERB" and head.pos_ != "NOUN" and head.head != head:
         head = head.head
@@ -126,9 +122,7 @@ def _find_subs(tok):
 
 # is the tok set's left or right negated?
 def _is_negated(tok):
-    """ 
-    This is a docstring.
-    """
+
     parts = list(tok.lefts) + list(tok.rights)
     for dep in parts:
         if dep.lower_ in NEGATIONS:
@@ -138,9 +132,7 @@ def _is_negated(tok):
 
 # get all the verbs on tokens with negation marker
 def _find_svs(tokens):
-    """ 
-    This is a docstring.
-    """
+
     svs = []
     verbs = [tok for tok in tokens if tok.pos_ == "VERB"]
     for v in verbs:
@@ -154,9 +146,7 @@ def _find_svs(tokens):
 
 # get grammatical objects for a given set of dependencies (including passive sentences)
 def _get_objs_from_prepositions(deps, is_pas):
-    """ 
-    This is a docstring.
-    """
+
     objs = []
     for dep in deps:
         if obj_ner_tags:
@@ -181,9 +171,7 @@ def _get_objs_from_prepositions(deps, is_pas):
 # get objects from the dependencies using the attribute dependency
 # *NOTE* disabled for unknown reason in _get_all_objs, this needs NER option if it should be enabled
 def _get_objs_from_attrs(deps, is_pas):
-    """ 
-    This is a docstring.
-    """
+
     for dep in deps:
         if dep.pos_ == "NOUN" and dep.dep_ == "attr":
             verbs = [tok for tok in dep.rights if tok.pos_ == "VERB"]
@@ -197,11 +185,9 @@ def _get_objs_from_attrs(deps, is_pas):
     return None, None
 
 
-# xcomp; open complement - verb has no suject
+# xcomp; open complement - verb has no subject
 def _get_obj_from_xcomp(deps, is_pas):
-    """ 
-    This is a docstring.
-    """
+
     for dep in deps:
         if dep.pos_ == "VERB" and dep.dep_ == "xcomp":
             v = dep
@@ -221,9 +207,7 @@ def _get_obj_from_xcomp(deps, is_pas):
 
 # get all functional subjects adjacent to the verb passed in
 def _get_all_subs(v):
-    """ 
-    This is a docstring.
-    """
+
     verb_negated = _is_negated(v)
     if sub_ner_tags:
         subs = [
@@ -248,18 +232,14 @@ def _get_all_subs(v):
 
 # is the token a verb?  (excluding auxiliary verbs)
 def _is_non_aux_verb(tok):
-    """ 
-    This is a docstring.
-    """
+
     return tok.pos_ == "VERB" and (tok.dep_ != "aux" and tok.dep_ != "auxpass")
 
 
 # return the verb to the right of this verb in a CCONJ relationship if applicable
 # returns a tuple, first part True|False and second part the modified verb if True
 def _right_of_verb_is_conj_verb(v):
-    """ 
-    This is a docstring.
-    """
+
     # rights is a generator
     rights = list(v.rights)
 
@@ -274,9 +254,7 @@ def _right_of_verb_is_conj_verb(v):
 
 # get all objects for an active/passive sentence
 def _get_all_objs(v, is_pas):
-    """ 
-    This is a docstring.
-    """
+
     # rights is a generator
     rights = list(v.rights)
     if obj_ner_tags:
@@ -313,9 +291,7 @@ def _get_all_objs(v, is_pas):
 
 # return true if the sentence is passive - at he moment a sentence is assumed passive if it has an auxpass verb
 def _is_passive(tokens):
-    """ 
-    This is a docstring.
-    """
+
     for tok in tokens:
         if tok.dep_ == "auxpass":
             return True
@@ -324,9 +300,7 @@ def _is_passive(tokens):
 
 # resolve a 'that' where/if appropriate
 def _get_that_resolution(toks):
-    """ 
-    This is a docstring.
-    """
+
     for tok in toks:
         if 'that' in [t.orth_ for t in tok.lefts]:
             return tok.head
@@ -335,9 +309,7 @@ def _get_that_resolution(toks):
 
 # simple stemmer using lemmas
 def _get_lemma(word: str):
-    """ 
-    This is a docstring.
-    """
+
     tokens = word  #nlp(word)
     if len(tokens) == 1:
         return tokens[0].lemma_
@@ -346,9 +318,7 @@ def _get_lemma(word: str):
 
 # print information for displaying all kinds of things of the parse tree
 def printDeps(toks):
-    """ 
-    This is a docstring.
-    """
+
     for tok in toks:
         print(tok.orth_, tok.dep_, tok.pos_, tok.head.orth_,
               [t.orth_ for t in tok.lefts], [t.orth_ for t in tok.rights])
@@ -356,9 +326,7 @@ def printDeps(toks):
 
 # expand an obj / subj np using its chunk
 def expand(item, tokens, visited):
-    """ 
-    This is a docstring.
-    """
+
     if item.lower_ == 'that':
         item = _get_that_resolution(tokens)
 
@@ -393,17 +361,12 @@ def expand(item, tokens, visited):
 
 # convert a list of tokens to a string
 def to_str(tokens):
-    """ 
-    This is a docstring.
-    """
+
     return ' '.join([item.text for item in tokens])
 
 
 # find verbs and their subjects / objects to create SVOs, detect passive/active sentences
 def findSVOs(tokens, sub_tags=False, obj_tags=False):
-    """ 
-    This is a docstring.
-    """
     global sub_ner_tags
     sub_ner_tags = sub_tags
     global obj_ner_tags

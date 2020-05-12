@@ -107,7 +107,7 @@ def max_bursts_export(bursts, from_svo=False):
     return max_bursts
 
 
-def all_bursts_export(bursts, offsets, lookup, from_svo=False):
+def all_bursts_export(bursts, lookup, from_svo=False):
     """
     This is a docstring.
     """
