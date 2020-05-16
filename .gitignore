@@ -140,6 +140,9 @@ hand/
 .vscode
 
 #
+*.org
+
+#
 output/*
 !*.gitkeep
 
