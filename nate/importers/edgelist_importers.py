@@ -1,15 +1,11 @@
-"""
-This is a MODULE docstring
-"""
+"""`Nate` importers for edgelists."""
 
 import pandas
 from .named_tuple_generator import tupleize
 
 
 def process_edgelist(temp_data, From, To, Weight=None):
-    """
-    This is a docstring
-    """
+    """Turns an edgelist in a dataframe into a list of NamedTuples."""
 
     series_dict = {}
 
@@ -25,13 +21,24 @@ def process_edgelist(temp_data, From, To, Weight=None):
 
 
 class EdgelistMixin():
-    """
-    This is a docstring
-    """
+    """Provides edgelist functionality to objects in nate."""
 
     def add_edges_from_csv(self, file_path, From, To, Weight=None):
-        """
-        Note that the capitalized arguments are a result of 'from' being a reserved keyword in Python.
+        """Imports an edgelist from a .csv file into `nate`.
+        
+        This function sets the self.edgelist attribute to a list of
+        NamedTuples, with each tuple representing one edge.
+
+        Args:
+            file_path (str): The location of the file to be loaded from disk.
+            From (str): The name of the column containing the origin of
+                the edge.
+            To (str): The name of the column containing the destination of
+                the edge.
+            Weight (str, optional): The column containing the edge's weight.
+            
+        Note that the capitalized arguments are a result of 'from' being a
+        reserved keyword in Python.
         """
 
         col_list = [From, To]
@@ -47,10 +54,23 @@ class EdgelistMixin():
                                          Weight=Weight)
 
     def add_edges_from_dataframe(self, dataframe, From, To, Weight=None):
-        """
-        Note that the capitalized arguments are a result of 'from' being a reserved keyword in Python.
-        """
+        """Imports an edgelist from a dataframe into `nate`.
+        
+        This function sets the self.edgelist attribute to a list of
+        NamedTuples, with each tuple representing one edge.
 
+        Args:
+            dataframe (pandas.Dataframe): The dataframe from which to extract
+                the edgelist.
+            From (str): The name of the column containing the origin of
+                the edge.
+            To (str): The name of the column containing the destination of
+                the edge.
+            Weight (str, optional): The column containing the edge's weight.
+            
+        Note that the capitalized arguments are a result of 'from' being a
+        reserved keyword in Python.
+        """
         self.edgelist = process_edgelist(dataframe,
                                          From=From,
                                          To=To,

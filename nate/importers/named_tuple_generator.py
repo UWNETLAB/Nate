@@ -1,15 +1,11 @@
-"""
-This is a MODULE docstring
-"""
+"""Implements extra NamedTuple functionality."""
 
 from collections import namedtuple
 from typing import List, NamedTuple
 
 
 def define_named_tuple(observation_name, attribute_names: List[str]):
-    """
-    This is a docstring.
-    """
+    """Creates a new subclass of NamedTuple."""
     output_tuple = namedtuple(observation_name, attribute_names)
 
     return output_tuple
@@ -17,8 +13,25 @@ def define_named_tuple(observation_name, attribute_names: List[str]):
 
 def create_observation_list(observation_name: str,
                             **kwargs) -> List[NamedTuple]:
-    """
-    This is a docstring.
+    """Creates an observation list of NamedTuples.
+    
+    This function builds a new NamedTuple type from the lists passed as
+    kwargs, with each field given the name of the keyword it was passed with.
+
+    This function requires that all lists passed as kwargs are the same length.
+
+    Args:
+        observation_name (str): The name given to the new NamedTuple type.
+        **kwargs: Lists containing data for each observation. The keyword
+            passed with each list will become the name of that field in the
+            resulting NamedTuple type.
+
+    Returns:
+        List[NamedTuple]: A list of NamedTuples, with each tuple corresponding
+            to one observation.
+    
+    Raises:
+        Exception: If the lists passed as kwargs are not the same length.
     """
     custom_named_tuple = define_named_tuple(observation_name,
                                             list(kwargs.keys()))
@@ -46,9 +59,7 @@ def create_observation_list(observation_name: str,
 
 
 def tupleize(series_dict, tuple_name="obs"):
-    """
-    This is a docstring.
-    """
+    """Creates an observation list of NamedTuples."""
     kwarg_dict = {}
 
     keys = [i for i in series_dict.keys()]

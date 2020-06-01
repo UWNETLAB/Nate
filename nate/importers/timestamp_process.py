@@ -1,13 +1,11 @@
 """
-This is a MODULE docstring
+Process and reformat times for consistency across Nate.
 """
 from datetime import datetime, timezone
 
 
 def convert_times(times, timezone=timezone.utc):
-    """
-    This is a docstring
-    """
+    """Convert all times to POSIX timestamps, in UTC."""
     timestamps = []
 
     for time in times:
@@ -18,8 +16,6 @@ def convert_times(times, timezone=timezone.utc):
 
 
 def convert_time(time, timezone=timezone.utc):
-    """
-    This is a docstring
-    """
+    """Convert a single time to POSIX timestamp, in UTC."""
     dt = datetime.strptime(time, "%m/%d/%Y %H:%M")
     return int(dt.replace(tzinfo=timezone.utc).timestamp())

@@ -80,10 +80,10 @@ def import_csv(file_paths: Union[List, str],
                time: str = None,
                columns_to_keep: List = [],
                observation_threshold=0):
-    """Imports a comma-separated values file (.csv) into nate.
+    """Imports a comma-separated values file (.csv) into `nate`.
 
     This function uses pre-existing pandas functionality to read in a
-    comma-separated value file (.csv) into nate.
+    comma-separated value file (.csv) into `nate`.
 
     Args:
         file_path (str or path-like): The location of the file to
@@ -95,7 +95,7 @@ def import_csv(file_paths: Union[List, str],
             some uses of nate (e.g. Divsim).
         time (str, optional): The name of the column containing the time the
             observation was recorded. Required for some uses of nate
-            (e.g. edge_burst).
+            (e.g. edgeburst).
         columns_to_keep (list, optional): A list of column names indicating
             which columns not specified elsewhere (e.g. for the time
             parameter) are kept.
