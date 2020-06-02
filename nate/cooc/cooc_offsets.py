@@ -16,7 +16,7 @@ def cooc_offsets(processed_list: List, time: List, minimum_offsets):
 
     Args:
         processed_list (List): A list of lists, where each entry in the outer
-            list represents a text, and the entries of each inner list are 
+            list represents a text, and the entries of each inner list are
             the tokens found in those texts in string form.
         time (List): A list of times for when each text was written.
         minimum_offsets (int): The minimum number of 'offsets' - or occurrences
@@ -25,7 +25,7 @@ def cooc_offsets(processed_list: List, time: List, minimum_offsets):
 
     Returns:
         Dict: The offset dictionary for the `Cooc` class, with word-word pairs
-            in integer format as keys and a list of offsets (occurence 
+            in integer format as keys and a list of offsets (occurence
             timestamps) as values.
         Dict: A lookup dictionary for each word in the corpus, with the integer
             representation as key and the string representation as value.
@@ -75,8 +75,8 @@ def text_to_int(processed_list):
     no longer in the same order. This function should only be used on texts
     where the distance between tokens in the source text is not relevant. It
     should only be used on texts where token co-occurence _in the same document_
-    is relevan
-    
+    is relevant.
+
     Args:
         processed_list (List): A list of texts, where each text is a
             list of tokens (strings).
@@ -124,9 +124,9 @@ def cooc(time, word_ints):
             represents a text, and the entries of each inner list are the
             integer representations of tokens found in those texts (as
             produced by text_to_int).
-    
+
     Returns:
-        Dict: A dictionary with token-token pairs as keys and a list of 
+        Dict: A dictionary with token-token pairs as keys and a list of
             occurence timestamps as values.
     """
 
@@ -135,7 +135,7 @@ def cooc(time, word_ints):
 
     # iterate through each document and its timestamp
     for text, timestamp in zip(word_ints, time):
-        
+
         # use combinations to find all word-pairs in the current document
         keys = list(combinations(text, 2))
 

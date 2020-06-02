@@ -19,7 +19,7 @@ class Cooc(BurstMixin):
             in the dataset - a given token/term pair must have had in order to
             be retained.
         from_svo (Bool): A flag to be passed to future steps in the pipeline
-            marking whether the data descended from an SVO class. 
+            marking whether the data descended from an SVO class.
             [Should be removed on future development.]
     """
 
@@ -35,13 +35,13 @@ class Cooc(BurstMixin):
 
     def __getitem__(self, index: Union[slice, int, tuple]):
         """Called when `Cooc` is accessed using indexing or slicing.
-        
+
         Args:
             index (slice): A range of integers used to retrieve corresponding entries
                 in the `offset_dict` attribute.
-        
+
         Returns:
-            List: A list of named tuples, each corresponding to one row in the dataset. 
+            List: A list of named tuples, each corresponding to one row in the dataset.
         """
 
         if isinstance(index, slice) or isinstance(index, int):
@@ -52,7 +52,7 @@ class Cooc(BurstMixin):
 
     def cooc_to_burst(self, s=2, gamma=1):
         """Returns an instance of the `Bursts` class.
-        
+
         Args:
             s (float, optional): s parameter for tuning Kleinberg algorithm.
                 Higher values make it more difficult for bursts to move up the
@@ -60,7 +60,7 @@ class Cooc(BurstMixin):
             gamma (float, optional): gamma parameter for tuning Kleinberg
                 algorithm. Higher values make it more difficult for activity to
                 be considered a burst. Defaults to 1.
-        
+
         Returns:
             Bursts: An instance of the `Bursts` class containing data from the
                 instance of the `Cooc` class it was called from.
