@@ -1,5 +1,8 @@
-"""
-This is a MODULE docstring
+"""Definition of the `Bursts` class, for analysis of bursty term relations.
+
+While `BurstMixin` provides the actual burst detection functionality,
+this module provides export and plotting functions to facilitate further
+analysis.
 """
 from nate.edgeburst import pybursts
 from ..utils.mp_helpers import mp
@@ -10,19 +13,29 @@ from typing import Tuple, Dict, Callable, Union
 
 
 def get_bursts(s, gamma, offset_list):
-    """
-	This is a docstring. Sends offset list and parameters to pybursts for processing. Returns a list of variably nested
-    burst data
-	"""
+    """Sends Kleinberg parameters and offset_list to pybursts."""
     burst_list = pybursts.process(offset_list, s, gamma)
 
     return burst_list
 
 
 def detect_bursts(offsets, s=2, gamma=1):
-    """
-    This is a docstring. Sends list of time offsets for each document to the get_bursts function. Returns dictionary
-    with bursting terms as keys and nested burst data as values
+    """Returns dictionary with bursting terms as keys and burst data as values.
+
+    Args:
+        offsets (Dict): A dictionary of offsets, with keys being edge
+            objects and the values being lists of occurence times.
+        s (float, optional): s parameter for tuning Kleinberg algorithm.
+            Higher values make it more difficult for bursts to move up the
+            burst hierarchy. Defaults to 2.
+        gamma (float, optional): gamma parameter for tuning Kleinberg
+            algorithm. Higher values make it more difficult for activity to
+            be considered a burst. Defaults to 1.
+
+    Returns:
+        Dict: A dictionary of bursts, with keys being edge objects and values
+            being lists of burst data. Each burst is in the format
+            [intensity, start_time, end_time].
     """
     key_list = list(offsets.keys())
     offset_list = list(offsets.values())
@@ -35,8 +48,29 @@ def detect_bursts(offsets, s=2, gamma=1):
 
 
 class Bursts():
-    """
-    This is a docstring.
+    """The core burst detection class.
+
+    This class provides all burst analysis functionality, including export
+    and plotting abilities.
+
+    Attributes:
+        offset_dict (Dict): A dictionary with edge objects in string format
+            as keys and occurence times as values.
+        edge_burst_dict (Dict): A dictionary with edge objects in string format
+            as keys and a list of bursts as values. The burst lists are in the
+            format [intensity, start_time, end_time].
+        s (float, optional): s parameter for tuning Kleinberg algorithm.
+            Higher values make it more difficult for bursts to move up the
+            burst hierarchy. Changing this parameter after object instatiation
+            does not change the object's data.
+        gamma (float, optional): gamma parameter for tuning Kleinberg
+            algorithm. Higher values make it more difficult for activity to
+            be considered a burst. Changing this parameter after object
+            instatiation does not change the object's data.
+        from_svo (Bool): A flad that determines whether the pipeline should be
+            configured for bursts of SVOs.
+        lookup (Dict): A lookup dictionary for terms, with integer
+            representations as keys and string representations as values.
     """
 
     def __init__(self, offset_dict, edge_burst_dict, s, gamma, from_svo,
@@ -51,14 +85,15 @@ class Bursts():
         self.lookup = lookup
 
     def __getitem__(self, index: Union[slice, int, tuple]):
-        """Called when `EdgeBurst` is accessed using indexing or slicing.
-        
+        """Called when `Bursts` is accessed using indexing or slicing.
+
         Args:
-            index (slice): A range of integers used to retrieve corresponding entries
-                in the `offset_dict` attribute.
-        
+            index (slice): A range of integers used to retrieve corresponding
+                entries in the `offset_dict` attribute.
+
         Returns:
-            A list of named tuples, each corresponding to one row in the dataset. 
+            List: A list of named tuples, each corresponding to one row in the
+                dataset.
         """
 
         if isinstance(index, slice) or isinstance(index, int):
@@ -68,27 +103,57 @@ class Bursts():
 
 
     def export_df(self):
-        """
-        This is a docstring. Uses objects attached to the burst class to return a dataframe of all bursts
+        """Exports burst data to a dataframe.
+
+        Returns:
+            pandas.Dataframe: A dataframe containing all bursts data.
+
+            The returned dataframe has the following columns:
+                - Column(s) representing the edge objects (terms), whose names
+                  depend on the object the `Bursts` object was formed from.
+                - 'bursts': A dict with
+                - 'term_id' (int): The id of the edge object in the dataset.
+                  This will match the index.
+                - 'interval_start' (datetime): The start of the burst.
+                - 'interval_end' (datetime): The end of the burst.
+                - 'intensity' (int): The intensity of the burst.
         """
         return df_export(self.edge_burst_dict, self.offset_dict, self.from_svo)
 
     def export_max_bursts(self):
-        """
-        This is a docstring. Uses objects attached to the burst class to return a dictionary with bursting
-        terms as keys and highest level burst as values
-        """
+        """Returns a dict with edges as keys and all max bursts as values."""
         return max_bursts_export(self.edge_burst_dict, self.from_svo)
 
     def to_pandas(self, key: Tuple, unit='s') -> Tuple[Dict, Dict]:
-        """[summary]
-        
+        """Exports bursts and offsets to separate dataframes for a given key.
+
+        TODO: refactor the wrapped function (visualize_bursts.to_pandas)
+        so that it is not SVO specific. Should not be much of an issue.
+
         Args:
-            key (Tuple): [description]
-            unit (str, optional): [description]. Defaults to 's'.
-        
+            key (Tuple): The edge for which burst and offset data will
+                be extracted.
+            unit (str, optional): The unit to be passed to pd.to_datetime.
+                Defaults to 's'.
+
         Returns:
-            Tuple[Dict, Dict]: [description]
+            Tuple[pandas.Dataframe, pandas.Dataframe]: The first dataframe
+                contains burst data. The second dataframe contains offset data.
+
+            The first dataframe has the following columns:
+                - 'level' (int): The level of the burst.
+                - 'start' (datetime): The start time of the burst.
+                - 'end' (datetime): The end time of the burst.
+                - 'svo' (string): The edge for which the dataframe contains
+                  data.
+
+            The second dataframe has the following columns:
+                - 'Date' (int): The date of the occurence.
+                - 'Year' (int): The year of occurence.
+                - 'Month' (int): The month of the occurence.
+                - 'Day' (int): The day of the occurence.
+                - 'svo' (string): The edge for which the dataframe contains
+                  data.
         """
 
         offsets = self.offset_dict[key]
@@ -103,14 +168,25 @@ class Bursts():
                     title=True,
                     daterange=None,
                     xrangeoffsets=3):
-        """[summary]
-        
+        """Plots the occurences and bursts of the given key.
+
+        TODO: Refactor wrapped function so that it is not SVO specific.
+
         Args:
-            key (Tuple): [description]
-            unit (str, optional): [description]. Defaults to 's'.
-            lowest_level (int, optional): [description]. Defaults to 0.
-            daterange ([type], optional): [description]. Defaults to None.
-            xrangeoffsets (int, optional): [description]. Defaults to 3.
+            key (Tuple): The key whose burst data to plot.
+            unit (str, optional): The unit to be passed to pd.to_datetime.
+                Defaults to 's'.
+            lowest_level (int, optional): If passed, includes bursts only if
+                they are greater than the given lowest level. Defaults to 0.
+            title (Bool, optional): If True, include the name of SVO as the
+                title of the figure. Defaults to True.
+            daterange (Tuple[str,str], optional): If passed, only bursts in the
+                range daterange[0] to daterange[1] will be plotted. The dates
+                must be passed as strings in the format 'year-month-day'.
+                Defaults to None.
+            xrangeoffsets (int, optional): The number of days to add before the
+                minimum date and after the maximum date. Used to 'pad' the plot.
+                Defaults to 3.
         """
         bdf, odf = self.to_pandas(key, unit)
 
