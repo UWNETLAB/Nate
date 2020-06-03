@@ -51,7 +51,7 @@ class Nate(EdgelistMixin):
         """
         self.data: List = data
         self.texts: List = self.list_texts()
-        self.post_nlp: List
+        self.post_nlp: List = False
 
     def __call__(self, start: int = 0, end: int = 5):
         """Returns complete 'rows' from the contained dataset. 
@@ -369,7 +369,7 @@ class Nate(EdgelistMixin):
         sentences = [x[0] for x in self.post_svo]
         svo_items = [x[1] for x in self.post_svo]
 
-        if self.data.time:
+        if self.data[0].time:
             return SVOnet(sentences, svo_items, self.list_times())
         else:
             return(SVOnet(sentences, svo_items, False))
