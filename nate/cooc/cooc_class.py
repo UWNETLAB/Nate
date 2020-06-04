@@ -1,6 +1,13 @@
 """Definition of the `Cooc` pipeline, for co-occurence analysis.
 
-This module defines the `Cooc` pipeline, [description of cooc pipeline functionality].
+This module defines the `Cooc` pipeline, which contains a dictionary of
+the results from the co-occurence analysis which is conducted when
+this class is instantiated from the `Nate` class's `cooc_pipeline()`
+method. 
+
+This class contains useful information in its own right, but primarily
+serves as an intermediary for the `Bursts` class, which can be 
+instantiated using this class's `cooc_to_bursts()` method.
 """
 from typing import Dict, Union, List
 from ..edgeburst.burst_mixin import BurstMixin
