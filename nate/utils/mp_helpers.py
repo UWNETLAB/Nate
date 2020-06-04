@@ -1,6 +1,4 @@
-"""
-This is a MODULE docstring
-"""
+"""Utilities for multiprocessing."""
 from joblib import Parallel, delayed, cpu_count
 from itertools import chain
 from spacy.util import minibatch
@@ -9,14 +7,15 @@ from typing import Union, List, Dict
 
 
 def mp(items, function, *args) -> Union[List, Dict]:
-    """
-    This is a convenience function for generalized multiprocessing of any function that
-    deals with a list or dictionary of items.
-    The functions passed to `mp` must accept the list of items to be processed at the end 
-    of their function call, with optional arguments first.
-    *args can be any number of optional arguments accepted by the function that will be multiprocessed.
-    On Windows, functions must be defined outside of the current python file and imported, to avoid 
-    infinite recursion.
+    """Applies a function to a list or dict of items, using multiprocessing.
+    
+    This is a convenience function for generalized multiprocessing of any
+    function that deals with a list or dictionary of items. The functions
+    passed to `mp` must accept the list of items to be processed at the end 
+    of their function call, with optional arguments first. *args can be any
+    number of optional arguments accepted by the function that will be 
+    multiprocessed. On Windows, functions must be defined outside of the
+    current python file and imported, to avoid infinite recursion.
     """
     if cpu_count() >= 10:  #to avoid overtaxing Brad, save some cores
         cpu = 10
@@ -46,9 +45,11 @@ def mp(items, function, *args) -> Union[List, Dict]:
 
 
 def mp2(items, function, *args):
-    """
-    This is the same as `mp` but used when two lists of results need to be returned. Will perhaps be
-    generalized for any number of results in the future. Does not currently work for dictionaries.
+    """Applies a function to a list, returning two lists of results.
+
+    This is the same as `mp` but used when two lists of results need to be 
+    returned. Will perhaps be generalized for any number of results in the 
+    future. Does not currently work for dictionaries.
     """
     if cpu_count() >= 10:  #to avoid overtaxing Brad, save some cores
         cpu = 10

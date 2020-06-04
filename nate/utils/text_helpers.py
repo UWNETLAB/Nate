@@ -1,13 +1,12 @@
-"""
-This is a MODULE docstring
-"""
+"""Utilities for manipulation of plain text."""
 
 import pandas as pd
 import re
 
 
 def window_text(string_of_text, window_lr=3):
-    """
+    """Creates a list of windowed strings.
+
     This function splits a string into tokens on each space. Then it iterates
     over each token and takes add n words to a new list where n = the number of
     ``window_lr`` * 2 + 1. This is because ``window_lr'' is the number of
@@ -42,7 +41,8 @@ def window_text(string_of_text, window_lr=3):
 
 
 def search_entities(raw_text_string, search):
-    """
+    """Searches for known entities in a string.
+    
     Helper function for construct_entity_conet(). Iterates over a list
     of entities and looks to see if they are present in a given text
     string. If they are, then it will append the entity to a list for
@@ -57,9 +57,7 @@ def search_entities(raw_text_string, search):
 
 
 def adjmat_to_wel(adjmat, remove_self_loops=True):
-    """
-    Accepts an adjacency matrix and outputs a weighted edgelist.
-    """
+    """ Accepts an adjacency matrix and outputs a weighted edgelist."""
     adjmat = pd.read_csv('~/Desktop/testing/ajm.csv', index_col=0)
     adjmat.fillna(0, inplace=True)
 
@@ -91,6 +89,7 @@ def write_topics(model, feature_names, no_top_words, filename='topics.txt'):
             f.write('\n')
 
 def is_ascii(s):        
+    """Determines if a string is encoded in ascii."""
     try:
         s.encode('ascii')
     except UnicodeEncodeError:
