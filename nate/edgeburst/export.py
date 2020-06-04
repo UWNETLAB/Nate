@@ -1,6 +1,4 @@
-"""
-This is a MODULE docstring
-"""
+"""Exports burst data to other data structures."""
 import pandas as pd
 import numpy as np
 import os
@@ -10,8 +8,12 @@ from itertools import groupby
 
 
 def df_export(bursts, offsets, from_svo=False):
-    """
-    This is a docstring.
+    """Exports the burst data to a dataframe.
+
+    TODO: remove offsets parameter, as it is not used to generate the dataframe
+    (as far as I can tell).
+
+    TODO: does the 'bursts' column need to be kept for every edge entry?
     """
     key_list = []
     burst_list = []
@@ -41,17 +43,16 @@ def df_export(bursts, offsets, from_svo=False):
 
 
 def max_intensities(burst_list):
-    """
-    This is a docstring.
-    """
+    """Removes all but the max intensity for each burst interval."""
     max_bursts = [{(j, k): i for i, j, k in x} for x in burst_list]
 
     return max_bursts
 
 
 def flatten(df, intensities):
-    """
-    This is a docstring.
+    """Flattens burst data into dataframe columns.
+
+    Depends on the df being in the same order as the list of intensities.
     """
     term_id_list = []
     interval_start_list = []
@@ -77,8 +78,10 @@ def flatten(df, intensities):
 
 
 def max_bursts_export(bursts, from_svo=False):
-    """
-    This is a docstring.
+    """Returns a dict with term as key and maximum intensity burst as value.
+
+    TODO: make this function export what it means to. As of now, it returns
+    a dict with all bursts as values.
     """
     key_list = []
     burst_list = []
@@ -108,9 +111,7 @@ def max_bursts_export(bursts, from_svo=False):
 
 
 def all_bursts_export(bursts, lookup, from_svo=False):
-    """
-    This is a docstring.
-    """
+    """Converts the keys of the `bursts` dictionary from ints to strings."""
     key_list = []
     burst_list = []
 
@@ -137,8 +138,11 @@ def all_bursts_export(bursts, lookup, from_svo=False):
 
 
 def offsets_export(offsets, lookup, from_svo=False):
-    """
-    This is a docstring.
+    """Converts the keys of the `offsets` dictionary from ints to strings.
+
+    TODO: This does exactly the same thing as all_bursts_export above:
+    the differences between the two datastructures aren't relevant to
+    replacing their keys with strings.
     """
     key_list = []
     offset_list = []

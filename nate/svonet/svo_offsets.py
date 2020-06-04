@@ -1,6 +1,4 @@
-"""
-This is a MODULE docstring
-"""
+"""Generates the offset dictionary for the SVO pipeline."""
 from time import time as marktime
 from typing import List
 from itertools import groupby
@@ -8,9 +6,7 @@ from collections import defaultdict
 
 
 def generate_svo_offsets(svo_list: List, time: List, minimum_offsets):
-    """
-    This is a docstring. Create offset dictionary and int-to-string lookup for text in SVO format.
-    """
+    """Creates offset dictionary and int-to-string lookup for SVO format."""
     print("Generating Offsets:")
 
     start = marktime()
@@ -48,10 +44,7 @@ def generate_svo_offsets(svo_list: List, time: List, minimum_offsets):
 
 
 def text_to_int(svo_dict):
-    """
-    This is a docstring. Converts SVO terms to integers for memory and processing efficiency but also
-    to remain consistent with other pipelines
-    """
+    """Converts SVO terms to integers, and generates a lookup dictionary."""
     svo_int_dict = defaultdict(list)
     lookup_dict = defaultdict(tuple)
     i = 0

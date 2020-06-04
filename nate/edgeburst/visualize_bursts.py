@@ -1,6 +1,4 @@
-"""
-This is a MODULE docstring
-"""
+"""Visualizes burst data."""
 
 import pandas as pd
 import matplotlib as mpl
@@ -9,8 +7,7 @@ import matplotlib.dates as mdates
 
 
 def to_pandas(ebursts, offsets, svo, unit='s'):
-    """
-    TODO: write docstring
+    """Exports burst and offset data to dataframes for a single term.
 
     ebursts is an edgebust dict from the SVO object
     offsets is an offsets dict from the SVO object
@@ -42,10 +39,9 @@ def plot_bursts(odf,
                 xrangeoffsets=3,
                 s=None,
                 gamma=None):
-    """
-    TODO: write docstring
+    """Plots burst and offset data.
 
-    odf = an offsets dataframe 
+    odf = an offsets dataframe
     bdf = an edgeburst dataframe
     lowest_level = subset the burst dataframe with bursts greater than or equal to the specified level
     daterange = a tuple with two elements: a start date and end date as *strings*. format is 'year-month-day'
@@ -77,7 +73,7 @@ def plot_bursts(odf,
     levels = [0]
 
     for i in range(1, len(day_freq.index)):
-        
+
         period_start = odf.resample('D').size().index[i - 1]
         period_end = odf.resample('D').size().index[i]
 
@@ -86,25 +82,25 @@ def plot_bursts(odf,
         days.append(period_end)
 
         for j in range(len(bdf)):
-            
+
             burst_start = bdf['start'][j]
             burst_end = bdf['end'][j]
             level = bdf['level'][j]
-            
+
             if burst_end < period_start or period_end < burst_start :
                 pass
             else:
                 max_burst.add(level)
-        
+
         levels.append(max(max_burst))
-                
+
     finaldf = pd.DataFrame({"start": days, "level": levels})
 
     if lowest_level > 0:
         bdf = bdf[bdf['level'] >= lowest_level]
         xmin = min(bdf['start'])
         xmax = max(bdf['start'])
-        
+
         if xmin == xmax:
             raise Exception("There must be at least two bursts at or above the specified level. Try reducing the `lowest_level` parameter.")
 
