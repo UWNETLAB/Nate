@@ -1,5 +1,6 @@
-"""
-This is a MODULE docstring
+"""Definition of the `SVOnet` class, for subject-verb-object analysis.
+
+This module defines the `SVOnet` class, [description of SVO pipeline].
 """
 
 from nate.svonet.svo import findSVOs
@@ -14,9 +15,11 @@ from nate.svonet.svoburst_class import SVOburst
 
 
 def process_svo(sub_tags, obj_tags, doc):
-    """
-    This is a docstring. Custom spaCy pipeline component to detect SVOs in each document
-    after spaCy has processed it
+    """Detects SVOs in a document after spaCy has processed it.
+
+    Custom pipeline component for spaCY.
+
+    TODO: move this to utils, where it is used.
     """
     sentences = [x.string.strip() for x in doc.sents]  # list of raw sentences in the document
     svo_items = [findSVOs(x, sub_tags, obj_tags) for x in doc.sents] # detect SVOs sentence-by-sentence in the document
@@ -25,9 +28,21 @@ def process_svo(sub_tags, obj_tags, doc):
 
 
 class SVOnet(BurstMixin):
-    """
-    This is a docstring. Primarily provides data clean-up upon initialization, as well as
-    an export function and burst detection functions.
+    """Provides data cleanup, export functions, and burst detection.
+
+    Attributes:
+        doc_ids (List): A list of document ids, determining which document
+            the SVO at index i came from.
+        sent_ids (List): A list of sentence ids, determining which sentence
+            the SVO at index i came from.
+        sentences (List): The sentence that the SVO was pulled from.
+        svo_items (List): The entire SVO item.
+        times (List): The time that the SVO's source document was written.
+        subjects (List): The SVO at index i's subject.
+        verbs (List): The SVO at index i's verb.
+        objects (List): The SVO at index i's object
+        sub_ent_types (List): The SVO at index i's subject entity type.
+        obj_ent_types (List): The SVO at index i's object entity type.
     """
 
     def __init__(self, sentences, svo_items, timestamps):
@@ -69,11 +84,39 @@ class SVOnet(BurstMixin):
         self.from_svo = True
 
     def svo_to_df(self, tidy=True):
-        """ 
-        This is a docstring. Outputs a Pandas dataframe of all detected SVOs and associated timestamps (if present). 
+        """Outputs a pandas dataframe with all SVOs and their timestamps.
+
         If tidy is set to True, each SVO will have its own line in the dataframe.
-        If tidy is set to False, identical SVOs will be grouped and their document ids, timestamps, and datetimes
-        will be aggregated into lists in the dataframe.
+        If tidy is set to False, identical SVOs will be grouped and their
+        document ids, timestamps, and datetimes will be aggregated into lists
+        in the dataframe.
+
+        Args:
+            tidy (Bool, optional): Whether to output a tidy or non-tidy
+                dataframe, the differences between which are documented above.
+                Defaults to True.
+
+        Returns:
+            pandas.Dataframe: A dataframe containing data for all detected SVOs,
+                including their associated timestamps (if present).
+
+            The outputted dataframe will have the following columns:
+              - 'doc_ids' (int) : A list of document ids, determining which
+                document the SVO at index i came from.
+              - 'sent_ids' (int): A list of sentence ids, determining which
+                 sentence
+                 the SVO at index i came from.
+              - 'sentences' (string): The sentence that the SVO was pulled from.
+              - 'svo' (Tuple): The entire SVO item.
+              - 'times' (datetime): The time that the SVO's source document
+                was written.
+              - 'subjects' (string): The SVO at index i's subject.
+              - 'verbs' (string): The SVO at index i's verb.
+              - 'objects' (string): The SVO at index i's object
+              - 'sub_ent_types' (string): The SVO at index i's subject entity
+                type.
+              - 'obj_ent_types' (string): The SVO at index i's object entity
+                type.
         """
         df = pd.DataFrame()
 
@@ -94,8 +137,26 @@ class SVOnet(BurstMixin):
         return df
 
     def svo_to_burst(self, minimum_offsets=20, s=2, gamma=1) -> SVOburst:
-        """
-        Initiates burst detection on data contained in the SVOnet class. Returns an instance of the SVOburst class.
+        """Initiates burst detection on data contained in the SVOnet class.
+
+        This function requires that the object was instantiates with a list
+        of times.
+
+        Args:
+            minimum_offsets (int, optional): The minimum number of occurences
+                of an SVO in the dataset for it to be included in the bursts
+                calculation. Lower values include more of the dataset, at the
+                cost of longer processing time. Defaults to 20.
+            s (float, optional): s parameter for tuning Kleinberg algorithm.
+                Higher values make it more difficult for bursts to move up the
+                burst hierarchy. Defaults to 2.
+            gamma (float, optional): gamma parameter for tuning Kleinberg
+                algorithm. Higher values make it more difficult for activity to
+                be considered a burst. Defaults to 1.
+
+        Returns:
+            SVOburst: An SVOburst object for exporting, visualizing, and otherwise
+                manipulating burst data for the data contained in this class.
         """
         if not self.times:
             print("Burst detection requires timestamps")

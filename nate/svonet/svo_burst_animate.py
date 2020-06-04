@@ -275,6 +275,10 @@ def build_graph(df, pos = False, time_interval: int = 86400):
 
 
 def animate_graph(graph, pos, offscreen, new_burst_halo, dpi):
+    """Animates the bursts of an SVO network over time.
+
+    The `new_burst_halo` and `dpi` arguments are not used.
+    """
     frame = 0
     g = graph
 
