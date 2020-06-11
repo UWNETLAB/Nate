@@ -141,6 +141,7 @@ hand/
 
 #
 *.org
+*.el
 
 #
 output/*
