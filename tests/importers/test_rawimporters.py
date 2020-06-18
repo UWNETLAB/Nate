@@ -23,9 +23,8 @@ def list_of_files():
             "tests/importers/textfiles/3.txt"]
 
 # fixtures for import_dict_of_dicts
-@pytest.fixture
-def dict_of_dicts_text(df):
-    return {df["tweet_id"][i]: {"text": df["content"][i]} for i in range(0,10)}
+
+# see contest.py for dict_of_dicts_text
 
 @pytest.fixture
 def dict_of_dicts_cols(df):
