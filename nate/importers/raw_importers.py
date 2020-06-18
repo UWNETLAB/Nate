@@ -1,4 +1,4 @@
-"""Import text, and only text, directly into `Nate``."""
+"""Import text, and only text, directly into `Nate`."""
 
 from typing import List, Union
 from .named_tuple_generator import define_named_tuple
