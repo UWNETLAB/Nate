@@ -17,6 +17,7 @@ def process_dataframe(temp_data,
                       text: str,
                       unique_id: str = None,
                       time: str = None,
+                      twitter_times: bool = False,
                       columns_to_keep: List = []):
     """Builds a nate object from a dataframe."""
     series_dict = {}
@@ -35,8 +36,12 @@ def process_dataframe(temp_data,
         series_dict[covariate_column] = temp_column.tolist()
 
     if time != None:
-        series_dict['time'] = convert_times(series_dict['times'])
-        del series_dict['times']
+        try:
+            series_dict['time'] = convert_times(series_dict['times'])
+            del series_dict['times']
+        except:
+            series_dict['time'] = series_dict['times']
+            del series_dict['times']
 
     return Nate(tupleize(series_dict))
 
@@ -45,6 +50,7 @@ def import_dataframe(input_dataframe: pandas.DataFrame,
                      text: str,
                      unique_id: str = None,
                      time: str = None,
+                     twitter_times: bool = False,
                      columns_to_keep: List = []):
     """Imports a pandas dataframe into nate.
 
@@ -70,7 +76,11 @@ def import_dataframe(input_dataframe: pandas.DataFrame,
     be renamed to 'text', 'unique_id', and 'time', accordingly. The names
     of the columns listed in 'columns_to_keep' will be preserved as-is.
     """
-    return process_dataframe(input_dataframe, text, unique_id, time,
+    
+    if time!= None and twitter_times == False:
+        input_dataframe = input_dataframe.astype({time: 'str'})
+        input_dataframe[time] = pandas.to_datetime(input_dataframe[time], infer_datetime_format=True)
+    return process_dataframe(input_dataframe, text, unique_id, time, twitter_times,
                              columns_to_keep)
 
 
@@ -78,6 +88,7 @@ def import_csv(file_paths: Union[List, str],
                text: str,
                unique_id: str = None,
                time: str = None,
+               twitter_times: bool = False,
                columns_to_keep: List = [],
                observation_threshold=0):
     """Imports a comma-separated values file (.csv) into `nate`.
@@ -126,12 +137,17 @@ def import_csv(file_paths: Union[List, str],
     for special_column in [text, unique_id, time]:
         if special_column != None:
             columns_to_import.append(special_column)
+            
+    dtypes = {}
+    
+    if time!= None:
+        dtypes[time] = "str"
 
     if isinstance(file_paths, list):
         df_list = []
         total_len = 0
         for entry in file_paths:
-            temp_df = pandas.read_csv(entry, usecols=columns_to_import)
+            temp_df = pandas.read_csv(entry, usecols=columns_to_import, dtype = dtypes)
             df_list.append(temp_df)
 
             if observation_threshold != 0:
@@ -143,18 +159,23 @@ def import_csv(file_paths: Union[List, str],
 
     elif isinstance(file_paths, str):
 
-        temp_data = pandas.read_csv(file_paths, usecols=columns_to_import)
+        temp_data = pandas.read_csv(file_paths, usecols=columns_to_import, dtype = dtypes)
 
     else:
         raise TypeError("file_paths must be either string or list of strings")
+        
+    if time!= None and twitter_times == False:
+        temp_data = temp_data.astype({time: 'str'})
+        temp_data[time] = pandas.to_datetime(temp_data[time], infer_datetime_format=True)
 
-    return process_dataframe(temp_data, text, unique_id, time, columns_to_keep)
+    return process_dataframe(temp_data, text, unique_id, time, twitter_times, columns_to_keep)
 
 
 def import_excel(file_paths: Union[List, str],
                  text: str,
                  unique_id: str = None,
                  time: str = None,
+                 twitter_times: bool = False,
                  columns_to_keep: List = [],
                  observation_threshold=0):
     """Imports an excel file (.xlsx) into nate.
@@ -203,6 +224,11 @@ def import_excel(file_paths: Union[List, str],
     for special_column in [text, unique_id, time]:
         if special_column != None:
             columns_to_import.append(special_column)
+            
+    dtypes = {}
+    
+    if time!= None:
+        dtypes[time] = "str"
 
     print(columns_to_import)
     print(columns_to_keep)
@@ -211,7 +237,7 @@ def import_excel(file_paths: Union[List, str],
         df_list = []
         total_len = 0
         for entry in file_paths:
-            temp_df = pandas.read_excel(entry, usecols=columns_to_import)
+            temp_df = pandas.read_excel(entry, usecols=columns_to_import, dtype = dtypes)
             df_list.append(temp_df)
 
             if observation_threshold != 0:
@@ -223,9 +249,13 @@ def import_excel(file_paths: Union[List, str],
 
     elif isinstance(file_paths, str):
 
-        temp_data = pandas.read_excel(file_paths, usecols=columns_to_import)
+        temp_data = pandas.read_excel(file_paths, usecols=columns_to_import, dtype = dtypes)
 
     else:
         raise TypeError("file_paths must be either string or list of strings")
+        
+    if time!= None and twitter_times == False:
+        temp_data = temp_data.astype({time: 'str'})
+        temp_data[time] = pandas.to_datetime(temp_data[time], infer_datetime_format=True)
 
-    return process_dataframe(temp_data, text, unique_id, time, columns_to_keep)
+    return process_dataframe(temp_data, text, unique_id, time, twitter_times, columns_to_keep)
