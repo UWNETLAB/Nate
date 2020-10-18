@@ -18,10 +18,7 @@ RCY = mk.RecordCollection('../input/', cached=False)
 RC = RCY.yearSplit(2008, 2019)
 
 coauth = RC.networkCoAuthor()
-# coauth.remove_nodes_from(list(nx.isolates(coauth)))   #temporarily commented out until we decide whether to NLP entire network or just giant component
-#coauth = max(nx.connected_component_subgraphs(coauth), key=len)  #temporarily added - see above
-#partition = community.best_partition(coauth)
-mk.writeGraph(coauth, '../output/coauthorship')
+mk.writeGraph(coauth, 'coauthorship')
 
 wos_dict = RC.makeDict(
     onlyTheseTags=["UT", "AF", "AU", "TI", "ID", "DE", "AB", "TC", "SO", "PY"],
@@ -109,11 +106,11 @@ for i in range(0, len(wos_dict['wosString'])):
     except TypeError:
         pass
 
-with open("../output/author_metadata.pkl", "wb") as handle:
+with open("author_metadata.pkl", "wb") as handle:
     pickle.dump(author_dict, handle)
 
-with open("../output/comm_abs.pkl", "wb") as handle:
+with open("comm_abs.pkl", "wb") as handle:
     pickle.dump(abs_dict, handle)
 
-with open("../output/cites_dict.yaml", "w") as stream:
+with open("cites_dict.yaml", "w") as stream:
     yaml.dump(cites_dict, stream, default_flow_style=False)

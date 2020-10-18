@@ -15,7 +15,7 @@ from spacy.pipeline import merge_entities
 
 from nate.cooc.cooc_class import Cooc
 from nate.cooc.cooc_offsets import cooc_offsets
-#from ..socnet.socnet import SOCnet
+from nate.socnet.socnet_class import SOCnet
 from nate.svonet.svonet_class import process_svo, SVOnet
 from nate.utils import nlp_helpers
 from nate.utils.mp_helpers import mp, mp2
@@ -296,9 +296,7 @@ class Nate(EdgelistMixin):
             SOCnet: An instance of the `SOCnet` class.
         """
 
-        print("NOT CURRENTLY IMPLEMENTED")
-
-        return "NOT CURRENTLY IMPLEMENTED"  #SOCnet(self.data, self.edgelist[slice(subset)])
+        return SOCnet(self.data, self.edgelist[slice(subset)])
 
     def svonet_pipeline(self,
                      sub_tags: bool = False,
