@@ -1,4 +1,4 @@
-"""Import text, and only text, directly into `Nate``."""
+"""Import text, and only text, directly into `Nate`."""
 
 from typing import List, Union
 from .named_tuple_generator import define_named_tuple
@@ -41,7 +41,7 @@ def import_files(files):
     for filepath in files:
         with open(filepath, 'r', encoding='utf-8') as stream:
             obs_list.append(
-                text_only_namedtuple(stream.read().replace('\n', '')))
+                text_only_namedtuple(stream.read().replace('\n', ' ')))
 
     return Nate(obs_list)
 
